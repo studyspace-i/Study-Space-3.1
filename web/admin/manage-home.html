@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Manage Homepage — Study Space Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+  <a href="/admin/settings.html#home" class="text-sm font-semibold text-gray-500 hover:text-primary">← Back to Settings</a>
+  <h1 class="mb-6 mt-2 text-2xl font-bold text-gray-900">Notices &amp; Gallery</h1>
+
+  <div class="grid gap-4 md:grid-cols-3">
+    <div class="md:col-span-2">
+      <div class="mb-4 rounded-xl bg-white p-6 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold text-gray-700">General Content</h2>
+        <div class="mb-2"><label class="mb-1 block text-xs text-gray-500">Library Name</label><input id="libraryName" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <div class="mb-2"><label class="mb-1 block text-xs text-gray-500">Tagline</label><input id="tagline" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <div class="mb-2"><label class="mb-1 block text-xs text-gray-500">About Text</label><textarea id="aboutText" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"></textarea></div>
+        <div class="mb-2"><label class="mb-1 block text-xs text-gray-500">Features (comma separated)</label><input id="features" placeholder="24x7 WiFi, 100 Seats, AC Hall" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <div class="mb-2 grid grid-cols-2 gap-2">
+          <div><label class="mb-1 block text-xs text-gray-500">Contact Phone</label><input id="contactPhone" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+          <div><label class="mb-1 block text-xs text-gray-500">Contact Email</label><input id="contactEmail" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        </div>
+        <div class="mb-3"><label class="mb-1 block text-xs text-gray-500">Contact Address</label><input id="contactAddress" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <label class="mb-3 flex items-center gap-2 text-sm text-gray-600"><input type="checkbox" id="showLeaderboard" class="h-4 w-4"> Show leaderboard on homepage</label>
+        <button id="btn-save-content" class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Save Changes</button>
+      </div>
+
+      <div class="rounded-xl bg-white p-6 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold text-gray-700">Notices</h2>
+        <div class="mb-3 flex gap-2">
+          <input id="new-notice" placeholder="New notice message" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+          <button id="btn-add-notice" class="whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Add</button>
+        </div>
+        <ul id="notices-list" class="divide-y divide-gray-100 text-sm"></ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="rounded-xl bg-white p-6 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold text-gray-700">Gallery Photos</h2>
+        <form id="upload-form" class="mb-4">
+          <input type="file" id="gallery-file" accept="image/*" required class="mb-2 w-full text-sm" />
+          <input id="gallery-caption" placeholder="Caption (optional)" class="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+          <button type="submit" class="w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-blue-700">Upload Photo</button>
+        </form>
+        <div id="gallery-grid" class="grid grid-cols-2 gap-2"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+async function loadContent() {
+  const { data: c } = await api("/content");
+  document.getElementById("libraryName").value = c.libraryName || "";
+  document.getElementById("tagline").value = c.tagline || "";
+  document.getElementById("aboutText").value = c.aboutText || "";
+  document.getElementById("features").value = (c.features || []).join(", ");
+  document.getElementById("contactPhone").value = c.contactPhone || "";
+  document.getElementById("contactEmail").value = c.contactEmail || "";
+  document.getElementById("contactAddress").value = c.contactAddress || "";
+  document.getElementById("showLeaderboard").checked = !!c.showLeaderboard;
+
+  document.getElementById("notices-list").innerHTML = (c.notices || []).length
+    ? c.notices.map((n) => `
+      <li class="flex items-center justify-between py-2">
+        <span>${n.message}</span>
+        <button class="btn-delete-notice text-red-500 hover:text-red-700" data-id="${n._id}">✕</button>
+      </li>`).join("")
+    : `<li class="py-2 text-gray-400">No notices yet</li>`;
+
+  document.getElementById("gallery-grid").innerHTML = (c.galleryImages || []).length
+    ? c.galleryImages.map((g) => `
+      <div class="relative">
+        <img src="${g.url}" class="h-28 w-full rounded-md object-cover" />
+        <button class="btn-delete-image absolute right-1 top-1 rounded-full bg-red-600 px-1.5 text-xs text-white" data-id="${g._id}">✕</button>
+      </div>`).join("")
+    : `<p class="col-span-2 text-sm text-gray-400">No photos yet</p>`;
+
+  document.querySelectorAll(".btn-delete-notice").forEach((btn) => {
+    btn.addEventListener("click", async () => { await api(`/admin/content/notices/${btn.dataset.id}`, { method: "DELETE" }); loadContent(); });
+  });
+  document.querySelectorAll(".btn-delete-image").forEach((btn) => {
+    btn.addEventListener("click", async () => { await api(`/admin/content/gallery/${btn.dataset.id}`, { method: "DELETE" }); loadContent(); });
+  });
+}
+
+document.getElementById("btn-save-content").addEventListener("click", async () => {
+  try {
+    await api("/admin/content", {
+      method: "PUT",
+      body: {
+        libraryName: document.getElementById("libraryName").value.trim(),
+        tagline: document.getElementById("tagline").value.trim(),
+        aboutText: document.getElementById("aboutText").value.trim(),
+        features: document.getElementById("features").value.split(",").map((f) => f.trim()).filter(Boolean),
+        contactPhone: document.getElementById("contactPhone").value.trim(),
+        contactEmail: document.getElementById("contactEmail").value.trim(),
+        contactAddress: document.getElementById("contactAddress").value.trim(),
+        showLeaderboard: document.getElementById("showLeaderboard").checked,
+      },
+    });
+    toast("Homepage updated");
+  } catch (e) { toast(e.message, "error"); }
+});
+
+document.getElementById("btn-add-notice").addEventListener("click", async () => {
+  const val = document.getElementById("new-notice").value.trim();
+  if (!val) return;
+  try { await api("/admin/content/notices", { method: "POST", body: { message: val } }); document.getElementById("new-notice").value = ""; loadContent(); }
+  catch (e) { toast(e.message, "error"); }
+});
+
+// Gallery upload needs multipart/form-data, so this bypasses the JSON-only
+// api() helper and does a raw fetch — but still attaches the CSRF header,
+// same double-submit-cookie check the backend requires on every POST.
+document.getElementById("upload-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const file = document.getElementById("gallery-file").files[0];
+  if (!file) return;
+  const fd = new FormData();
+  fd.append("image", file);
+  fd.append("caption", document.getElementById("gallery-caption").value.trim());
+
+  try {
+    const res = await fetch("/api/admin/content/gallery", {
+      method: "POST",
+      credentials: "include",
+      headers: { "X-CSRF-Token": getCookie("csrf_token") || "" },
+      body: fd,
+    });
+    const json = await res.json();
+    if (!res.ok || json.success === false) throw new Error(json.message || "Upload failed");
+    document.getElementById("upload-form").reset();
+    toast("Image uploaded");
+    loadContent();
+  } catch (err) { toast(err.message, "error"); }
+});
+
+(async () => {
+  const user = await guardRole(["admin", "staff"]);
+  if (!user) return;
+  renderAdminNav("/admin/settings.html", user);
+  if (!requirePagePermission(user, "homepage", "Homepage")) return;
+  loadContent();
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

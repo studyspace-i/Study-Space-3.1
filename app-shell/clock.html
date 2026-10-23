@@ -1,0 +1,783 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"/><title>Clock — Study Space</title>
+<link rel="stylesheet" href="/assets/tailwind.css"/>
+<style>
+:root{--a1:#4f46e5;--a2:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;padding:0 16px 140px;color:var(--ss-ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:transparent}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer;touch-action:manipulation}
+.tabs{display:flex;gap:2px;position:sticky;top:0;z-index:5;margin:0 -16px;padding:0 10px;overflow-x:auto;scrollbar-width:none;background:var(--ss-bar);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--ss-line)}.tabs::-webkit-scrollbar{display:none}
+.tabs button{position:relative;flex:none;padding:13px 13px 12px;font-size:14px;font-weight:700;color:var(--ss-mut)}.tabs button.on{color:var(--ss-ink)}.tabs button.on::after{content:"";position:absolute;left:13px;right:13px;bottom:-1px;height:3px;border-radius:3px;background:var(--a1)}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;margin:18px 2px 8px}.hd h2{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:0;line-height:1}.hd small{display:block;font-size:13px;color:var(--ss-mut);font-weight:600;margin-top:6px}
+.ib{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--ss-ink2);border:1px solid var(--ss-line);background:var(--ss-card)}.ib svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ib.acc{color:#fff;border:0;background:var(--a1)}
+.card{border-radius:22px;background:var(--ss-glass);border:1px solid var(--ss-line);padding:14px 16px}
+.al{display:flex;align-items:center;gap:12px;padding:16px 2px;border-bottom:1px solid var(--ss-line)}.al:last-child{border-bottom:0}
+.al .t{font-size:46px;font-weight:300;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums}.al .t small{font-size:16px;font-weight:700;margin-left:5px;color:var(--ss-mut);letter-spacing:0}
+.al .m{font-size:13px;color:var(--ss-mut);margin-top:6px;font-weight:600;display:flex;gap:6px;flex-wrap:wrap;align-items:center}.al.off .t,.al.off .m{opacity:.42}
+.bd{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:8px}.bd.imp{background:#fee2e2;color:#b91c1c}.bd.rnd{background:#ede9fe;color:#6d28d9}
+html[data-theme=dark] .bd.imp{background:rgba(239,68,68,.22);color:#fca5a5}html[data-theme=dark] .bd.rnd{background:rgba(139,92,246,.25);color:#c4b5fd}
+.tg{position:relative;width:51px;height:31px;border-radius:16px;background:rgba(148,163,184,.45);flex:none;transition:.2s}.tg::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.28);transition:.25s cubic-bezier(.3,1.4,.5,1)}.tg.on{background:var(--a1)}.tg.on::after{left:22px}
+.big{width:100%;height:52px;border-radius:26px;font-size:16px;font-weight:800;color:#fff;background:var(--a1);box-shadow:0 14px 26px -14px var(--a1)}.big:active{transform:scale(.98)}
+.circ{width:80px;height:80px;border-radius:50%;font-weight:800;font-size:15px;display:grid;place-items:center;color:#fff;background:var(--a1)}.circ.g{background:rgba(148,163,184,.3);color:var(--ss-ink2)}.circ.r{background:#ef4444}.circ:active{transform:scale(.95)}
+.chip{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 13px;border-radius:17px;font-size:13px;font-weight:700;background:var(--ss-card);border:1px solid var(--ss-line);color:var(--ss-ink2);white-space:nowrap;flex:none}.chip.on{background:var(--a1);color:#fff;border-color:transparent}
+.sub{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ss-mut);margin:20px 4px 8px}
+.row{display:flex;align-items:center;gap:12px;padding:13px 2px;border-top:1px solid var(--ss-line)}.row:first-child{border-top:0}.row b{font-size:14.5px;font-weight:700}.row i{display:block;font-style:normal;font-size:12px;color:var(--ss-mut);margin-top:2px}
+.pre{flex:none;width:68px;height:68px;border-radius:50%;background:var(--ss-card);border:1px solid var(--ss-line);display:grid;place-items:center;text-align:center;font-weight:800;font-size:18px;line-height:1.05}.pre small{display:block;font-size:9.5px;color:var(--a1);font-weight:800;letter-spacing:.06em}.pre:active{transform:scale(.94)}
+.wheels{position:relative;display:flex;justify-content:center;gap:6px;height:190px}.wheels .band{position:absolute;left:8%;right:8%;top:75px;height:40px;border-radius:12px;background:rgba(148,163,184,.18);pointer-events:none}
+.wheel{height:190px;width:84px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;text-align:center;-webkit-mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent)}.wheel::-webkit-scrollbar{display:none}
+.wheel .pad{height:75px}.wheel .it{height:40px;line-height:40px;scroll-snap-align:center;font-size:24px;font-weight:300;color:var(--ss-faint);font-variant-numeric:tabular-nums}.wheel .it.sel{font-weight:700;color:var(--ss-ink)}
+.wlab{display:flex;justify-content:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ss-faint)}.wlab span{width:84px;text-align:center}
+.ring{position:relative;width:min(270px,74vw);aspect-ratio:1;margin:8px auto}.ring svg{width:100%;height:100%;transform:rotate(-90deg)}.ring .t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.ring .t b{font-size:clamp(40px,13vw,56px);font-weight:300;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.ring .t span{font-size:12.5px;font-weight:700;color:var(--ss-mut)}
+.mask{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.55);display:flex;align-items:flex-end;justify-content:center}.mask .pnl{width:100%;max-width:560px;margin:0;padding:16px 18px calc(100px + env(safe-area-inset-bottom,0px));border-radius:28px 28px 0 0;background:var(--ss-sheet);color:var(--ss-ink);box-shadow:0 -20px 60px rgba(0,0,0,.35);max-height:94vh;overflow:auto;animation:up .25s}@keyframes up{from{transform:translateY(40px);opacity:0}}
+.mask input[type=text],.mask input[type=number],.mask input[type=time]{width:100%;padding:12px 4px;border:0;border-bottom:1.5px solid var(--ss-line);font-size:17px;background:transparent;outline:none;color:var(--ss-ink);font-family:inherit}
+.seg3{display:flex;padding:3px;border-radius:14px;background:rgba(148,163,184,.2);margin-bottom:6px}.seg3 button{flex:1;height:34px;border-radius:11px;font-size:13px;font-weight:700;color:var(--ss-mut)}.seg3 button.on{background:var(--ss-sheet);color:var(--ss-ink);box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.seg3.imp button.on[data-k=important]{color:#dc2626}
+.days{display:flex;justify-content:space-between;margin:10px 0 2px}.days button{width:38px;height:38px;border-radius:50%;font-weight:800;font-size:13px;color:var(--ss-ink2);background:rgba(148,163,184,.16)}.days button.on{background:var(--a1);color:#fff}
+.foot{display:flex;gap:10px;margin-top:14px}.foot button{flex:1;height:48px;border-radius:24px;font-weight:800;font-size:15px;background:rgba(148,163,184,.2);color:var(--ss-ink2)}.foot button.pri{background:var(--a1);color:#fff}
+.toast{position:fixed;left:50%;bottom:118px;transform:translateX(-50%);padding:10px 18px;border-radius:18px;background:#0f172ae6;color:#fff;font-size:13px;font-weight:700;z-index:80;white-space:nowrap}
+.stat{display:flex;gap:8px}.stat>div{flex:1;border-radius:16px;padding:10px 6px;background:var(--ss-card);border:1px solid var(--ss-line);text-align:center}.stat b{display:block;font-size:18px;font-weight:800}.stat span{font-size:10.5px;color:var(--ss-mut);font-weight:700}
+.scroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0}.scroll::-webkit-scrollbar{display:none}
+.dwrap{position:relative;width:min(250px,68vw);aspect-ratio:1;margin:6px auto 0;color:var(--ss-ink)}.dwrap svg{width:100%;height:100%}.dwrap .dc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}.dwrap .dc b{font-size:58px;font-weight:300;letter-spacing:-.04em;line-height:1}.dwrap .dc span{font-size:12px;font-weight:800;color:var(--ss-mut);letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
+.nudge{display:flex;gap:8px;justify-content:center;margin:6px 0 10px}.nudge button{height:32px;padding:0 12px;border-radius:16px;font-size:12.5px;font-weight:800;background:var(--ss-card);border:1px solid var(--ss-line);color:var(--ss-ink2)}
+.tabs-wide{max-width:760px;margin:0 auto}
+@media(min-width:700px){body{padding-left:28px;padding-right:28px}.tabs{margin:0 -28px}#v{max-width:720px;margin:0 auto}}
+/* ---- v2.3 clock: app-like screens ---- */
+html,body{overscroll-behavior:none}
+.noanim *{animation:none!important;transition:none!important}
+.tabs{padding:0 6px;gap:0}.tabs button{padding:14px 12px 13px}.tabs .ind{position:absolute;bottom:-1px;height:3px;border-radius:3px;background:var(--a1);left:0;width:0;transition:transform .32s cubic-bezier(.3,1.2,.4,1),width .32s;pointer-events:none}
+.tabs button.on::after{display:none}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+#v.go>*{animation:up .38s cubic-bezier(.2,.9,.3,1) both}#v.go>*:nth-child(2){animation-delay:.04s}#v.go>*:nth-child(3){animation-delay:.08s}#v.go>*:nth-child(4){animation-delay:.12s}
+.card.pop{animation:up .35s both}
+.ac{display:flex;align-items:center;gap:12px;padding:16px 16px;margin-bottom:10px;border-radius:24px;background:var(--ss-glass);border:1px solid var(--ss-line);box-shadow:0 14px 28px -22px rgba(79,70,229,.6);transition:.2s;position:relative;overflow:hidden}
+.ac:active{transform:scale(.985)}.ac.off .tm,.ac.off .mt{opacity:.45}
+.ac .tm{font-size:44px;font-weight:300;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}.ac .tm small{font-size:15px;font-weight:800;margin-left:5px;color:var(--ss-mut);letter-spacing:0}
+.ac .lb{font-size:13.5px;font-weight:700;margin-top:6px}.ac .mt{font-size:12.5px;color:var(--ss-mut);margin-top:3px;font-weight:600;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sk{font-size:11px;font-weight:800;padding:4px 10px;border-radius:12px;background:var(--ss-soft);color:var(--a1)}
+.bd.tsk{background:#dcfce7;color:#15803d}html[data-theme=dark] .bd.tsk{background:rgba(16,185,129,.2);color:#6ee7b7}
+.empty{text-align:center;padding:42px 18px;color:var(--ss-mut);font-size:14px;line-height:1.5}.empty .em{font-size:52px;margin-bottom:6px}
+.fab{position:fixed;right:20px;bottom:calc(104px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:20px;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;display:grid;place-items:center;box-shadow:0 16px 30px -10px var(--a1);z-index:6;transition:.2s}.fab:active{transform:scale(.92)}.fab svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round}
+.pnl.tall{max-height:94vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pnl h3{margin:0 0 4px;font-size:20px;font-weight:800}
+.bigt{display:flex;justify-content:center;align-items:center;gap:6px;margin:6px 0 12px}
+.bigt .f{min-width:92px;height:88px;border-radius:22px;display:grid;place-items:center;font-size:56px;font-weight:300;font-variant-numeric:tabular-nums;background:var(--ss-card);border:2px solid transparent;color:var(--ss-ink);transition:.2s}
+.bigt .f.on{border-color:var(--a1);background:var(--ss-soft);color:var(--a1);font-weight:600}.bigt .f.pend{opacity:.6}
+.bigt .co{font-size:50px;font-weight:300;color:var(--ss-mut)}
+.apm{display:flex;flex-direction:column;gap:6px;margin-left:6px}.apm button{width:54px;height:40px;border-radius:12px;font-weight:800;font-size:14px;border:1.5px solid var(--ss-line);color:var(--ss-mut)}.apm button.on{background:var(--a1);color:#fff;border-color:var(--a1)}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:340px;margin:0 auto}
+.kp button{height:58px;border-radius:18px;font-size:25px;font-weight:600;background:var(--ss-card);border:1px solid var(--ss-line);color:var(--ss-ink);transition:transform .08s,background .15s}.kp button:active{transform:scale(.93);background:var(--ss-soft)}
+.kp button.fn{font-size:19px;color:var(--ss-mut);background:transparent;border-color:transparent}
+.kp button.ok{background:var(--a1);color:#fff;border-color:var(--a1)}
+.dial{position:relative;width:min(270px,76vw);aspect-ratio:1;margin:0 auto;touch-action:none;user-select:none}
+.dial svg{width:100%;height:100%;display:block}.dial .face{fill:var(--ss-card);stroke:var(--ss-line)}
+.dial text{font-size:15px;font-weight:600;fill:var(--ss-ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}.dial text.in{font-size:12.5px;fill:var(--ss-mut)}.dial text.sel{fill:#fff}
+.dial .hand{stroke:var(--a1);stroke-width:2.5;transition:all .22s cubic-bezier(.3,1.2,.4,1)}.dial .knob{fill:var(--a1);transition:all .22s cubic-bezier(.3,1.2,.4,1)}.dial .dot{fill:var(--a1)}
+.modes{display:flex;gap:6px;align-items:center}.modes button{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:var(--ss-mut);background:var(--ss-card);border:1px solid var(--ss-line)}.modes button.on{color:var(--a1);border-color:var(--a1);background:var(--ss-soft)}.modes svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.foot2{display:flex;align-items:center;gap:10px;margin-top:16px}.foot2 .sp{flex:1}.foot2 .tb{height:46px;padding:0 20px;border-radius:23px;font-weight:800;font-size:15px;color:var(--a1)}.foot2 .tb.pri{background:var(--a1);color:#fff}
+.field{display:flex;align-items:center;gap:12px;padding:13px 2px;border-top:1px solid var(--ss-line);min-height:56px}.field:first-child{border-top:0}
+.field>div{flex:1;min-width:0}.field b{display:block;font-size:14.5px;font-weight:700}.field i{display:block;font-style:normal;font-size:12px;color:var(--ss-mut);margin-top:2px}.field .v{flex:none;font-size:13.5px;font-weight:800;color:var(--a1)}
+.field input[type=text]{border-bottom:0!important;padding:0!important;font-size:15px!important;font-weight:700}
+.seg{display:flex;padding:3px;border-radius:14px;background:rgba(148,163,184,.2);gap:2px}.seg button{flex:1;height:34px;border-radius:11px;font-size:12.5px;font-weight:700;color:var(--ss-mut);white-space:nowrap;padding:0 8px}.seg button.on{background:var(--ss-sheet);color:var(--ss-ink);box-shadow:0 2px 8px rgba(0,0,0,.14)}
+.cal{margin:8px 0}.cal .ch{display:flex;align-items:center;justify-content:space-between;font-weight:800;margin-bottom:6px}.cal .g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}.cal .g span{font-size:10.5px;color:var(--ss-faint);font-weight:800}.cal .g button{aspect-ratio:1;border-radius:50%;font-size:13px;font-weight:700}.cal .g button.on{background:var(--a1);color:#fff}.cal .g button.td{border:1.5px solid var(--a1)}.cal .g button.pa{opacity:.35}
+.tcard{border-radius:26px;background:var(--ss-glass);border:1px solid var(--ss-line);padding:16px 16px 14px;margin-bottom:12px;box-shadow:0 14px 28px -22px rgba(79,70,229,.6);position:relative;overflow:hidden}
+.tcard .top{display:flex;align-items:center;gap:8px}.tcard .top .nm{flex:1;font-size:14px;font-weight:700;color:var(--ss-mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcard .tt{display:block;width:100%;text-align:left;font-size:54px;font-weight:300;letter-spacing:-.04em;line-height:1.05;margin:4px 0 10px;font-variant-numeric:tabular-nums}.tcard.run .tt{color:var(--a1)}.tcard.done .tt{color:#ef4444;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.35}}
+.pbar{height:8px;border-radius:4px;background:rgba(148,163,184,.25);overflow:hidden}.pbar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--a1),var(--a2));transition:width .3s linear}
+.tcard .ctl{display:flex;align-items:center;gap:8px;margin-top:12px}.tcard .ctl .sp{flex:1}
+.pill{height:42px;padding:0 16px;border-radius:21px;font-weight:800;font-size:13.5px;background:var(--ss-card);border:1px solid var(--ss-line);color:var(--ss-ink2)}.pill:active{transform:scale(.95)}
+.play{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--a1),var(--a2));box-shadow:0 12px 22px -10px var(--a1);color:#fff;transition:.2s}.play:active{transform:scale(.9)}.play svg{width:26px;height:26px;fill:#fff}
+.play.stop{background:linear-gradient(135deg,#f59e0b,#ef4444);box-shadow:0 12px 22px -10px #ef4444}
+.fs{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;background:radial-gradient(900px 600px at 50% 10%,color-mix(in srgb,var(--a1) 55%,transparent),transparent 62%),linear-gradient(170deg,#0f172a,#1e1b4b 60%,#312e81);color:#fff;animation:fsin .35s cubic-bezier(.2,.9,.3,1)}
+@keyframes fsin{from{opacity:0;transform:scale(1.05)}}
+.fs .x{position:absolute;top:max(14px,env(safe-area-inset-top));right:16px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:22px}
+.fs .rg{position:relative;width:min(300px,78vw);aspect-ratio:1}.fs .rg svg{width:100%;height:100%;transform:rotate(-90deg)}.fs .rg .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.fs .rg .c b{font-size:56px;font-weight:300;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.fs .rg .c span{font-size:14px;opacity:.7;margin-top:4px;font-weight:600}
+.fs .row2{display:flex;gap:14px;align-items:center}.fs .pill{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.2);color:#fff}
+.swd{text-align:center;margin:14px 0 4px}.swd b{display:block;font-size:68px;font-weight:200;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}.swd b small{font-size:34px;color:var(--ss-mut);font-weight:300}
+.swr{position:relative;width:min(250px,70vw);aspect-ratio:1;margin:8px auto 4px}.swr svg{width:100%;height:100%}.swr .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.lap{display:flex;align-items:center;gap:10px;padding:11px 4px;border-top:1px solid var(--ss-line);font-variant-numeric:tabular-nums;font-size:15px}.lap .n{width:34px;color:var(--ss-mut);font-weight:700;font-size:13px}.lap .l{flex:1;font-weight:700}.lap .d{font-size:12px;font-weight:800;padding:2px 8px;border-radius:9px}.lap .tot{width:92px;text-align:right;color:var(--ss-mut);font-size:13.5px}
+.lap.fast .l{color:#16a34a}.lap.slow .l{color:#dc2626}.d.up{background:rgba(239,68,68,.15);color:#dc2626}.d.dn{background:rgba(16,185,129,.16);color:#16a34a}
+.srch{display:flex;align-items:center;gap:10px;height:48px;border-radius:24px;padding:0 16px;background:var(--ss-card);border:1px solid var(--ss-line);margin:12px 0 4px}.srch svg{width:20px;height:20px;fill:none;stroke:var(--ss-mut);stroke-width:2;stroke-linecap:round;flex:none}.srch input{flex:1;border:0;background:transparent;font-size:16px;color:var(--ss-ink);outline:none;font-family:inherit;min-width:0}
+.grp{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--a1);margin:22px 6px 8px}
+.srow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 16px;min-height:60px;border-top:1px solid var(--ss-line)}.srow:first-child{border-top:0}.srow:active{background:var(--ss-soft)}
+.srow .ic{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex:none;background:var(--ss-soft)}
+.srow>div{flex:1;min-width:0}.srow b{display:block;font-size:14.5px;font-weight:700}.srow i{display:block;font-style:normal;font-size:12px;color:var(--ss-mut);margin-top:2px}.srow .v{flex:none;font-size:13px;font-weight:800;color:var(--a1);max-width:42%;text-align:right}
+.spin{display:flex;justify-content:center;gap:10px}
+.sep{display:flex;align-items:center;font-size:28px;color:var(--ss-faint);font-weight:300;padding-bottom:6px}
+</style></head>
+<body>
+<div class="tabs" id="tabs"></div>
+<div id="v" style="padding-top:2px"></div>
+<script src="/child.js"></script><script src="/shiftcard.js"></script>
+<script>
+(function () {
+  var Core = parent.AppCore, AL = parent.AppAlarms, FO = parent.AppFocus, Shell = parent.AppShell, LS = Core.LS, N = parent.Native;
+  var $ = function (s, r) { return (r || document).querySelector(s); }, esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  function toast(t) { var e = document.createElement("div"); e.className = "toast"; e.textContent = t; document.body.appendChild(e); setTimeout(function () { e.remove(); }, 2300); }
+  function z2(n) { return ("0" + n).slice(-2); }
+  function J(k, d) { try { var v = JSON.parse(LS.get(k, "null")); return v == null ? d : v; } catch (e) { return d; } }
+  function W(k, v) { LS.set(k, JSON.stringify(v)); }
+
+  /* ---------- clock settings ---------- */
+  var CS_DEF = { h24: false, pick: "dial", tpick: "keypad", anim: true, hap: true, sound: "chime", snz: 5, maxSnz: 0, rise: 0, vib: true, del: false, task: "none", tsound: "bell", tvib: true, trise: 0, swKeep: true, cmp: "prev" };
+  function CS() { var o = {}, s = J("ss_clock_set", {}); for (var k in CS_DEF) o[k] = s[k] === undefined ? CS_DEF[k] : s[k]; return o; }
+  function setCS(k, v) { var c = J("ss_clock_set", {}); c[k] = v; W("ss_clock_set", c); applyCS(); }
+  function applyCS() { document.documentElement.classList.toggle("noanim", CS().anim === false); }
+  applyCS();
+  function haptic() { try { if (CS().hap) navigator.vibrate && navigator.vibrate(8); } catch (e) {} }
+  function fmtT(h, m) { var S = CS(); if (S.h24) return { t: z2(h) + ":" + z2(m), p: "" }; return { t: ((h % 12) || 12) + ":" + z2(m), p: h >= 12 ? "PM" : "AM" }; }
+  function fmt12(h, m) { return fmtT(h, m); }
+
+  var IC = {
+    plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+    dial: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    kb: '<svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>',
+    spin: '<svg viewBox="0 0 24 24"><path d="M7 4h10M7 20h10"/><rect x="5" y="9" width="14" height="6" rx="2"/><path d="M12 6v.01M12 18v.01"/></svg>',
+    search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+    play: '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',
+    pause: '<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+    stop: '<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>'
+  };
+
+  /* ---------- sheets ---------- */
+  function sheet(html, tall) {
+    var m = document.createElement("div"); m.className = "mask";
+    m.innerHTML = '<div class="pnl' + (tall ? " tall" : "") + '">' + html + '</div>'; document.body.appendChild(m);
+    m.close = function () { try { AL.stop(); } catch (e) {} m.remove(); };
+    m.addEventListener("click", function (e) { if (e.target === m) m.close(); });
+    return m;
+  }
+  function confirmBox(title, text, yes, cb) {
+    var m = sheet('<h3>' + esc(title) + '</h3><div style="font-size:14px;color:var(--ss-mut);margin:6px 0 4px;line-height:1.5">' + esc(text) + '</div><div class="foot"><button id="cn">Cancel</button><button class="pri" id="ok" style="background:#ef4444">' + esc(yes) + '</button></div>');
+    $("#cn", m).onclick = m.close; $("#ok", m).onclick = function () { m.close(); cb(); };
+  }
+  function pickList(title, opts, cur, cb) {
+    var m = sheet('<h3>' + esc(title) + '</h3><div style="margin-top:6px">' + opts.map(function (o) { return '<div class="field" data-v="' + esc(o[0]) + '"><div><b>' + esc(o[1]) + '</b>' + (o[2] ? '<i>' + esc(o[2]) + '</i>' : "") + '</div><span class="tg ' + (String(o[0]) === String(cur) ? "on" : "") + '"></span></div>'; }).join("") + '</div>');
+    m.addEventListener("click", function (e) { var f = e.target.closest("[data-v]"); if (!f) return; haptic(); var v = f.dataset.v; m.close(); cb(v); });
+  }
+  function soundName(s) { if (AL.SOUNDS[s]) return AL.SOUNDS[s].name; var f = J("ss_sound_files", []).filter(function (x) { return "file:" + x.id === s; })[0]; return f ? f.name : "Chime"; }
+  async function pickSound(cur, done) {
+    var files = J("ss_sound_files", []), val = cur;
+    var m = sheet('<h3>Sound</h3><div id="sl"></div><button class="chip" id="addf" style="width:100%;margin-top:10px;height:44px;justify-content:center">🎵 Choose from my files…</button><input type="file" id="fi" accept="audio/*" hidden/><div class="foot"><button id="cn">Cancel</button><button class="pri" id="ok">Done</button></div>', true);
+    function paint() { $("#sl", m).innerHTML = Object.keys(AL.SOUNDS).map(function (k) { return '<div class="row" data-k="' + k + '"><span class="tg ' + (val === k ? "on" : "") + '"></span><b style="flex:1">' + AL.SOUNDS[k].name + '</b><button class="chip" data-p="' + k + '">▶ Play</button></div>'; }).join("") + files.map(function (f) { return '<div class="row" data-k="file:' + f.id + '"><span class="tg ' + (val === "file:" + f.id ? "on" : "") + '"></span><b style="flex:1">' + esc(f.name) + '</b><button class="chip" data-p="file:' + f.id + '">▶ Play</button></div>'; }).join(""); }
+    paint();
+    m.addEventListener("click", function (e) { var p = e.target.closest("[data-p]"); if (p) return AL.play(p.dataset.p, false); var r = e.target.closest(".row[data-k]"); if (r) { val = r.dataset.k; paint(); } });
+    $("#addf", m).onclick = function () { $("#fi", m).click(); };
+    $("#fi", m).onchange = async function (e) { var f = e.target.files[0]; if (!f) return; if (f.size > 6 * 1024 * 1024) return toast("Please choose a file under 6 MB"); var id = "f" + Date.now(); await AL.putFile("file:" + id, f); AL.nativeSound(id, f); files.push({ id: id, name: f.name.replace(/\.[^.]+$/, "") }); W("ss_sound_files", files); val = "file:" + id; paint(); };
+    $("#cn", m).onclick = m.close;
+    $("#ok", m).onclick = function () { AL.stop(); m.remove(); done(val); };
+  }
+
+  /* ---------- wheel (used by the "spinner" picker style) ---------- */
+  function wheel(el, items, idx, cb) {
+    el.innerHTML = '<div class="pad"></div>' + items.map(function (i) { return '<div class="it">' + i + '</div>'; }).join("") + '<div class="pad"></div>';
+    var t, nodes = el.querySelectorAll(".it");
+    function mark(i) { nodes.forEach(function (n, k) { n.classList.toggle("sel", k === i); }); }
+    el.scrollTop = idx * 40; mark(idx);
+    el.addEventListener("scroll", function () { clearTimeout(t); t = setTimeout(function () { var i = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / 40))); mark(i); haptic(); if (cb) cb(i); }, 70); }, { passive: true });
+    return { get: function () { return Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / 40))); }, set: function (i) { el.scrollTop = i * 40; mark(i); } };
+  }
+
+  /* ---------- Samsung-style number pad ---------- */
+  function padHtml(extra) { return '<div class="kp">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (n) { return '<button data-k="' + n + '">' + n + '</button>'; }).join("") + (extra || '<button class="fn" data-k="00">00</button>') + '<button data-k="0">0</button><button class="fn" data-k="bs" aria-label="Delete">⌫</button></div>'; }
+
+  /* a plain number question with the on-screen pad: askNum("Title", 25, "minutes", cb) */
+  function askNum(title, def, unit, ok, max) {
+    var buf = String(def || ""), fresh = true;
+    var m = sheet('<h3>' + esc(title) + '</h3><div style="text-align:center;margin:10px 0 2px"><span id="nv" style="font-size:60px;font-weight:300;color:var(--a1);font-variant-numeric:tabular-nums"></span></div><div style="text-align:center;font-size:13px;color:var(--ss-mut);margin-bottom:14px">' + esc(unit) + '</div>' + padHtml() + '<div class="foot2"><span class="sp"></span><button class="tb" id="cn">Cancel</button><button class="tb pri" id="ok">OK</button></div>');
+    function show() { $("#nv", m).textContent = buf === "" ? "0" : buf; }
+    show();
+    m.addEventListener("click", function (e) { var b = e.target.closest("[data-k]"); if (!b) return; haptic(); var k = b.dataset.k; if (k === "bs") { buf = buf.slice(0, -1); fresh = false; } else { if (fresh) { buf = ""; fresh = false; } if (buf.length < 4) buf += k; } buf = buf.replace(/^0+(?=\d)/, ""); if (max && +buf > max) buf = String(max); show(); });
+    $("#cn", m).onclick = m.close; $("#ok", m).onclick = function () { var v = parseInt(buf, 10); if (v > 0) { m.remove(); ok(v); } else toast("Enter a number"); };
+  }
+
+  /* ---------- time picker: dial · keyboard · spinner ---------- */
+  function pickTime(H, M, title, cb) {
+    var S = CS(), mode = S.pick, sel = "h", h24 = S.h24, hb = "", mb = "", m;
+    function hv() { return h24 ? H : (H % 12 || 12); }
+    function setHv(v) { H = h24 ? v : (v % 12) + (H >= 12 ? 12 : 0); }
+    m = sheet('<h3>' + esc(title || "Set time") + '</h3><div class="bigt"><button class="f on" id="fh"></button><span class="co">:</span><button class="f" id="fm"></button><div class="apm" id="apm"></div></div><div id="pb" style="min-height:300px"></div><div class="foot2"><div class="modes" id="md"></div><span class="sp"></span><button class="tb" id="cn">Cancel</button><button class="tb pri" id="ok">OK</button></div>', true);
+    function head() {
+      var fh = $("#fh", m), fm = $("#fm", m);
+      fh.textContent = hb.length === 1 ? "0" + hb : z2(hv()); fm.textContent = mb.length === 1 ? "0" + mb : z2(M);
+      fh.className = "f" + (sel === "h" ? " on" : "") + (hb ? " pend" : ""); fm.className = "f" + (sel === "m" ? " on" : "") + (mb ? " pend" : "");
+      $("#apm", m).innerHTML = h24 ? "" : '<button data-ap="0" class="' + (H < 12 ? "on" : "") + '">AM</button><button data-ap="1" class="' + (H >= 12 ? "on" : "") + '">PM</button>';
+      $("#md", m).innerHTML = [["dial", IC.dial], ["kb", IC.kb], ["spin", IC.spin]].map(function (x) { return '<button data-md="' + x[0] + '" class="' + (mode === x[0] ? "on" : "") + '" aria-label="' + x[0] + '">' + x[1] + '</button>'; }).join("");
+    }
+    function body() {
+      var pb = $("#pb", m); head();
+      if (mode === "dial") dialBody(pb); else if (mode === "kb") kbBody(pb); else spinBody(pb);
+    }
+    /* dial */
+    function dialBody(pb) {
+      var svgNS = "", html = '<div class="dial" id="dl"><svg viewBox="0 0 260 260"><circle class="face" cx="130" cy="130" r="126"/><line class="hand" id="hd" x1="130" y1="130" x2="130" y2="130"/><circle class="knob" id="kn" r="22" cx="130" cy="30"/><circle class="dot" cx="130" cy="130" r="4"/><g id="nums"></g></svg></div>';
+      pb.innerHTML = html + '<div style="text-align:center;font-size:12.5px;color:var(--ss-mut);margin-top:12px">' + (sel === "h" ? "Choose the hour — or tap the keyboard icon to type" : "Choose the minutes") + '</div>';
+      var g = $("#nums", pb), items = "";
+      function pos(i, r) { var a = (i * 30 - 90) * Math.PI / 180; return [130 + r * Math.cos(a), 130 + r * Math.sin(a)]; }
+      var cur = sel === "h" ? hv() : M;
+      for (var i = 1; i <= 12; i++) {
+        var p = pos(i, 100), val = sel === "h" ? i : (i % 12) * 5, on = false;
+        items += '<text x="' + p[0] + '" y="' + p[1] + '" class="' + (on ? "sel" : "") + '">' + (sel === "h" ? i : z2(val)) + '</text>';
+      }
+      if (sel === "h" && h24) for (var j = 1; j <= 12; j++) { var q = pos(j, 66), v2 = j === 12 ? 0 : j + 12; items += '<text class="in ' + (H === v2 ? "sel" : "") + '" x="' + q[0] + '" y="' + q[1] + '">' + z2(v2) + '</text>'; }
+      g.innerHTML = items;
+      function hand() {
+        var ang, r = 100;
+        if (sel === "h") { var v = H; if (h24) { if (v === 0 || v > 12) { r = 66; } ang = ((v % 12) * 30 - 90); } else ang = ((hv() % 12) * 30 - 90); }
+        else ang = (M * 6 - 90);
+        var a = ang * Math.PI / 180, x = 130 + r * Math.cos(a), y = 130 + r * Math.sin(a);
+        $("#hd", pb).setAttribute("x2", x); $("#hd", pb).setAttribute("y2", y); $("#kn", pb).setAttribute("cx", x); $("#kn", pb).setAttribute("cy", y);
+        $("#hd", pb).setAttribute("x1", 130);
+        $("#nums", pb).querySelectorAll("text").forEach(function (t) { t.classList.remove("sel"); });
+        var nodes = $("#nums", pb).querySelectorAll("text"), best = null, bd = 99999;
+        nodes.forEach(function (t) { var dx = +t.getAttribute("x") - x, dy = +t.getAttribute("y") - y, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = t; } });
+        if (best && bd < 120) best.classList.add("sel");
+      }
+      hand();
+      var dl = $("#dl", pb), dragging = false;
+      function at(e) {
+        var r = dl.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * 260 - 130, y = (e.clientY - r.top) / r.height * 260 - 130;
+        var ang = Math.atan2(y, x) * 180 / Math.PI + 90; if (ang < 0) ang += 360; var dist = Math.sqrt(x * x + y * y);
+        if (sel === "h") { var n = Math.round(ang / 30) % 12; if (h24) { if (dist < 83) setHv(n === 0 ? 0 : n + 12); else setHv(n === 0 ? 12 : n); } else { setHv(n === 0 ? 12 : n); } hb = ""; }
+        else { M = Math.round(ang / 6) % 60; mb = ""; }
+        head(); hand(); haptic();
+      }
+      dl.addEventListener("pointerdown", function (e) { dragging = true; try { dl.setPointerCapture(e.pointerId); } catch (x) {} at(e); });
+      dl.addEventListener("pointermove", function (e) { if (dragging) at(e); });
+      dl.addEventListener("pointerup", function () { if (!dragging) return; dragging = false; if (sel === "h") { sel = "m"; setTimeout(body, 160); } });
+    }
+    /* keyboard */
+    function kbBody(pb) {
+      pb.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--ss-mut);margin:0 0 14px">Type the digits — for example <b>7</b> <b>3</b> <b>0</b> for 7:30</div>' + padHtml('<button class="fn" data-k="nx">' + (sel === "h" ? "Min ›" : "‹ Hour") + '</button>');
+    }
+    function typeDigit(d) {
+      if (sel === "h") {
+        if (hb === "") {
+          if ((!h24 && d >= 2) || (h24 && d >= 3)) { setHv(d === 0 && !h24 ? 12 : d); sel = "m"; }
+          else hb = String(d);
+        } else {
+          var v = +(hb + d); hb = "";
+          if (h24) v = Math.min(23, v); else { if (v === 0) v = 12; v = Math.min(12, v); }
+          setHv(v); sel = "m";
+        }
+      } else {
+        if (mb === "") { if (d >= 6) { M = d; } else mb = String(d); }
+        else { M = Math.min(59, +(mb + d)); mb = ""; }
+      }
+    }
+    function back() { if (hb) hb = ""; else if (mb) mb = ""; else if (sel === "m") sel = "h"; }
+    /* spinner */
+    function spinBody(pb) {
+      var hrs = [], i; if (h24) for (i = 0; i < 24; i++) hrs.push(z2(i)); else for (i = 1; i <= 12; i++) hrs.push(String(i));
+      var mins = []; for (i = 0; i < 60; i++) mins.push(z2(i));
+      pb.innerHTML = '<div class="wheels"><div class="band"></div><div class="wheel" id="wh"></div><div class="sep">:</div><div class="wheel" id="wm"></div></div>';
+      var wh = wheel($("#wh", pb), hrs, h24 ? H : (hv() - 1), function (k) { setHv(h24 ? k : k + 1); hb = ""; head(); });
+      wheel($("#wm", pb), mins, M, function (k) { M = k; mb = ""; head(); });
+    }
+    m.addEventListener("click", function (e) {
+      var ap = e.target.closest("[data-ap]"); if (ap) { haptic(); H = (H % 12) + (ap.dataset.ap === "1" ? 12 : 0); body(); return; }
+      var md = e.target.closest("[data-md]"); if (md) { haptic(); mode = md.dataset.md; setCS("pick", mode); hb = mb = ""; body(); return; }
+      if (e.target.closest("#fh")) { sel = "h"; hb = mb = ""; body(); return; }
+      if (e.target.closest("#fm")) { sel = "m"; hb = mb = ""; body(); return; }
+      var k = e.target.closest("[data-k]"); if (!k || mode !== "kb") return; haptic();
+      var v = k.dataset.k;
+      if (v === "bs") back(); else if (v === "nx") { sel = sel === "h" ? "m" : "h"; hb = mb = ""; } else if (v === "00") { typeDigit(0); typeDigit(0); } else typeDigit(+v);
+      body();
+    });
+    $("#cn", m).onclick = m.close;
+    $("#ok", m).onclick = function () { m.remove(); cb(H, M); };
+    body();
+  }
+
+  /* ---------- duration picker for timers: keypad fills from the right, like the phone's own clock ---------- */
+  function pickDur(ms, title, o, cb) {
+    o = o || {};
+    var S = CS(), mode = S.tpick === "spinner" ? "spin" : "pad", digits = "", extra = 0, m;
+    var tot = Math.round((ms || 0) / 1000); if (tot > 0) { var hh = Math.floor(tot / 3600), mm = Math.floor(tot % 3600 / 60), ss = tot % 60; digits = String(hh * 10000 + mm * 100 + ss); }
+    var H0 = Math.floor(tot / 3600), M0 = Math.floor(tot % 3600 / 60), S0 = tot % 60;
+    m = sheet('<h3>' + esc(title || "Timer") + '</h3>' + (o.label !== undefined ? '<div class="field" style="margin-top:6px"><div><i>Label</i><input type="text" id="lb" maxlength="30" placeholder="Name (optional)" value="' + esc(o.label) + '"/></div></div>' : "") +
+      '<div id="dd"></div><div id="pb"></div><div class="foot2"><div class="modes" id="md"></div><span class="sp"></span><button class="tb" id="cn">Cancel</button>' + (o.add ? '<button class="tb" id="ad">Add</button>' : "") + '<button class="tb pri" id="ok">' + esc(o.ok || "OK") + '</button></div>', true);
+    function val() {
+      if (mode === "spin") return (H0 * 3600 + M0 * 60 + S0) * 1000;
+      var d = ("000000" + digits).slice(-6); return ((+d.slice(0, 2)) * 3600 + (+d.slice(2, 4)) * 60 + (+d.slice(4, 6))) * 1000;
+    }
+    function draw() {
+      var d = ("000000" + digits).slice(-6), parts = mode === "spin" ? [z2(H0), z2(M0), z2(S0)] : [d.slice(0, 2), d.slice(2, 4), d.slice(4, 6)], started = false;
+      $("#dd", m).innerHTML = '<div style="display:flex;justify-content:center;align-items:baseline;gap:6px;margin:14px 0 14px;font-variant-numeric:tabular-nums">' + parts.map(function (p, i) { var live = mode === "spin" || digits.length > [4, 2, 0][i]; return '<span style="font-size:58px;font-weight:300;line-height:1;color:' + (live ? "var(--a1)" : "var(--ss-faint)") + '">' + p + '</span><span style="font-size:15px;font-weight:800;color:var(--ss-mut);margin-right:8px">' + "hms"[i] + '</span>'; }).join("") + '</div>';
+      $("#md", m).innerHTML = [["pad", IC.kb], ["spin", IC.spin]].map(function (x) { return '<button data-md="' + x[0] + '" class="' + (mode === x[0] ? "on" : "") + '">' + x[1] + '</button>'; }).join("");
+      var pb = $("#pb", m);
+      if (mode === "pad") {
+        pb.innerHTML = '<div class="scroll" style="justify-content:center;margin-bottom:12px">' + [["+1 min", 60], ["+5 min", 300], ["+10 min", 600], ["+30 min", 1800], ["+1 hr", 3600]].map(function (q) { return '<button class="chip" data-q="' + q[1] + '">' + q[0] + '</button>'; }).join("") + '</div>' + padHtml();
+      } else {
+        var a = [], b = [], i; for (i = 0; i < 100; i++) a.push(z2(i)); for (i = 0; i < 60; i++) b.push(z2(i));
+        pb.innerHTML = '<div class="wheels"><div class="band"></div><div class="wheel" id="w1"></div><div class="sep">:</div><div class="wheel" id="w2"></div><div class="sep">:</div><div class="wheel" id="w3"></div></div><div class="wlab"><span>hours</span><span style="width:12px"></span><span>min</span><span style="width:12px"></span><span>sec</span></div>';
+        wheel($("#w1", pb), a, H0, function (k) { H0 = k; draw1(); }); wheel($("#w2", pb), b, M0, function (k) { M0 = k; draw1(); }); wheel($("#w3", pb), b, S0, function (k) { S0 = k; draw1(); });
+      }
+    }
+    function draw1() { var d = $("#dd", m); if (!d) return; var sp = d.querySelectorAll("span"); sp[0].textContent = z2(H0); sp[2].textContent = z2(M0); sp[4].textContent = z2(S0); }
+    m.addEventListener("click", function (e) {
+      var md = e.target.closest("[data-md]"); if (md) { haptic(); if (md.dataset.md === "spin" && mode === "pad") { var t = val() / 1000; H0 = Math.min(99, Math.floor(t / 3600)); M0 = Math.floor(t % 3600 / 60); S0 = t % 60; } else if (md.dataset.md === "pad" && mode === "spin") { digits = String(H0 * 10000 + M0 * 100 + S0); if (digits === "0") digits = ""; } mode = md.dataset.md; setCS("tpick", mode === "spin" ? "spinner" : "keypad"); draw(); return; }
+      var q = e.target.closest("[data-q]"); if (q) { haptic(); var t2 = Math.min(359999, val() / 1000 + (+q.dataset.q)), hh2 = Math.floor(t2 / 3600), mm2 = Math.floor(t2 % 3600 / 60), ss2 = t2 % 60; digits = String(hh2 * 10000 + mm2 * 100 + ss2); draw(); return; }
+      var k = e.target.closest("[data-k]"); if (!k) return; haptic(); var v = k.dataset.k;
+      if (v === "bs") digits = digits.slice(0, -1); else if (digits.length + v.length <= 6) digits = (digits + v).replace(/^0+/, "");
+      draw();
+    });
+    $("#cn", m).onclick = m.close;
+    function fin(start) { var v = val(); if (v < 1000) return toast("Set a time first"); var lb = $("#lb", m); m.remove(); cb(v, lb ? lb.value.trim() : undefined, start); }
+    $("#ok", m).onclick = function () { fin(true); };
+    if ($("#ad", m)) $("#ad", m).onclick = function () { fin(false); };
+    draw();
+  }
+
+  /* ---------- tabs ---------- */
+  var cur = LS.get("ss_clock_tab", "alarm"), tick = [], student = false;
+  function clearTicks() { tick.forEach(clearInterval); tick = []; }
+  var VIEWS = {};
+  function tabs() {
+    var T = [["alarm", "Alarm"], ["timer", "Timer"], ["sw", "Stopwatch"], ["focus", "Focus"]]; if (student) T.push(["shift", "Shift"]); T.push(["settings", "Settings"]);
+    $("#tabs").innerHTML = T.map(function (t) { return '<button data-t="' + t[0] + '">' + t[1] + '</button>'; }).join("") + '<i class="ind"></i>';
+    return T.map(function (t) { return t[0]; });
+  }
+  function tab(t) {
+    cur = t; LS.set("ss_clock_tab", t);
+    document.querySelectorAll("#tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.t === t); });
+    var on = $("#tabs button.on"), ind = $("#tabs .ind");
+    if (on && ind) { ind.style.width = (on.offsetWidth - 20) + "px"; ind.style.transform = "translateX(" + (on.offsetLeft + 10) + "px)"; on.scrollIntoView({ inline: "center", block: "nearest" }); }
+    clearTicks(); var v = $("#v"); v.className = ""; void v.offsetWidth; v.className = "go";
+    window.scrollTo(0, 0); VIEWS[t]();
+  }
+  $("#tabs").onclick = function (e) { var b = e.target.closest("button"); if (b) { haptic(); tab(b.dataset.t); } };
+
+  /* ================= ALARM ================= */
+  var DAYN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], DAYL = ["S", "M", "T", "W", "T", "F", "S"];
+  function dispDate(k) { var p = k.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString([], { day: "numeric", month: "short" }); }
+  function repeatText(a) {
+    var sc = AL.sched(a), d = a.days || [];
+    if (sc === "once") return "Once";
+    if (sc === "daily") return "Every day";
+    function dd() { if (!d.length || d.length === 7) return "Every day"; if (d.length === 5 && [1, 2, 3, 4, 5].every(function (x) { return d.indexOf(x) > -1; })) return "Weekdays"; if (d.length === 2 && d.indexOf(0) > -1 && d.indexOf(6) > -1) return "Weekends"; return d.slice().sort().map(function (x) { return DAYN[x]; }).join(", "); }
+    if (sc === "weekly") return dd();
+    if (sc === "dates") { var ds = (a.dates || []).slice().sort(); return ds.length ? (ds.length > 2 ? ds.length + " dates" : ds.map(dispDate).join(", ")) : "Pick dates"; }
+    return (a.from ? dispDate(a.from) : "…") + " → " + (a.to ? dispDate(a.to) : "…") + (d.length && d.length < 7 ? " · " + dd() : "");
+  }
+  function rel(ms) {
+    var mi = Math.max(1, Math.ceil((ms - Date.now()) / 60000)), dd = Math.floor(mi / 1440), h = Math.floor(mi % 1440 / 60), m = mi % 60;
+    if (dd) return dd + (dd === 1 ? " day " : " days ") + h + " h"; if (h) return h + " h " + m + " min"; return m + " min";
+  }
+  function nextAlarmText() {
+    var best = -1; AL.list().forEach(function (a) { var n = AL.next(a); if (n > 0 && (best < 0 || n < best)) best = n; });
+    if (best < 0) return "No upcoming alarms";
+    var d = new Date(best), t = fmtT(d.getHours(), d.getMinutes());
+    return "Next alarm in " + rel(best) + " · " + t.t + (t.p ? " " + t.p : "");
+  }
+  var TASKN = { math: "Math", retype: "Retype text", seq: "Number sequence" };
+  function taskText(t) { if (t.t === "math") return "Math · " + ["Easy", "Medium", "Hard"][(t.d || 1) - 1]; if (t.t === "retype") return "Retype · " + (t.len || 8) + " characters"; return "Sequence · 1 to " + (t.n || 5); }
+  function newAlarm() {
+    var S = CS(), tk = S.task && S.task !== "none" ? [S.task === "math" ? { t: "math", d: 1, n: 1 } : S.task === "retype" ? { t: "retype", len: 8 } : { t: "seq", n: 5 }] : [];
+    return { id: AL.nextId(), label: "", time: "07:00", sched: "daily", days: [], dates: [], from: "", to: "", sound: S.sound, vibrate: S.vib, snooze: S.snz > 0, snoozeMin: S.snz || 5, maxSnooze: S.maxSnz, rise: S.rise, tasks: tk, del: S.del, important: false, on: true, isNew: true };
+  }
+  VIEWS.alarm = function vAlarm() {
+    var v = $("#v"), l = AL.list().slice().sort(function (a, b) { return a.time.localeCompare(b.time); });
+    v.innerHTML = '<div class="hd"><div><h2>Alarm</h2><small id="nx">' + esc(nextAlarmText()) + '</small></div></div>' +
+      (l.length ? l.map(function (a) {
+        var p = a.time.split(":"), f = fmtT(+p[0], +p[1]), rep = a.skipTo && a.skipTo > Date.now() - 1000 && a.on, nx = a.on ? AL.next(a) : -1, sc = AL.sched(a);
+        return '<div class="ac ' + (a.on ? "" : "off") + '" data-id="' + a.id + '"><div style="flex:1;min-width:0"><div class="tm">' + f.t + (f.p ? '<small>' + f.p + '</small>' : "") + '</div>' +
+          (a.label ? '<div class="lb">' + esc(a.label) + '</div>' : "") +
+          '<div class="mt"><span>' + esc(repeatText(a)) + '</span>' + (a.important ? '<span class="bd imp">Important</span>' : "") + (a.random ? '<span class="bd rnd">Random</span>' : "") + ((a.tasks || []).length ? '<span class="bd tsk">' + a.tasks.length + ' task' + (a.tasks.length > 1 ? "s" : "") + '</span>' : "") + (a.auto ? '<span class="bd rnd">Shift</span>' : "") + '</div>' +
+          (a.on && nx > 0 ? '<div class="mt" style="margin-top:2px">' + (rep ? "Next skipped · " : "") + 'in ' + rel(nx) + '</div>' : "") +
+          (a.on && sc !== "once" && !a.auto ? '<div style="margin-top:8px"><button class="sk" data-sk="' + a.id + '">' + (a.skipTo && a.skipTo > Date.now() ? "↺ Undo skip" : "Skip next") + '</button></div>' : "") + '</div>' +
+          '<span class="tg ' + (a.on ? "on" : "") + '" data-tg="' + a.id + '"></span></div>';
+      }).join("") : '<div class="empty"><div class="em">⏰</div><b>No alarms yet</b><br>Tap the + button to set your first alarm.</div>') +
+      '<button class="fab" id="add" aria-label="Add alarm">' + IC.plus + '</button>';
+    $("#add").onclick = function () { haptic(); editAlarm(newAlarm()); };
+    v.onclick = function (e) {
+      var sk = e.target.closest("[data-sk]"), tg = e.target.closest("[data-tg]"), c = e.target.closest(".ac");
+      var L = AL.list();
+      if (sk) { var a = L.filter(function (x) { return x.id === +sk.dataset.sk; })[0]; if (!a) return; if (a.skipTo && a.skipTo > Date.now()) delete a.skipTo; else { var n = AL.next(a, true); if (n > 0) a.skipTo = n; } AL.save(L).then(vAlarmSoft); toast(a.skipTo ? "Next alarm skipped" : "Skip removed"); return; }
+      if (tg) { haptic(); var b = L.filter(function (x) { return x.id === +tg.dataset.tg; })[0]; if (!b) return; b.on = !b.on; if (b.on) { delete b.skipTo; if (b.random) delete b.rollFor; if (AL.sched(b) === "once" || !AL.next(b)) { } } AL.save(L).then(vAlarmSoft); if (b.on) { var n2 = AL.next(AL.list().filter(function (x) { return x.id === b.id; })[0] || b); if (n2 > 0) toast("Rings in " + rel(n2)); } return; }
+      if (c) { var q = L.filter(function (x) { return x.id === +c.dataset.id; })[0]; if (q) editAlarm(JSON.parse(JSON.stringify(q))); }
+    };
+    tick.push(setInterval(function () { var n = $("#nx"); if (n) n.textContent = nextAlarmText(); }, 20000));
+  };
+  function vAlarmSoft() { if (cur === "alarm") VIEWS.alarm(); }
+
+  function editAlarm(a) {
+    var m, calM = new Date(); calM.setDate(1);
+    function t12() { var p = a.time.split(":"), f = fmtT(+p[0], +p[1]); return f; }
+    function paint() {
+      var f = t12(), sc = AL.sched(a), nx = AL.next(Object.assign({}, a, { on: true }), true);
+      var body = '<h3>' + (a.isNew ? "New alarm" : "Edit alarm") + '</h3>' +
+        '<button id="tm" style="display:block;width:100%;text-align:center;margin:8px 0 2px"><span style="font-size:64px;font-weight:300;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--a1)">' + f.t + '</span><span style="font-size:20px;font-weight:800;color:var(--ss-mut);margin-left:6px">' + f.p + '</span></button>' +
+        '<div style="text-align:center;font-size:13px;color:var(--ss-mut);margin-bottom:12px">' + (a.random ? "Random time between the window below" : (nx > 0 ? "Rings in " + rel(nx) : "Tap the time to change it")) + '</div>' +
+        '<div class="seg" id="sc">' + [["once", "Once"], ["daily", "Daily"], ["weekly", "Weekly"], ["dates", "Dates"], ["range", "Range"]].map(function (x) { return '<button data-s="' + x[0] + '" class="' + (sc === x[0] ? "on" : "") + '">' + x[1] + '</button>'; }).join("") + '</div>';
+      if (sc === "weekly" || sc === "range") body += '<div class="days" id="dy">' + DAYL.map(function (d, i) { return '<button data-d="' + i + '" class="' + ((a.days || []).indexOf(i) > -1 ? "on" : "") + '">' + d + '</button>'; }).join("") + '</div>' + (sc === "range" ? '<div style="font-size:11.5px;color:var(--ss-mut);text-align:center;margin-top:4px">Leave all days off to ring every day in the range</div>' : "");
+      if (sc === "range") body += '<div class="field" style="margin-top:6px"><div><b>From</b></div><input type="date" id="df" value="' + esc(a.from || "") + '" style="font-size:15px;font-weight:700;border:0;background:transparent;color:var(--a1)"/></div><div class="field"><div><b>To</b></div><input type="date" id="dt" value="' + esc(a.to || "") + '" style="font-size:15px;font-weight:700;border:0;background:transparent;color:var(--a1)"/></div>';
+      if (sc === "dates") body += calHtml();
+      body += '<div style="margin-top:10px">' +
+        '<div class="field"><div><i>Label</i><input type="text" id="lb" maxlength="40" placeholder="Alarm name (optional)" value="' + esc(a.label || "") + '"/></div></div>' +
+        '<div class="field" data-f="sound"><div><b>Sound</b></div><span class="v">' + esc(soundName(a.sound)) + ' ›</span></div>' +
+        '<div class="field" data-f="vib"><div><b>Vibrate</b></div><span class="tg ' + (a.vibrate !== false ? "on" : "") + '"></span></div>' +
+        '<div class="field" data-f="rise"><div><b>Rising volume</b><i>Starts quietly and gets louder</i></div><span class="v">' + (a.rise ? a.rise + " sec" : "Off") + ' ›</span></div>' +
+        '<div class="field" data-f="snz"><div><b>Snooze</b></div><span class="v">' + (a.snooze === false || a.important ? "Off" : a.snoozeMin + " min") + ' ›</span></div>' +
+        (a.snooze !== false && !a.important ? '<div class="field" data-f="max"><div><b>Max snoozes</b></div><span class="v">' + (a.maxSnooze ? a.maxSnooze : "Unlimited") + ' ›</span></div>' : "") +
+        '</div>' +
+        '<div class="sub" style="margin:16px 2px 4px">Wake-up tasks</div><div style="font-size:12px;color:var(--ss-mut);margin:0 2px 6px">Solve these to switch the alarm off — shown over the lock screen.</div>' +
+        (a.tasks || []).map(function (t, i) { return '<div class="field"><div><b>' + esc(taskText(t)) + '</b></div><button class="chip" data-tt="' + i + '">Change</button><button class="chip" data-tx="' + i + '">Remove</button></div>'; }).join("") +
+        '<div class="scroll" style="margin-top:8px">' + ["math", "retype", "seq"].map(function (k) { return '<button class="chip" data-ta="' + k + '">＋ ' + TASKN[k] + '</button>'; }).join("") + '</div>' +
+        '<div style="margin-top:12px">' +
+        '<div class="field" data-f="imp"><div><b>Important alarm</b><i>No snooze, and a task is needed to stop it</i></div><span class="tg ' + (a.important ? "on" : "") + '"></span></div>' +
+        '<div class="field" data-f="rnd"><div><b>Random time</b><i>A new time every day inside a window</i></div><span class="tg ' + (a.random ? "on" : "") + '"></span></div>' +
+        (a.random ? '<div class="field" data-f="rf"><div><b>From</b></div><span class="v">' + fmtT(+a.random.from.split(":")[0], +a.random.from.split(":")[1]).t + ' ›</span></div><div class="field" data-f="rt"><div><b>Until</b></div><span class="v">' + fmtT(+a.random.to.split(":")[0], +a.random.to.split(":")[1]).t + ' ›</span></div>' : "") +
+        '<div class="field" data-f="del"><div><b>Delete after ringing</b><i>For one-time alarms</i></div><span class="tg ' + (a.del ? "on" : "") + '"></span></div></div>' +
+        '<div class="foot2">' + (a.isNew ? "" : '<button class="tb" id="rm" style="color:#ef4444">Delete</button>') + '<span class="sp"></span><button class="tb" id="cn">Cancel</button><button class="tb pri" id="sv">Save</button></div>';
+      var prev = m ? m.querySelector(".pnl").scrollTop : 0;
+      if (!m) { m = sheet(body, true); wire(); } else { m.querySelector(".pnl").innerHTML = body; m.querySelector(".pnl").scrollTop = prev; }
+    }
+    function calHtml() {
+      var y = calM.getFullYear(), mo = calM.getMonth(), first = new Date(y, mo, 1).getDay(), days = new Date(y, mo + 1, 0).getDate(), today = new Date(), out = "";
+      for (var i = 0; i < first; i++) out += "<i></i>";
+      for (var d = 1; d <= days; d++) { var k = y + "-" + z2(mo + 1) + "-" + z2(d), past = new Date(y, mo, d, 23, 59) < today; out += '<button data-cd="' + k + '" class="' + ((a.dates || []).indexOf(k) > -1 ? "on " : "") + (past ? "pa " : "") + (today.getFullYear() === y && today.getMonth() === mo && today.getDate() === d ? "td" : "") + '">' + d + '</button>'; }
+      return '<div class="cal"><div class="ch"><button class="chip" data-cm="-1">‹</button><span>' + calM.toLocaleDateString([], { month: "long", year: "numeric" }) + '</span><button class="chip" data-cm="1">›</button></div><div class="g">' + DAYL.map(function (x) { return "<span>" + x + "</span>"; }).join("") + out + '</div></div>';
+    }
+    function wire() {
+      m.addEventListener("input", function (e) { if (e.target.id === "lb") a.label = e.target.value; });
+      m.addEventListener("change", function (e) { if (e.target.id === "df") { a.from = e.target.value; if (a.to && a.to < a.from) a.to = a.from; paint(); } if (e.target.id === "dt") { a.to = e.target.value; if (a.from && a.to < a.from) a.from = a.to; paint(); } });
+      m.addEventListener("click", function (e) {
+        var t = e.target;
+        function B(sel) { return t.closest(sel); }
+        if (B("#tm")) { var p = a.time.split(":"); return pickTime(+p[0], +p[1], "Alarm time", function (h, mi) { a.time = z2(h) + ":" + z2(mi); paint(); }); }
+        if (B("#cn")) return m.close();
+        if (B("#rm")) return confirmBox("Delete alarm?", "This alarm will be removed.", "Delete", function () { m.close(); AL.save(AL.list().filter(function (x) { return x.id !== a.id; })).then(vAlarmSoft); });
+        if (B("#sv")) return save();
+        var s = B("[data-s]"); if (s) { haptic(); a.sched = s.dataset.s; if (a.sched === "daily" || a.sched === "once") a.days = []; return paint(); }
+        var d = B("[data-d]"); if (d) { haptic(); var i = +d.dataset.d, k = (a.days = a.days || []).indexOf(i); if (k > -1) a.days.splice(k, 1); else a.days.push(i); return paint(); }
+        var cd = B("[data-cd]"); if (cd) { haptic(); a.dates = a.dates || []; var j = a.dates.indexOf(cd.dataset.cd); if (j > -1) a.dates.splice(j, 1); else a.dates.push(cd.dataset.cd); return paint(); }
+        var cm = B("[data-cm]"); if (cm) { calM.setMonth(calM.getMonth() + (+cm.dataset.cm)); return paint(); }
+        var ta = B("[data-ta]"); if (ta) { haptic(); a.tasks = a.tasks || []; if (a.tasks.length >= 3) return toast("Up to 3 tasks"); a.tasks.push(ta.dataset.ta === "math" ? { t: "math", d: 1, n: 1 } : ta.dataset.ta === "retype" ? { t: "retype", len: 8 } : { t: "seq", n: 5 }); return paint(); }
+        var tx = B("[data-tx]"); if (tx) { a.tasks.splice(+tx.dataset.tx, 1); return paint(); }
+        var tt = B("[data-tt]"); if (tt) { var q = a.tasks[+tt.dataset.tt]; if (q.t === "math") q.d = (q.d % 3) + 1; else if (q.t === "retype") q.len = q.len >= 14 ? 6 : (q.len || 8) + 2; else q.n = q.n >= 9 ? 3 : (q.n || 5) + 1; return paint(); }
+        var f = B("[data-f]"); if (!f) return; haptic(); var k2 = f.dataset.f;
+        if (k2 === "sound") return pickSound(a.sound, function (v) { a.sound = v; paint(); });
+        if (k2 === "vib") { a.vibrate = a.vibrate === false; return paint(); }
+        if (k2 === "rise") return pickList("Rising volume", [["0", "Off"], ["10", "10 seconds"], ["30", "30 seconds"], ["60", "1 minute"]], a.rise || 0, function (v) { a.rise = +v; paint(); });
+        if (k2 === "snz") return pickList("Snooze length", [["0", "Off"], ["1", "1 minute"], ["5", "5 minutes"], ["10", "10 minutes"], ["15", "15 minutes"], ["custom", "Other…", "Type your own"]], a.snooze === false ? 0 : a.snoozeMin, function (v) { if (v === "custom") return askNum("Snooze length", a.snoozeMin, "minutes (1 – 60)", function (n) { a.snooze = true; a.snoozeMin = Math.min(60, n); paint(); }, 60); a.snooze = +v > 0; if (+v > 0) a.snoozeMin = +v; paint(); });
+        if (k2 === "max") return pickList("Max snoozes", [["0", "Unlimited"], ["1", "1 time"], ["2", "2 times"], ["3", "3 times"], ["5", "5 times"]], a.maxSnooze || 0, function (v) { a.maxSnooze = +v; paint(); });
+        if (k2 === "imp") { a.important = !a.important; return paint(); }
+        if (k2 === "del") { a.del = !a.del; return paint(); }
+        if (k2 === "rnd") { a.random = a.random ? null : { from: "05:00", to: "06:00" }; if (!a.random) delete a.random; return paint(); }
+        if (k2 === "rf" || k2 === "rt") { var key = k2 === "rf" ? "from" : "to", pp = a.random[key].split(":"); return pickTime(+pp[0], +pp[1], key === "from" ? "Earliest" : "Latest", function (h, mi) { a.random[key] = z2(h) + ":" + z2(mi); paint(); }); }
+      });
+    }
+    function save() {
+      var lb = $("#lb", m); if (lb) a.label = lb.value.trim();
+      var sc = AL.sched(a);
+      if (sc === "dates" && !(a.dates || []).length) return toast("Pick at least one date");
+      if (sc === "range" && (!a.from || !a.to)) return toast("Choose the start and end dates");
+      if (sc === "weekly" && !(a.days || []).length) a.sched = "daily";
+      a.on = true; delete a.skipTo; if (a.random) delete a.rollFor; a.once = a.sched === "once";
+      var snzOn = a.snooze !== false && !a.important; a.snooze = snzOn;
+      var isNew = a.isNew; delete a.isNew;
+      var L = AL.list(), i = L.findIndex(function (x) { return x.id === a.id; }); if (i > -1) L[i] = a; else L.push(a);
+      AL.save(L).then(function () { var n = AL.next(AL.list().filter(function (x) { return x.id === a.id; })[0] || a); if (n > 0) toast("Rings in " + rel(n)); else toast("Saved"); });
+      m.close(); vAlarmSoft();
+    }
+    paint();
+  }
+
+  /* ================= TIMER ================= */
+  var wl = null;
+  async function keepAwake(on) { try { if (on && navigator.wakeLock) wl = await navigator.wakeLock.request("screen"); else if (wl) { wl.release(); wl = null; } } catch (e) {} }
+  function tLeft(t) { return t.running ? Math.max(0, t.end - Date.now()) : (t.done ? 0 : t.left); }
+  function clk(ms) { var s = Math.ceil(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60); return (h ? h + ":" + z2(m) : z2(m)) + ":" + z2(s % 60); }
+  function dtxt(ms) { var s = Math.round(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), r = s % 60; return (h ? h + " h " : "") + (m ? m + " min " : "") + (r ? r + " sec" : ""); }
+  function newTimer(ms, label) { var S = CS(); return { id: AL.nextTimerId(), label: label || "", dur: ms, base: ms, left: ms, running: false, end: 0, done: false, sound: S.tsound, vibrate: S.tvib, rise: S.trise }; }
+  function tPatch(id, fn) { var L = AL.timers(), t = L.filter(function (x) { return x.id === id; })[0]; if (!t) return null; fn(t); return AL.saveTimers(L).then(function () { return t; }); }
+  function startT(t) { if (t.done || !(t.left > 0)) { t.left = t.base; t.dur = t.base; } t.running = true; t.done = false; t.end = Date.now() + t.left; }
+  function pauseT(t) { t.left = tLeft(t); t.running = false; }
+  function resetT(t) { t.running = false; t.done = false; t.left = t.base; t.dur = t.base; t.end = 0; }
+  function addMin(t) { if (t.done) { t.left = 0; t.done = false; t.dur = 60000; t.base = t.base || 60000; t.left = 60000; t.running = true; t.end = Date.now() + 60000; return; } if (t.running) t.end += 60000; else t.left += 60000; t.dur += 60000; }
+  function presets() { return J("ss_tpresets", [{ n: "Pomodoro", ms: 1500000 }, { n: "Short break", ms: 300000 }, { n: "Long break", ms: 900000 }, { n: "Quick 10", ms: 600000 }, { n: "1 hour", ms: 3600000 }]); }
+  function afterTimerDone(t) { if (!AL.native) AL.ring({ title: (t.label || "Timer") + " ⏱", text: "Time's up!", sound: t.sound, vibrate: t.vibrate, doneLabel: "Stop" }); }
+
+  // one slow watcher for the whole page: marks timers finished (the phone engine rings them, even when the app is closed)
+  setInterval(function () {
+    var L = AL.timers(), ch = false, fin = [];
+    L.forEach(function (t) { if (t.running && Date.now() >= t.end + 700) { t.running = false; t.done = true; t.left = 0; ch = true; fin.push(t); } });
+    if (ch) { AL.saveTimers(L).then(function () { if (cur === "timer") VIEWS.timer(); }); fin.forEach(afterTimerDone); }
+  }, 1000);
+
+  VIEWS.timer = function vTimer() {
+    var v = $("#v"), L = AL.timers(), run = L.filter(function (t) { return t.running; }).length, P = presets();
+    v.innerHTML = '<div class="hd"><div><h2>Timer</h2><small>' + (run ? run + " running" : (L.length ? "Ready" : "Tap + to start one")) + '</small></div></div>' +
+      '<div class="scroll" id="ps" style="margin-bottom:12px">' + P.map(function (p, i) { return '<button class="chip" data-p="' + i + '">' + esc(p.n) + ' · ' + clk(p.ms) + '</button>'; }).join("") + '</div>' +
+      (L.length ? L.map(function (t) { return timerCard(t); }).join("") : '<div class="empty"><div class="em">⏱</div><b>No timers</b><br>Pick a quick one above, or tap + to type your own time.</div>') +
+      '<button class="fab" id="add" aria-label="Add timer">' + IC.plus + '</button>';
+    $("#add").onclick = function () { haptic(); addDialog(); };
+    v.onclick = function (e) {
+      var p = e.target.closest("[data-p]"); if (p) { haptic(); var pr = P[+p.dataset.p], t = newTimer(pr.ms, pr.n); startT(t); var l2 = AL.timers(); l2.unshift(t); AL.saveTimers(l2).then(function () { VIEWS.timer(); toast("Timer started"); }); return; }
+      var c = e.target.closest(".tcard"); if (!c) return; var id = +c.dataset.id, a = e.target.closest("[data-a]"); if (!a) return; haptic();
+      var act = a.dataset.a;
+      if (act === "fs") return openFs(id);
+      if (act === "menu") return timerMenu(id);
+      if (act === "edit") return editDur(id);
+      var pr2 = tPatch(id, function (t) { if (act === "go") { if (t.running) pauseT(t); else startT(t); } else if (act === "reset") resetT(t); else if (act === "add") addMin(t); });
+      if (pr2) pr2.then(function () { VIEWS.timer(); });
+    };
+    tick.push(setInterval(function () {
+      document.querySelectorAll(".tcard").forEach(function (c) {
+        var t = AL.timers().filter(function (x) { return x.id === +c.dataset.id; })[0]; if (!t) return;
+        var l = tLeft(t), tt = c.querySelector(".tt"), pb = c.querySelector(".pbar i");
+        if (t.running && tt) tt.textContent = clk(l); if (pb) pb.style.width = (t.dur ? Math.max(0, Math.min(100, l / t.dur * 100)) : 0) + "%";
+      });
+    }, 250));
+  };
+  function timerCard(t) {
+    var l = tLeft(t), st = t.done ? "done" : t.running ? "run" : (t.left < t.dur ? "pause" : "idle"), canEdit = st === "idle";
+    return '<div class="tcard ' + (st === "run" ? "run" : st === "done" ? "done" : "") + '" data-id="' + t.id + '"><div class="top"><div class="nm">' + esc(t.label || (t.base ? dtxt(t.base) : "Timer")) + '</div><button class="ib" data-a="fs" aria-label="Full screen" style="width:36px;height:36px"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button><button class="ib" data-a="menu" aria-label="More" style="width:36px;height:36px"><svg viewBox="0 0 24 24"><path d="M12 6h.01M12 12h.01M12 18h.01" stroke-width="3"/></svg></button></div>' +
+      '<button class="tt" ' + (canEdit ? 'data-a="edit"' : "") + '>' + (st === "done" ? "Time's up" : clk(l)) + '</button><div class="pbar"><i style="width:' + (t.dur ? Math.max(0, Math.min(100, l / t.dur * 100)) : 0) + '%"></i></div>' +
+      '<div class="ctl">' + (st !== "idle" ? '<button class="pill" data-a="reset">Reset</button>' : "") + '<button class="pill" data-a="add">+1:00</button><span class="sp"></span><button class="play ' + (st === "done" ? "stop" : "") + '" data-a="go" aria-label="Start or pause">' + (st === "run" ? IC.pause : IC.play) + '</button></div></div>';
+  }
+  function addDialog() {
+    var d = 0;
+    pickDur(d, "New timer", { label: "", add: true, ok: "Start" }, function (ms, label, start) {
+      W("ss_tlast", ms); var t = newTimer(ms, label); if (start) startT(t);
+      var L = AL.timers(); L.unshift(t); AL.saveTimers(L).then(function () { VIEWS.timer(); toast(start ? "Timer started" : "Timer added"); });
+    });
+  }
+  function editDur(id) {
+    var t = AL.timers().filter(function (x) { return x.id === id; })[0]; if (!t) return;
+    pickDur(t.base, "Set time", { ok: "Set" }, function (ms) { tPatch(id, function (x) { x.base = ms; x.dur = ms; x.left = ms; }).then(function () { VIEWS.timer(); }); });
+  }
+  function timerMenu(id) {
+    var t = AL.timers().filter(function (x) { return x.id === id; })[0]; if (!t) return;
+    var m = sheet('<h3>' + esc(t.label || "Timer") + '</h3><div class="field" data-f="name"><div><b>Name</b></div><span class="v">' + esc(t.label || "None") + ' ›</span></div><div class="field" data-f="time"><div><b>Change time</b></div><span class="v">' + clk(t.base) + ' ›</span></div><div class="field" data-f="sound"><div><b>Sound</b></div><span class="v">' + esc(soundName(t.sound)) + ' ›</span></div><div class="field" data-f="vib"><div><b>Vibrate</b></div><span class="tg ' + (t.vibrate !== false ? "on" : "") + '"></span></div><div class="field" data-f="rise"><div><b>Rising volume</b></div><span class="v">' + (t.rise ? t.rise + " sec" : "Off") + ' ›</span></div><div class="field" data-f="pre"><div><b>Save as quick timer</b></div><span class="v">＋</span></div><div class="field" data-f="del"><div><b style="color:#ef4444">Delete timer</b></div></div>');
+    m.addEventListener("click", function (e) {
+      var f = e.target.closest("[data-f]"); if (!f) return; haptic(); var k = f.dataset.f;
+      function upd(fn) { m.remove(); tPatch(id, fn).then(function () { VIEWS.timer(); }); }
+      if (k === "name") { m.remove(); var m2 = sheet('<h3>Timer name</h3><div class="field"><div><input type="text" id="nm" maxlength="30" placeholder="e.g. Maths revision" value="' + esc(t.label) + '"/></div></div><div class="foot2"><span class="sp"></span><button class="tb" id="cn">Cancel</button><button class="tb pri" id="ok">Save</button></div>'); setTimeout(function () { $("#nm", m2).focus(); }, 150); $("#cn", m2).onclick = m2.close; $("#ok", m2).onclick = function () { var n = $("#nm", m2).value.trim(); m2.remove(); tPatch(id, function (x) { x.label = n; }).then(function () { VIEWS.timer(); }); }; return; }
+      if (k === "time") { m.remove(); return editDur(id); }
+      if (k === "sound") { m.remove(); return pickSound(t.sound, function (s) { tPatch(id, function (x) { x.sound = s; }).then(function () { VIEWS.timer(); }); }); }
+      if (k === "vib") return upd(function (x) { x.vibrate = x.vibrate === false; });
+      if (k === "rise") { m.remove(); return pickList("Rising volume", [["0", "Off"], ["10", "10 seconds"], ["30", "30 seconds"], ["60", "1 minute"]], t.rise || 0, function (v) { tPatch(id, function (x) { x.rise = +v; }).then(function () { VIEWS.timer(); }); }); }
+      if (k === "pre") { var P = presets(); P.push({ n: t.label || dtxt(t.base), ms: t.base }); W("ss_tpresets", P.slice(0, 12)); m.remove(); toast("Saved to quick timers"); return VIEWS.timer(); }
+      if (k === "del") { m.remove(); AL.saveTimers(AL.timers().filter(function (x) { return x.id !== id; })).then(function () { VIEWS.timer(); }); }
+    });
+  }
+  function openFs(id) {
+    var el = document.createElement("div"), R = 130, C = 2 * Math.PI * R; el.className = "fs";
+    el.innerHTML = '<button class="x" aria-label="Close">✕</button><div style="font-size:16px;font-weight:700;opacity:.85" id="fl"></div><div class="rg"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="' + R + '" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="10"/><circle id="fa" cx="140" cy="140" r="' + R + '" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="0" style="transition:stroke-dashoffset .3s linear"/></svg><div class="c"><b id="ft">00:00</b><span id="fs2"></span></div></div><div class="row2"><button class="pill" data-a="reset">Reset</button><button class="play" data-a="go" id="fg">' + IC.pause + '</button><button class="pill" data-a="add">+1:00</button></div>';
+    document.body.appendChild(el); keepAwake(true);
+    function close() { clearInterval(iv); keepAwake(false); el.remove(); if (cur === "timer") VIEWS.timer(); }
+    function upd() {
+      var t = AL.timers().filter(function (x) { return x.id === id; })[0]; if (!t) return close();
+      var l = tLeft(t); $("#ft", el).textContent = t.done ? "00:00" : clk(l); $("#fl", el).textContent = t.label || "Timer";
+      $("#fa", el).style.strokeDashoffset = C * (1 - (t.dur ? Math.max(0, Math.min(1, l / t.dur)) : 0));
+      $("#fs2", el).textContent = t.done ? "Time's up" : (t.running ? "ends " + new Date(t.end).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "Paused");
+      $("#fg", el).innerHTML = t.running ? IC.pause : IC.play; $("#fg", el).classList.toggle("stop", !!t.done);
+    }
+    var iv = setInterval(upd, 250); upd();
+    el.onclick = function (e) {
+      if (e.target.closest(".x")) return close();
+      var a = e.target.closest("[data-a]"); if (!a) return; haptic(); var act = a.dataset.a;
+      tPatch(id, function (t) { if (act === "go") { if (t.running) pauseT(t); else startT(t); } else if (act === "reset") resetT(t); else if (act === "add") addMin(t); }).then(upd);
+    };
+  }
+
+  /* ================= STOPWATCH ================= */
+  var sw = J("ss_sw", { run: false, t0: 0, acc: 0, laps: [] });
+  function swMs() { return sw.acc + (sw.run ? Date.now() - sw.t0 : 0); }
+  function swFmt(ms) { var cc = Math.floor(ms / 10) % 100, s = Math.floor(ms / 1000) % 60, m = Math.floor(ms / 60000) % 60, h = Math.floor(ms / 3600000); return { main: (h ? h + ":" : "") + z2(m) + ":" + z2(s), cc: z2(cc) }; }
+  function lapTimes() { var out = [], prev = 0; sw.laps.forEach(function (t) { out.push(t - prev); prev = t; }); return out; }
+  function swGo() { if (sw.run) { sw.acc += Date.now() - sw.t0; sw.run = false; AL.swStop(); } else { sw.t0 = Date.now(); sw.run = true; AL.swStart(Date.now() - sw.acc); } W("ss_sw", sw); }
+  function swLap() { if (sw.run) sw.laps.push(swMs()); else { sw = { run: false, t0: 0, acc: 0, laps: [] }; AL.swStop(); } W("ss_sw", sw); }
+  function lapRows() {
+    var lt = lapTimes(), S = CS(), n = lt.length; if (!n) return "";
+    var mn = Math.min.apply(null, lt), mx = Math.max.apply(null, lt), avg = lt.reduce(function (a, b) { return a + b; }, 0) / n;
+    var rows = lt.map(function (x, i) {
+      var ref = S.cmp === "prev" ? (i > 0 ? lt[i - 1] : null) : S.cmp === "avg" ? avg : S.cmp === "fast" ? mn : mx, dlt = ref == null ? null : x - ref;
+      var f = swFmt(x), tf = swFmt(sw.laps[i]);
+      return '<div class="lap ' + (n > 1 && x === mn ? "fast" : n > 1 && x === mx ? "slow" : "") + '"><span class="n">#' + (i + 1) + '</span><span class="l">' + f.main + '.' + f.cc + '</span>' + (dlt == null || Math.abs(dlt) < 5 ? "" : '<span class="d ' + (dlt > 0 ? "up" : "dn") + '">' + (dlt > 0 ? "+" : "−") + (Math.abs(dlt) / 1000).toFixed(2) + '</span>') + '<span class="tot">' + tf.main + '.' + tf.cc + '</span></div>';
+    });
+    return '<div class="sub" style="display:flex;align-items:center;justify-content:space-between">Laps<span class="scroll" id="cmp" style="padding:0">' + [["prev", "Previous"], ["avg", "Average"], ["fast", "Fastest"], ["slow", "Slowest"]].map(function (o) { return '<button class="chip" style="height:28px;font-size:11.5px;text-transform:none;letter-spacing:0;' + (S.cmp === o[0] ? "background:var(--a1);color:#fff;border-color:var(--a1)" : "") + '" data-c="' + o[0] + '">' + o[1] + '</button>'; }).join("") + '</span></div><div class="card" style="padding:2px 14px">' + rows.reverse().join("") + '</div>';
+  }
+  VIEWS.sw = function vSW() {
+    var v = $("#v"), R = 112, C = 2 * Math.PI * R;
+    v.innerHTML = '<div class="hd"><div><h2>Stopwatch</h2><small>Laps, comparisons and full screen</small></div><button class="ib" id="fsb" aria-label="Full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div>' +
+      '<div class="swr"><svg viewBox="0 0 260 260"><circle cx="130" cy="130" r="' + R + '" fill="none" stroke="rgba(148,163,184,.25)" stroke-width="10"/><circle id="sa" cx="130" cy="130" r="' + R + '" fill="none" stroke="var(--a1)" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '" transform="rotate(-90 130 130)"/><g id="so" transform="rotate(0 130 130)"><circle cx="130" cy="18" r="8" fill="var(--a2)"/></g></svg><div class="c"><b id="sm" style="font-size:50px;font-weight:300;letter-spacing:-.03em;font-variant-numeric:tabular-nums"></b><span id="sc2" style="font-size:24px;font-weight:300;color:var(--ss-mut)"></span></div></div>' +
+      '<div style="display:flex;justify-content:center;align-items:center;gap:26px;margin:14px 0 6px"><button class="circ g" id="lap"></button><button class="play" id="go" style="width:84px;height:84px"></button></div><div id="lp"></div>';
+    function btns() { $("#go").innerHTML = sw.run ? IC.pause : IC.play; $("#go").classList.toggle("stop", sw.run); $("#lap").textContent = sw.run ? "Lap" : "Reset"; $("#lap").style.opacity = (sw.run || swMs() > 0) ? 1 : .4; }
+    function paint() { var ms = swMs(), f = swFmt(ms), fr = (ms % 60000) / 60000; $("#sm").textContent = f.main; $("#sc2").textContent = "." + f.cc; $("#sa").style.strokeDashoffset = C * (1 - fr); $("#so").setAttribute("transform", "rotate(" + (fr * 360) + " 130 130)"); }
+    function laps() { $("#lp").innerHTML = lapRows(); }
+    btns(); paint(); laps();
+    $("#go").onclick = function () { haptic(); swGo(); btns(); };
+    $("#lap").onclick = function () { haptic(); swLap(); btns(); paint(); laps(); };
+    $("#fsb").onclick = function () { swFull(); };
+    $("#lp").onclick = function (e) { var c = e.target.closest("[data-c]"); if (c) { setCS("cmp", c.dataset.c); laps(); } };
+    tick.push(setInterval(function () { if (sw.run) paint(); }, 40));
+  };
+  function swFull() {
+    var el = document.createElement("div"); el.className = "fs"; var S = CS();
+    el.innerHTML = '<button class="x" aria-label="Close">✕</button><div style="font-size:16px;font-weight:700;opacity:.85">Stopwatch</div><div style="text-align:center"><b id="fm2" style="font-size:78px;font-weight:200;letter-spacing:-.04em;font-variant-numeric:tabular-nums"></b><span id="fc" style="font-size:36px;font-weight:200;opacity:.6"></span></div><div class="row2"><button class="pill" id="fl2"></button><button class="play" id="fg2" style="width:84px;height:84px"></button></div><div id="fll" style="font-size:15px;opacity:.85;font-variant-numeric:tabular-nums;min-height:22px"></div>';
+    document.body.appendChild(el); if (S.swKeep) keepAwake(true);
+    function upd() { var f = swFmt(swMs()); $("#fm2", el).textContent = f.main; $("#fc", el).textContent = "." + f.cc; $("#fg2", el).innerHTML = sw.run ? IC.pause : IC.play; $("#fg2", el).classList.toggle("stop", sw.run); $("#fl2", el).textContent = sw.run ? "Lap" : "Reset"; var lt = lapTimes(); if (lt.length) { var q = swFmt(lt[lt.length - 1]); $("#fll", el).textContent = "Lap " + lt.length + " · " + q.main + "." + q.cc; } else $("#fll", el).textContent = ""; }
+    var iv = setInterval(upd, 40); upd();
+    el.onclick = function (e) { if (e.target.closest(".x")) { clearInterval(iv); keepAwake(false); el.remove(); if (cur === "sw") VIEWS.sw(); return; } if (e.target.closest("#fg2")) { haptic(); swGo(); } else if (e.target.closest("#fl2")) { haptic(); swLap(); } upd(); };
+  }
+
+  /* ================= SETTINGS (with search) ================= */
+  var REL = { notif: "unknown", exact: "unknown" }, RACC = { fullScreen: true, batteryUnrestricted: false, native: false };
+  var RISE = [["0", "Off"], ["10", "10 seconds"], ["30", "30 seconds"], ["60", "1 minute"]];
+  function riseTxt(v) { return v ? v + " sec" : "Off"; }
+  function defs() {
+    var S = CS();
+    return [
+      { g: "General", ic: "🕒", t: "24-hour time", d: "Show times like 18:30 instead of 6:30 PM", kw: "time format 12 24 hour clock", tg: S.h24, run: function () { setCS("h24", !CS().h24); } },
+      { g: "General", ic: "⌨️", t: "Time picker style", d: "How you set a time — dial, keyboard or spinner", kw: "picker keyboard type digits samsung dial wheel spinner numpad", v: { dial: "Dial", kb: "Keyboard", spin: "Spinner" }[S.pick], run: function () { pickList("Time picker", [["dial", "Dial", "Tap or drag on a clock face"], ["kb", "Keyboard", "Type the digits, like on Samsung phones"], ["spin", "Spinner", "Scroll the numbers"]], CS().pick, function (v) { setCS("pick", v); draw(); }); } },
+      { g: "General", ic: "✨", t: "Animations", d: "Smooth motion on screens and buttons", kw: "animation motion effects reduce", tg: S.anim, run: function () { setCS("anim", !CS().anim); } },
+      { g: "General", ic: "📳", t: "Tap feedback", d: "A tiny vibration when you tap keys", kw: "haptic vibration touch tap feedback", tg: S.hap, run: function () { setCS("hap", !CS().hap); } },
+
+      { g: "Alarm", ic: "🔔", t: "Default sound", d: "Used for new alarms", kw: "alarm sound ringtone music melody", v: soundName(S.sound), run: function () { pickSound(CS().sound, function (s) { setCS("sound", s); draw(); }); } },
+      { g: "Alarm", ic: "💤", t: "Snooze length", d: "Minutes before the alarm rings again", kw: "alarm snooze minutes delay", v: S.snz ? S.snz + " min" : "Off", run: function () { pickList("Snooze length", [["0", "Off"], ["1", "1 minute"], ["5", "5 minutes"], ["10", "10 minutes"], ["15", "15 minutes"], ["custom", "Other…", "Type your own"]], CS().snz, function (v) { if (v === "custom") return askNum("Snooze length", CS().snz || 5, "minutes (1 – 60)", function (n) { setCS("snz", n); draw(); }, 60); setCS("snz", +v); draw(); }); } },
+      { g: "Alarm", ic: "🔁", t: "Max snoozes", d: "How many times an alarm may be snoozed", kw: "alarm snooze limit maximum", v: S.maxSnz ? S.maxSnz + " times" : "Unlimited", run: function () { pickList("Max snoozes", [["0", "Unlimited"], ["1", "1 time"], ["2", "2 times"], ["3", "3 times"], ["5", "5 times"]], CS().maxSnz, function (v) { setCS("maxSnz", +v); draw(); }); } },
+      { g: "Alarm", ic: "📈", t: "Rising volume", d: "Alarm starts quiet and gets louder", kw: "alarm volume gradually increase fade", v: riseTxt(S.rise), run: function () { pickList("Rising volume", RISE, CS().rise, function (v) { setCS("rise", +v); draw(); }); } },
+      { g: "Alarm", ic: "📳", t: "Vibrate", d: "Vibrate when an alarm rings", kw: "alarm vibration", tg: S.vib, run: function () { setCS("vib", !CS().vib); } },
+      { g: "Alarm", ic: "🧩", t: "Wake-up task", d: "Task to solve for new alarms", kw: "alarm task math puzzle retype sequence dismiss", v: { none: "None", math: "Math", retype: "Retype", seq: "Sequence" }[S.task], run: function () { pickList("Wake-up task", [["none", "None"], ["math", "Math"], ["retype", "Retype text"], ["seq", "Number sequence"]], CS().task, function (v) { setCS("task", v); draw(); }); } },
+      { g: "Alarm", ic: "🗑️", t: "Delete after ringing", d: "One-time alarms remove themselves", kw: "alarm delete remove once", tg: S.del, run: function () { setCS("del", !CS().del); } },
+
+      { g: "Timer", ic: "🔔", t: "Timer sound", d: "Used for new timers", kw: "timer sound ringtone", v: soundName(S.tsound), run: function () { pickSound(CS().tsound, function (s) { setCS("tsound", s); draw(); }); } },
+      { g: "Timer", ic: "📳", t: "Timer vibration", d: "Vibrate when a timer ends", kw: "timer vibrate", tg: S.tvib, run: function () { setCS("tvib", !CS().tvib); } },
+      { g: "Timer", ic: "📈", t: "Timer rising volume", d: "Timer sound gets louder slowly", kw: "timer volume rise fade", v: riseTxt(S.trise), run: function () { pickList("Rising volume", RISE, CS().trise, function (v) { setCS("trise", +v); draw(); }); } },
+      { g: "Timer", ic: "🔢", t: "Timer input", d: "Type time with a keypad, or scroll", kw: "timer keypad numpad keyboard spinner wheel digits", v: S.tpick === "spinner" ? "Spinner" : "Keypad", run: function () { pickList("Timer input", [["keypad", "Keypad", "Type digits — they fill in from the right"], ["spinner", "Spinner", "Scroll hours, minutes and seconds"]], CS().tpick, function (v) { setCS("tpick", v); draw(); }); } },
+      { g: "Timer", ic: "⚡", t: "Quick timers", d: "Edit the shortcuts shown above your timers", kw: "timer presets quick shortcuts pomodoro", v: presets().length + "", run: function () { managePresets(); } },
+
+      { g: "Stopwatch", ic: "⏱", t: "Compare laps with", d: "What each lap is measured against", kw: "stopwatch lap compare previous average fastest slowest", v: { prev: "Previous", avg: "Average", fast: "Fastest", slow: "Slowest" }[S.cmp], run: function () { pickList("Compare laps with", [["prev", "Previous lap"], ["avg", "Average lap"], ["fast", "Fastest lap"], ["slow", "Slowest lap"]], CS().cmp, function (v) { setCS("cmp", v); draw(); }); } },
+      { g: "Stopwatch", ic: "💡", t: "Keep screen on", d: "In full-screen stopwatch and timer", kw: "stopwatch screen awake wake lock display on", tg: S.swKeep, run: function () { setCS("swKeep", !CS().swKeep); } },
+
+      { g: "Alerts and reliability", ic: "🔔", t: "Notifications", d: REL.notif === "granted" ? "Allowed" : "Turn on so alarms and timers can alert you", kw: "notification permission allow alerts", v: REL.notif === "granted" ? "Allowed" : "Allow", run: async function () { await Core.perm.need("notifications"); await loadRel(); } },
+      { g: "Alerts and reliability", ic: "⏰", t: "Exact alarms", d: REL.exact === "denied" ? "Needed so alarms ring on time" : "On time, every time", kw: "exact alarm permission schedule", v: REL.exact === "denied" ? "Allow" : "OK", run: async function () { try { await N.LocalNotifications.changeExactNotificationSetting(); } catch (e) {} } },
+      { g: "Alerts and reliability", ic: "📱", t: "Alarm over lock screen", d: RACC.fullScreen ? "On — alarms open full screen" : "Allow so alarms open full screen", kw: "lock screen full screen display over other apps wake", v: RACC.fullScreen ? "OK" : "Allow", hide: !RACC.native, run: function () { AL.openFullScreen(); } },
+      { g: "Alerts and reliability", ic: "🔋", t: "Battery", d: RACC.batteryUnrestricted ? "Unrestricted — alarms are never delayed" : "Set to “Unrestricted” so alarms are never delayed", kw: "battery optimization unrestricted doze", v: RACC.batteryUnrestricted ? "OK" : "Allow", run: function () { if (RACC.native) AL.openBattery(); else { try { N.Settings.open({ optionAndroid: N.AndroidSettings.BatteryOptimization, optionIOS: N.IOSSettings.App }); } catch (e) {} } } },
+      { g: "Alerts and reliability", ic: "🧪", t: "Test alarm in 10 seconds", d: "Close the app after tapping to check it rings", kw: "test alarm check ring", v: "Test", run: async function () { if (!(await Core.perm.need("notifications"))) return; await AL.testIn(10); toast("Test alarm in 10 seconds"); } },
+
+      { g: "More", ic: "↺", t: "Reset clock settings", d: "Puts every option on this screen back to normal", kw: "reset default restore", run: function () { confirmBox("Reset settings?", "Your alarms and timers stay as they are.", "Reset", function () { W("ss_clock_set", {}); applyCS(); toast("Settings reset"); draw(); }); } },
+      { g: "More", ic: "📴", t: "Works offline", d: "The clock, alarms and timers never need internet", kw: "offline internet about info", v: "✓", run: function () { toast("Everything here runs on your phone"); } }
+    ].filter(function (x) { return !x.hide; });
+  }
+  async function loadRel() { try { REL = await AL.health(); RACC = await AL.access(); } catch (e) {} draw(); }
+  function managePresets() {
+    var m = sheet('<h3>Quick timers</h3><div id="pl"></div><button class="chip" id="pa" style="width:100%;margin-top:10px;height:44px;justify-content:center">＋ Add quick timer</button><div class="foot2"><span class="sp"></span><button class="tb pri" id="ok">Done</button></div>', true);
+    function paint() { var P = presets(); $("#pl", m).innerHTML = P.map(function (p, i) { return '<div class="field"><div><b>' + esc(p.n) + '</b><i>' + clk(p.ms) + '</i></div><button class="chip" data-r="' + i + '">Remove</button></div>'; }).join("") || '<div class="empty">No quick timers</div>'; }
+    paint();
+    m.addEventListener("click", function (e) { var r = e.target.closest("[data-r]"); if (r) { var P = presets(); P.splice(+r.dataset.r, 1); W("ss_tpresets", P); paint(); } });
+    $("#pa", m).onclick = function () { pickDur(600000, "New quick timer", { label: "", ok: "Save" }, function (ms, label) { var P = presets(); P.push({ n: label || dtxt(ms), ms: ms }); W("ss_tpresets", P.slice(0, 12)); paint(); }); };
+    $("#ok", m).onclick = function () { m.remove(); draw(); };
+  }
+  var sq = "";
+  function draw() {
+    if (cur !== "settings") return;
+    var v = $("#v"), box = $("#sl2"), q = sq.trim().toLowerCase(), list = defs().filter(function (d) { return !q || (d.t + " " + d.d + " " + d.kw + " " + d.g).toLowerCase().indexOf(q) > -1; });
+    if (!box) {
+      v.innerHTML = '<div class="hd"><div><h2>Settings</h2><small>Alarm, timer, stopwatch and more</small></div></div><div class="srch">' + IC.search + '<input id="q" type="text" placeholder="Search settings" autocomplete="off" value="' + esc(sq) + '"/></div><div id="sl2"></div>';
+      $("#q").oninput = function () { sq = this.value; draw(); };
+      box = $("#sl2");
+      box.onclick = function (e) { var r = e.target.closest("[data-i]"); if (!r) return; haptic(); var d = defs().filter(function (x) { return !q || (x.t + " " + x.d + " " + x.kw + " " + x.g).toLowerCase().indexOf((sq || "").trim().toLowerCase()) > -1; })[+r.dataset.i]; if (d) { var res = d.run(); if (d.tg !== undefined) setTimeout(draw, 0); } };
+    }
+    if (!list.length) { box.innerHTML = '<div class="empty"><div class="em">🔍</div>No settings match “' + esc(sq) + '”.</div>'; return; }
+    var out = "", last = "";
+    list.forEach(function (d, i) {
+      if (d.g !== last) { if (last) out += "</div>"; out += '<div class="grp">' + esc(d.g) + '</div><div class="card" style="padding:0;overflow:hidden">'; last = d.g; }
+      out += '<button class="srow" data-i="' + i + '"><span class="ic">' + d.ic + '</span><div><b>' + esc(d.t) + '</b><i>' + esc(d.d) + '</i></div>' + (d.tg !== undefined ? '<span class="tg ' + (d.tg ? "on" : "") + '"></span>' : (d.v ? '<span class="v">' + esc(d.v) + ' ›</span>' : "")) + '</button>';
+    });
+    box.innerHTML = out + "</div>";
+  }
+  VIEWS.settings = function vSettings() { sq = ""; var b0 = $("#sl2"); if (b0) b0.remove(); draw(); loadRel(); };
+
+  var SUBJ = ["General", "Maths", "Physics", "Chemistry", "Biology", "English", "Reading"];
+  function streak() { var log = J("ss_focus_log2", {}), n = 0; for (var i = 0; i < 365; i++) { var k = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10); if (log[k] && log[k].min > 0) n++; else if (i > 0) break; } return n; }
+  function vFocus() {
+    var v = $("#v"), C = FO.cfg(), ST = FO.state(), log = J("ss_focus_log2", {}), key = new Date().toISOString().slice(0, 10), td = log[key] || { min: 0, n: 0, subj: {} }, week = [];
+    for (var i = 6; i >= 0; i--) { var d = new Date(Date.now() - i * 86400000); week.push({ l: d.toLocaleDateString([], { weekday: "narrow" }), m: (log[d.toISOString().slice(0, 10)] || {}).min || 0 }); }
+    var mx = Math.max(30, Math.max.apply(null, week.map(function (w) { return w.m; })));
+    var custom = SUBJ.indexOf(C.subject) === -1 ? [C.subject] : [], mins = C.focus;
+    v.innerHTML = '<div class="hd"><div><h2>Focus</h2><small>Drag the dial to set your time</small></div></div>' +
+      '<div class="scroll" id="sj">' + SUBJ.concat(custom).map(function (s) { return '<button class="chip ' + (C.subject === s ? "on" : "") + '" data-s="' + esc(s) + '">' + esc(s) + '</button>'; }).join("") + '<button class="chip" data-s="__new">＋ Other</button></div>' +
+      '<div class="dwrap" id="dw">' + FO.dialSvg(mins, 120) + '<div class="dc"><b id="dm">' + mins + '</b><span>minutes</span></div></div>' +
+      '<div class="nudge"><button data-n="-5">−5</button><button data-n="-1">−1</button><button data-n="1">+1</button><button data-n="5">+5</button></div>' +
+      '<div class="scroll" id="fl">' + [15, 25, 45, 60, 90].map(function (m) { return '<button class="chip ' + (mins === m ? "on" : "") + '" data-m="' + m + '">' + m + ' min</button>'; }).join("") + '<button class="chip" data-m="c">Custom</button></div>' +
+      '<div class="card" style="margin-top:14px;padding:4px 16px"><div class="row"><div style="flex:1"><b>Break</b></div><div class="scroll" id="fb">' + [5, 10, 15].map(function (m) { return '<button class="chip ' + (C.brk === m ? "on" : "") + '" data-b="' + m + '">' + m + ' min</button>'; }).join("") + '<button class="chip" data-b="c">Custom</button></div></div>' +
+      '<div class="row" id="fa"><div style="flex:1"><b>Start breaks automatically</b></div><span class="tg ' + (C.auto ? "on" : "") + '"></span></div>' +
+      '<div class="row"><div style="flex:1"><b>Background sound</b></div><button class="chip" id="amb">' + ({ off: "Off", rain: "Rain 🌧", brown: "Brown 🌊", white: "White 🌫" }[C.amb]) + '</button></div></div>' +
+      '<button class="big" id="go" style="margin-top:14px">' + (ST.phase !== "idle" ? "Back to session" : "Start focus · " + mins + " min") + '</button>' +
+      '<div class="sub">Today</div><div class="stat"><div><b>' + (td.min >= 60 ? Math.floor(td.min / 60) + "h " + td.min % 60 + "m" : td.min + "m") + '</b><span>Studied</span></div><div><b>' + td.n + '</b><span>Sessions</span></div><div><b>' + streak() + '🔥</b><span>Day streak</span></div></div>' +
+      '<div class="card" style="margin-top:10px"><div style="display:flex;gap:8px;align-items:flex-end;height:78px">' + week.map(function (w) { return '<div style="flex:1;text-align:center"><div style="height:' + Math.max(4, w.m / mx * 58) + 'px;border-radius:7px;background:var(--a1);opacity:' + (w.m ? 1 : .22) + '"></div><div style="font-size:10px;color:var(--ss-faint);margin-top:4px;font-weight:700">' + w.l + '</div></div>'; }).join("") + '</div></div>' +
+      '<div style="font-size:12px;color:var(--ss-mut);margin:12px 4px;line-height:1.5">Tip: switch on <b>Do Not Disturb</b> before you start. While focus is on, the whole app is locked to your timer.</div>';
+    function setMin(m) { mins = Math.max(1, Math.min(240, m)); FO.setCfg({ focus: mins }); var dm = $("#dm"); if (dm) dm.textContent = mins; var go = $("#go"); if (go && ST.phase === "idle") go.textContent = "Start focus · " + mins + " min"; }
+    var dial = FO.attachDial($("#dw"), 120, 1, function () { return Math.min(120, mins); }, function (m) { setMin(m); }, function () { vFocus(); });
+    $("#sj").onclick = function (e) { var b = e.target.closest("button"); if (!b) return; if (b.dataset.s === "__new") { var m2 = sheet('<div style="font-size:18px;font-weight:800;margin-bottom:4px">Subject name</div><input type="text" id="nm" maxlength="20" placeholder="e.g. Accountancy"/><div class="foot"><button id="cn">Cancel</button><button class="pri" id="ok">Save</button></div>'); setTimeout(function () { $("#nm", m2).focus(); }, 120); $("#cn", m2).onclick = function () { m2.remove(); }; $("#ok", m2).onclick = function () { var n = $("#nm", m2).value.trim(); if (n) { FO.setCfg({ subject: n.slice(0, 20) }); m2.remove(); vFocus(); } }; return; } FO.setCfg({ subject: b.dataset.s }); vFocus(); };
+    v.querySelector(".nudge").onclick = function (e) { var b = e.target.closest("button"); if (b) { haptic(); setMin(mins + (+b.dataset.n)); vFocus(); } };
+    $("#fl").onclick = function (e) { var b = e.target.closest("button"); if (!b) return; if (b.dataset.m === "c") return askNum("Custom focus time", mins, "minutes (1 – 240)", function (m) { setMin(m); vFocus(); }); setMin(+b.dataset.m); vFocus(); };
+    $("#fb").onclick = function (e) { var b = e.target.closest("button"); if (!b) return; if (b.dataset.b === "c") return askNum("Custom break", C.brk, "minutes", function (m) { FO.setCfg({ brk: Math.min(60, m) }); vFocus(); }); FO.setCfg({ brk: +b.dataset.b }); vFocus(); };
+    $("#fa").onclick = function () { FO.setCfg({ auto: !FO.cfg().auto }); vFocus(); };
+    $("#amb").onclick = function () { var o = ["off", "rain", "brown", "white"]; FO.setCfg({ amb: o[(o.indexOf(FO.cfg().amb) + 1) % 4] }); vFocus(); };
+    $("#go").onclick = function () { if (FO.state().phase !== "idle") return FO.open(); FO.start("focus"); };
+  }
+  window.parent.addEventListener("ss:focus", function () { if (cur === "focus" && !document.hidden) { try { vFocus(); } catch (e) {} } });
+
+
+  /* ================= SHIFT ================= */
+  var HEALTH = {};
+  var ACC = { fullScreen: true, batteryUnrestricted: false, native: false };
+  async function vShift() {
+    var v = $("#v");
+    v.innerHTML = '<div class="hd"><div><h2>Shift</h2><small>Your timeline, check-in and reminders</small></div></div><div id="sc"></div><div id="rm"></div>';
+    window.SSShift.mount($("#sc"), { full: true });
+    HEALTH = await AL.health(); ACC = await AL.access(); drawRem();
+  }
+  function drawRem() {
+    var rem = LS.get("ss_shift_rem", "0") === "1", lead = +LS.get("ss_shift_lead", "10"), nud = AL.nudgesOn(), H = HEALTH, ok = H.notif === "granted";
+    var st = window.SSShift.data(), el = $("#rm"); if (!el) return;
+    el.innerHTML = '<div class="sub">Alerts &amp; reminders</div><div class="card" style="padding:2px 16px">' +
+      '<div class="row" data-r="nudge"><div style="flex:1"><b>Cute study nudges 💌</b><i>Friendly messages before your shift and during the day</i></div><span class="tg ' + (nud ? "on" : "") + '"></span></div>' +
+      '<div class="row" data-r="rem"><div style="flex:1"><b>Shift alarm</b><i>Rings when your shift is about to start</i></div><span class="tg ' + (rem ? "on" : "") + '"></span></div>' +
+      (rem ? '<div class="scroll" style="padding:2px 0 12px" id="ld">' + [[0, "On time"], [10, "10 min before"], [30, "30 min before"], [60, "1 hour before"]].map(function (o) { return '<button class="chip ' + (lead === o[0] ? "on" : "") + '" data-v="' + o[0] + '">' + o[1] + '</button>'; }).join("") + '<button class="chip" data-r="snd">🔔 ' + esc(soundName(LS.get("ss_shift_sound", "chime"))) + '</button></div>' : "") +
+      '<div class="row" data-r="sample"><div style="flex:1"><b>Send me a sample nudge</b><i>See how a message looks</i></div><span style="color:var(--ss-faint);font-size:20px">›</span></div></div>' +
+      '<div class="sub">Make sure alerts arrive</div><div class="card" style="padding:2px 16px">' +
+      '<div class="row" data-r="perm"><div style="flex:1"><b>Notifications</b><i>' + (ok ? "Allowed" : "Turn on to get alerts") + '</i></div><span class="chip ' + (ok ? "on" : "") + '">' + (ok ? "Allowed" : "Allow") + '</span></div>' +
+      '<div class="row" data-r="exact"><div style="flex:1"><b>Exact alarms</b><i>' + (H.exact === "denied" ? "Needed so alarms ring on time" : "On time, every time") + '</i></div><span class="chip ' + (H.exact === "denied" ? "" : "on") + '">' + (H.exact === "denied" ? "Allow" : "OK") + '</span></div>' +
+      (ACC.native ? '<div class="row" data-r="full"><div style="flex:1"><b>Alarm over lock screen</b><i>' + (ACC.fullScreen ? "On — alarms open full screen" : "Allow so alarms open full screen") + '</i></div><span class="chip ' + (ACC.fullScreen ? "on" : "") + '">' + (ACC.fullScreen ? "OK" : "Allow") + '</span></div>' : "") +
+      '<div class="row" data-r="batt"><div style="flex:1"><b>Battery</b><i>' + (ACC.batteryUnrestricted ? "Unrestricted — alarms are never delayed" : "Set to “Unrestricted” so alarms are never delayed") + '</i></div><span class="chip ' + (ACC.batteryUnrestricted ? "on" : "") + '">' + (ACC.batteryUnrestricted ? "OK" : "Allow") + '</span></div>' +
+      '<div class="row" data-r="test"><div style="flex:1"><b>Test alarm in 10 seconds</b><i>Close the app after tapping to check it rings</i></div><span class="chip on">Test</span></div></div>';
+    el.onclick = async function (e) {
+      var t = e.target.closest("[data-r],#ld button[data-v]"); if (!t) return; var r = t.dataset.r;
+      if (t.dataset.v != null) { LS.set("ss_shift_lead", t.dataset.v); if (st) await AL.syncShifts(st.shifts, +t.dataset.v, LS.get("ss_shift_sound", "chime"), true); return drawRem(); }
+      if (r === "nudge") { LS.set("ss_nudges", nud ? "0" : "1"); await AL.scheduleNudges(); toast(nud ? "Nudges off" : "Nudges on 💌"); return drawRem(); }
+      if (r === "rem") { var on = !rem; LS.set("ss_shift_rem", on ? "1" : "0"); if (on) await Core.perm.need("notifications"); if (st) await AL.syncShifts(st.shifts, lead, LS.get("ss_shift_sound", "chime"), on); toast(on ? "Shift alarm on" : "Shift alarm off"); return drawRem(); }
+      if (r === "snd") return pickSound(LS.get("ss_shift_sound", "chime"), async function (s) { LS.set("ss_shift_sound", s); if (st) await AL.syncShifts(st.shifts, lead, s, true); drawRem(); });
+      if (r === "sample") { var M = AL.messages.start, m = M[Math.floor(Math.random() * M.length)]; await Core.perm.need("notifications"); await AL.notifyNow(m[0], m[1].replace("{seat}", ""), { path: "/clock.html", tab: "shift" }); return toast("Sent — check your notifications"); }
+      if (r === "perm") { await Core.perm.need("notifications"); HEALTH = await AL.health(); AL.schedule(); AL.scheduleNudges(); return drawRem(); }
+      if (r === "exact") { try { await N.LocalNotifications.changeExactNotificationSetting(); } catch (e2) {} return; }
+      if (r === "full") { AL.openFullScreen(); return; }
+      if (r === "batt") { if (ACC.native) AL.openBattery(); else { try { N.Settings.open({ optionAndroid: N.AndroidSettings.BatteryOptimization, optionIOS: N.IOSSettings.App }); } catch (e3) {} } return; }
+      if (r === "test") { if (!(await Core.perm.need("notifications"))) return; await AL.testIn(10); toast("Test alarm in 10 seconds"); }
+    };
+  }
+
+
+  VIEWS.focus = vFocus; VIEWS.shift = vShift;
+
+  /* ---------- start ---------- */
+  function resumed() { AL.pull().then(function (ch) { if (ch && (cur === "timer" || cur === "alarm")) VIEWS[cur](); }); }
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) resumed(); });
+  window.addEventListener("ss:resume", resumed);
+  Core.getUser().then(async function (u) {
+    if (u && u.role !== "student") { $("#v").innerHTML = '<div class="empty" style="padding-top:90px"><div class="em">⏰</div><b>Not available</b><br>The clock is part of the student app.</div>'; return; }
+    student = !!(u && u.role === "student");
+    var ids = tabs(); if (ids.indexOf(cur) < 0) cur = "alarm";
+    try { await AL.ready; await AL.pull(); } catch (e) {}
+    try { AL.rollRandom(); } catch (e) {}
+    tab(cur);
+    window.addEventListener("resize", function () { var on = $("#tabs button.on"), ind = $("#tabs .ind"); if (on && ind) { ind.style.width = (on.offsetWidth - 20) + "px"; ind.style.transform = "translateX(" + (on.offsetLeft + 10) + "px)"; } });
+  });
+})();
+</script></body></html>

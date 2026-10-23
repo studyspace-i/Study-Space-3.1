@@ -1,0 +1,33 @@
+{
+  "appId": "in.mrharshit.studyspace",
+  "appName": "Study Space",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1800,
+      "launchAutoHide": true,
+      "launchFadeOutDuration": 250,
+      "backgroundColor": "#2B2F8F",
+      "showSpinner": false
+    },
+    "CapacitorHttp": {
+      "enabled": true
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_notify",
+      "iconColor": "#4F46E5"
+    },
+    "PrivacyScreen": {
+      "enable": false
+    }
+  },
+  "server": {
+    "androidScheme": "https",
+    "hostname": "study.mrharshit.in",
+    "errorPath": "offline.html"
+  }
+}

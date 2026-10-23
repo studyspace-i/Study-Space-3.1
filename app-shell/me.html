@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"/><title>My profile — Study Space</title>
+<style>
+:root{--a1:#4f46e5;--a2:#7c3aed}*{box-sizing:border-box}body{margin:0;padding:6px 16px 150px;color:var(--ss-ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.hero{border-radius:30px;padding:22px 18px 18px;color:#fff;text-align:center;background:linear-gradient(140deg,var(--a1),var(--a2) 65%,#db2777);box-shadow:0 22px 40px -22px var(--a1);position:relative;overflow:hidden}.hero::after{content:"";position:absolute;left:-40px;bottom:-50px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.13)}
+.av{width:84px;height:84px;border-radius:30px;margin:0 auto 12px;display:grid;place-items:center;font-size:34px;font-weight:800;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.hero h1{margin:0;font-size:23px;font-weight:800;letter-spacing:-.01em}.hero .sub{font-size:13px;opacity:.9;margin-top:3px}
+.chip{display:inline-block;margin-top:10px;padding:5px 13px;border-radius:14px;background:rgba(255,255,255,.2);font-size:12px;font-weight:800;border:1px solid rgba(255,255,255,.35)}
+.stats{display:flex;gap:10px;margin:14px 0 6px}.stats>div{flex:1;border-radius:20px;padding:14px 8px;text-align:center;background:var(--ss-glass);border:1px solid var(--ss-line);box-shadow:0 14px 28px -18px rgba(79,70,229,.45)}.stats b{display:block;font-size:20px;font-weight:800}.stats span{font-size:11px;color:var(--ss-mut);font-weight:700}
+.h{font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--ss-mut);margin:20px 6px 8px}
+.card{border-radius:26px;background:var(--ss-glass);border:1px solid var(--ss-line);box-shadow:0 16px 34px -18px rgba(79,70,229,.4);padding:4px 16px}
+.r{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid rgba(226,232,240,.8)}.r:first-child{border:0}.r .i{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:17px;background:var(--ss-soft);flex:none}
+.r .k{font-size:11.5px;color:var(--ss-faint);font-weight:700;letter-spacing:.03em}.r .v{font-size:15px;font-weight:700;margin-top:1px;word-break:break-word}
+.pill{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:800}.ok{background:#dcfce7;color:#15803d}.bad{background:#fee2e2;color:#b91c1c}.warn{background:#fef3c7;color:#b45309}
+.btn{display:block;width:100%;padding:15px;border-radius:18px;border:0;font-weight:800;font-size:15px;color:#fff;background:linear-gradient(135deg,var(--a1),var(--a2));box-shadow:0 14px 26px -12px var(--a1);margin-top:12px;text-align:center}.btn.g{background:#fff;color:#334155;border:1.5px solid #e2e8f0;box-shadow:none}
+</style></head>
+<body><div id="app"><div class="hero" style="height:210px;opacity:.5"></div></div>
+<script src="/child.js"></script>
+<script>
+(function () {
+  var Core = parent.AppCore, Shell = parent.AppShell;
+  var esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  function title(s) { return String(s || "").toLowerCase().replace(/\b[a-z]/g, function (c) { return c.toUpperCase(); }).trim(); }
+  function phone(p) { p = String(p || "").replace(/\D/g, ""); if (p.length >= 10) { p = p.slice(-10); return "+91 " + p.slice(0, 5) + " " + p.slice(5); } return p || "—"; }
+  function date(d) { if (!d) return "—"; try { return new Date(d).toLocaleDateString([], { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return "—"; } }
+  function api(u) { return Core.fetch("/api" + u, {}).then(function (r) { return r.json(); }).catch(function () { return null; }); }
+  function row(ic, k, v) { return v == null || v === "" ? "" : '<div class="r"><div class="i">' + ic + '</div><div><div class="k">' + k + '</div><div class="v">' + v + '</div></div></div>'; }
+  async function load() {
+    var u = await Core.getUser() || {}, role = u.role === "student" ? "Student" : u.role === "staff" ? "Staff" : "Library Admin";
+    var chk = await api("/auth/check"); if (chk && chk.success && chk.data) { u = Object.assign({}, u, chk.data); }
+    var p = null, m = null;
+    if (u.role === "student") { var a = await api("/student/profile"), b = await api("/student/membership-status"); p = a && a.data; m = b && b.data; }
+    var name = title(((p && p.userId && p.userId.firstName) || u.firstName || "") + " " + ((p && p.userId && p.userId.lastName) || u.lastName || "")) || "Study Space User";
+    var ini = name.split(" ").map(function (w) { return w[0]; }).slice(0, 2).join("").toUpperCase();
+    var sub = u.role === "student" ? (p && p.libraryCardNumber ? "Student ID · " + esc(p.libraryCardNumber) : "Student") : esc(u.email || "");
+    var left = m && typeof m.daysLeft === "number" ? m.daysLeft : null;
+    var h = '<div class="hero"><div class="av">' + esc(ini || "S") + '</div><h1>' + esc(name) + '</h1><div class="sub">' + sub + '</div><span class="chip">' + role + '</span></div>';
+    if (u.role === "student") h += '<div class="stats"><div><b>' + (m && m.seatNumber ? "#" + esc(m.seatNumber) : "—") + '</b><span>Seat</span></div><div><b>' + (left == null ? "—" : left < 0 ? "Due" : left) + '</b><span>' + (left != null && left >= 0 ? "Days left" : "Membership") + '</span></div><div><b>' + (m && m.status ? esc(title(m.status)) : "—") + '</b><span>Status</span></div></div>';
+    h += '<p class="h">Contact</p><div class="card">' + row("📱", "Mobile", phone((p && p.userId && p.userId.phone) || u.phone)) + row("✉️", "Email", esc((p && p.userId && p.userId.email) || u.email || "—")) + '</div>';
+    if (u.role === "student") {
+      var st = m && m.status ? '<span class="pill ' + (/active/i.test(m.status) ? "ok" : "bad") + '">' + esc(title(m.status)) + '</span>' : "—";
+      h += '<p class="h">Library</p><div class="card">' + row("🪪", "Student ID", esc((p && p.libraryCardNumber) || "—")) + row("🪑", "Seat", m && m.seatNumber ? "#" + esc(m.seatNumber) : "—") + row("⏰", "Shift", m && m.shifts && m.shifts.length ? m.shifts.map(function (s) { return esc(s.name || s); }).join("<br>") : "—") + row("📅", "Valid till", date(m && m.expiryDate)) + row("✅", "Membership", st) + '</div>';
+      h += '<p class="h">Personal</p><div class="card">' + row("👨‍👩‍👧", "Parent / Guardian", p && p.parentName ? esc(title(p.parentName)) : "—") + row("☎️", "Guardian mobile", p && p.parentPhone ? phone(p.parentPhone) : "—") + row("🎓", "Education", p && p.education ? esc(p.education) : "—") + row("📍", "Address", p && (p.address || p.city) ? esc([p.address, p.city, p.state, p.pincode].filter(Boolean).join(", ")) : "—") + '</div>';
+      h += '<button class="btn" id="chg">Request a profile change</button>';
+    } else {
+      h += '<p class="h">Account</p><div class="card">' + row("🛡️", "Role", role) + row("🏫", "Library settings", "Name, Wi-Fi, team, seats & billing") + '</div><button class="btn" id="lib">Open library settings</button>';
+    }
+    h += '<button class="btn g" id="pay">💜 Pay Now · support Study Space</button><button class="btn g" id="set">Settings</button>';
+    document.getElementById("app").innerHTML = h;
+    var g = function (id, fn) { var e = document.getElementById(id); if (e) e.onclick = fn; };
+    g("chg", function () { Shell.go("/student/profile.html"); }); g("lib", function () { Shell.go("/admin/settings.html"); }); g("pay", function () { Shell.go("/pay-now.html"); }); g("set", function () { Shell.go("/app-settings.html"); });
+  }
+  load();
+})();
+</script></body></html>

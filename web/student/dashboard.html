@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Dashboard — Study Space</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+
+  <!-- Shown only if this account has no admission/membership set up yet -->
+  <div id="pending-setup-box" class="mb-6 hidden rounded-xl border border-amber-200 bg-amber-50 p-6 text-amber-900">
+    <h2 class="mb-1 text-lg font-bold">Your membership isn't set up yet</h2>
+    <p class="text-sm">Your account exists, but no seat/membership has been assigned yet. Please visit the library
+      in person (or contact the admin) to complete your admission — after that, your digital ID, seat, and study
+      tools will appear here automatically.</p>
+  </div>
+
+  <div id="dashboard-content" class="grid gap-4 md:grid-cols-3">
+    <div class="md:col-span-1">
+      <div class="mb-4 rounded-xl bg-gradient-to-br from-primary to-blue-800 p-6 text-white shadow-sm">
+        <div class="text-xs uppercase tracking-wide text-blue-100">Digital Library Card</div>
+        <h2 class="mt-2 text-lg font-bold" id="dc-name">–</h2>
+        <div class="mb-3 text-sm text-blue-100" id="dc-card">–</div>
+        <div class="flex justify-between text-sm">
+          <span>Seat: <strong id="dc-seat">–</strong></span>
+          <span>Status: <strong id="dc-status">–</strong></span>
+        </div>
+        <div class="mt-2 text-sm text-blue-100" id="dc-shifts">–</div>
+        <div class="text-sm text-blue-100" id="dc-expiry">–</div>
+      </div>
+
+      <div class="mb-4 rounded-xl bg-white p-5 shadow-sm">
+        <h3 class="mb-2 text-sm font-semibold text-gray-700">📶 Wi-Fi Access</h3>
+        <p class="mb-2 text-xs text-gray-400">Only available while your membership is active.</p>
+        <div id="wifi-info"><button id="btn-show-wifi" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">Show Wi-Fi Details</button></div>
+      </div>
+
+      <div class="rounded-xl bg-white p-5 shadow-sm">
+        <h3 class="mb-2 text-sm font-semibold text-gray-700">🧾 Payment History</h3>
+        <ul id="payment-history" class="divide-y divide-gray-100 text-sm"><li class="py-2 text-gray-400">Loading...</li></ul>
+      </div>
+    </div>
+
+    <div class="md:col-span-2">
+      <div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div class="rounded-xl bg-blue-600 p-4 text-white shadow-sm"><div class="text-xs text-blue-100">Days Left</div><div class="mt-1 text-xl font-bold" id="stat-days-left">–</div></div>
+        <div class="rounded-xl bg-amber-500 p-4 text-white shadow-sm"><div class="text-xs text-amber-100">Streak</div><div class="mt-1 text-xl font-bold" id="stat-streak">–</div></div>
+        <div class="rounded-xl bg-emerald-600 p-4 text-white shadow-sm"><div class="text-xs text-emerald-100">Today</div><div class="mt-1 text-xl font-bold" id="stat-today-min">–</div></div>
+        <div class="rounded-xl bg-teal-600 p-4 text-white shadow-sm"><div class="text-xs text-teal-100">This Week</div><div class="mt-1 text-xl font-bold" id="stat-week-min">–</div></div>
+        <div class="rounded-xl bg-indigo-600 p-4 text-white shadow-sm"><div class="text-xs text-indigo-100">This Month</div><div class="mt-1 text-xl font-bold" id="stat-month-min">–</div></div>
+        <div class="rounded-xl bg-violet-600 p-4 text-white shadow-sm"><div class="text-xs text-violet-100">All-Time</div><div class="mt-1 text-xl font-bold" id="stat-total-hrs">–</div></div>
+      </div>
+
+      <div class="mb-4 rounded-xl bg-white p-6 text-center shadow-sm">
+        <h3 class="mb-1 text-sm font-semibold text-gray-700">Study Timer</h3>
+        <p class="mb-3 text-xs text-gray-400">Auto-stops after 4 hours for safety. A session spanning midnight is split correctly across both days.</p>
+        <div class="mb-4 text-4xl font-bold text-primary" id="timer-display">00:00:00</div>
+        <div class="flex justify-center gap-2">
+          <button id="btn-start" class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Start</button>
+          <button id="btn-pause" disabled class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-500 disabled:opacity-50">Pause</button>
+          <button id="btn-stop" disabled class="rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-600 disabled:opacity-50">Stop &amp; Save</button>
+        </div>
+      </div>
+
+      <div class="mb-4 rounded-xl bg-white p-6 shadow-sm">
+        <div class="mb-3 flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-gray-700">Consistency (last 30 days)</h3>
+          <button id="btn-reset-streak" class="text-sm text-red-600 hover:underline">Reset Challenge</button>
+        </div>
+        <div class="flex flex-wrap gap-1" id="consistency-strip"></div>
+      </div>
+
+      <div class="rounded-xl bg-white p-6 shadow-sm">
+        <h3 class="mb-3 text-sm font-semibold text-gray-700">Today's To-Do List</h3>
+        <p class="mb-2 text-xs text-gray-400">Want to plan a different day? Use the <a href="/student/calendar.html" class="text-primary hover:underline">Study Calendar</a> — click any date to open its to-do list.</p>
+        <div class="mb-3 flex gap-2">
+          <input id="new-todo" placeholder="Add a task for today" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+          <button id="btn-add-todo" class="whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Add</button>
+        </div>
+        <ul id="todo-list" class="divide-y divide-gray-100 text-sm"></ul>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+function todayStr() {
+  return new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD in local time
+}
+
+async function loadDigitalId() {
+  try {
+    const { data: d } = await api("/student/digital-id");
+    document.getElementById("dc-name").textContent = d.name;
+    document.getElementById("dc-card").textContent = d.libraryCardNumber;
+    document.getElementById("dc-seat").textContent = "#" + d.seatNumber;
+    document.getElementById("dc-status").textContent = d.status;
+    document.getElementById("dc-shifts").textContent = d.shifts.map((s) => `${s.name} (${s.time})`).join(", ");
+    document.getElementById("dc-expiry").textContent = "Expires: " + new Date(d.expiryDate).toLocaleDateString();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function loadMembershipStatus() {
+  try {
+    const { data } = await api("/student/membership-status");
+    const el = document.getElementById("stat-days-left");
+    if (!data) el.textContent = "–";
+    else if (data.daysLeft < 0) { el.textContent = "Overdue " + Math.abs(data.daysLeft) + "d"; el.parentElement.classList.replace("bg-blue-600", "bg-red-600"); }
+    else if (data.daysLeft === 0) el.textContent = "Expires today";
+    else el.textContent = data.daysLeft + (data.daysLeft === 1 ? " day" : " days");
+  } catch (e) {}
+}
+
+async function loadStreak() {
+  const { data } = await api("/student/streak");
+  document.getElementById("stat-streak").textContent = data.currentStreak;
+}
+
+async function loadStudyStats() {
+  const { data } = await api("/student/study-stats");
+  document.getElementById("stat-today-min").textContent = data.todayMinutes + " min";
+  document.getElementById("stat-total-hrs").textContent = (Math.round((data.totalMinutesAllTime / 60) * 10) / 10) + " hrs";
+}
+
+async function loadWeeklyStats() {
+  const { data } = await api("/student/weekly-stats");
+  document.getElementById("stat-week-min").textContent = (Math.round((data.totalMinutes / 60) * 10) / 10) + " hrs";
+}
+
+async function loadMonthlyStats() {
+  const now = new Date();
+  const { data } = await api(`/student/monthly-summary?year=${now.getFullYear()}&month=${now.getMonth() + 1}`);
+  document.getElementById("stat-month-min").textContent = (Math.round((data.totalMinutes / 60) * 10) / 10) + " hrs";
+}
+
+async function loadConsistency() {
+  const { data } = await api("/student/recent-days?days=30");
+  document.getElementById("consistency-strip").innerHTML = data.map((d) =>
+    `<span class="h-4 w-4 rounded ${d.studied ? "bg-primary" : "bg-gray-200"}" title="${d.date}"></span>`).join("");
+}
+
+async function loadPaymentHistory() {
+  const { data } = await api("/student/payment-history");
+  const list = document.getElementById("payment-history");
+  list.innerHTML = data.length
+    ? data.map((t) => `<li class="flex justify-between py-2"><span>${t.receiptNumber}</span><span>₹${t.amount}</span></li>`).join("")
+    : `<li class="py-2 text-gray-400">No payments yet</li>`;
+}
+
+async function loadTodos() {
+  const { data } = await api(`/student/todos/${todayStr()}`);
+  renderTodos(data);
+}
+function renderTodos(todos) {
+  const list = document.getElementById("todo-list");
+  list.innerHTML = todos.length ? todos.map((t) => `
+    <li class="flex items-center justify-between py-2">
+      <span class="flex items-center gap-2 ${t.done ? "text-gray-400 line-through" : ""}">
+        <input type="checkbox" class="todo-toggle h-4 w-4" data-id="${t._id}" ${t.done ? "checked" : ""}>${t.text}
+      </span>
+      <button class="todo-delete text-red-500 hover:text-red-700" data-id="${t._id}">✕</button>
+    </li>`).join("") : `<li class="py-2 text-gray-400">No tasks for today yet.</li>`;
+
+  list.querySelectorAll(".todo-toggle").forEach((cb) => {
+    cb.addEventListener("change", async () => {
+      const { data } = await api(`/student/todos/${todayStr()}/${cb.dataset.id}`, { method: "PUT" });
+      renderTodos(data);
+    });
+  });
+  list.querySelectorAll(".todo-delete").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const { data } = await api(`/student/todos/${todayStr()}/${btn.dataset.id}`, { method: "DELETE" });
+      renderTodos(data);
+    });
+  });
+}
+
+document.getElementById("btn-add-todo").addEventListener("click", async () => {
+  const val = document.getElementById("new-todo").value.trim();
+  if (!val) return;
+  const { data } = await api(`/student/todos/${todayStr()}`, { method: "POST", body: { text: val } });
+  document.getElementById("new-todo").value = "";
+  renderTodos(data);
+});
+
+function copyToClipboard(text, label) {
+  navigator.clipboard.writeText(text).then(
+    () => toast(`${label} copied to clipboard`),
+    () => toast(`Could not copy ${label.toLowerCase()} — copy it manually`, "error")
+  );
+}
+
+document.getElementById("btn-show-wifi").addEventListener("click", async () => {
+  try {
+    const { data } = await api("/student/wifi-info");
+    const nets = data.networks && data.networks.length ? data.networks : [{ ssid: data.ssid, password: data.password, label: "", band: "" }];
+    const escH = (t) => String(t == null ? "" : t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    document.getElementById("wifi-info").innerHTML = nets.map((n) => `
+      <div class="mb-2 rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm">
+        ${n.label || n.band ? `<div class="mb-1 text-xs font-semibold text-gray-500">${escH(n.label)}${n.label && n.band && n.band !== "dual" ? " · " : ""}${n.band && n.band !== "dual" ? escH(n.band) : ""}</div>` : ""}
+        <div class="flex items-center justify-between">
+          <span>Wi-Fi: <strong>${escH(n.ssid)}</strong></span>
+          <button class="btn-copy-wifi rounded border border-gray-300 px-2 py-0.5 text-xs text-gray-600 hover:bg-white" data-value="${escH(n.ssid)}" data-label="Wi-Fi name">📋 Copy</button>
+        </div>
+        <div class="mt-1 flex items-center justify-between">
+          <span>Password: <strong>${escH(n.password) || "(open network)"}</strong></span>
+          ${n.password ? `<button class="btn-copy-wifi rounded border border-gray-300 px-2 py-0.5 text-xs text-gray-600 hover:bg-white" data-value="${escH(n.password)}" data-label="Wi-Fi password">📋 Copy</button>` : ""}
+        </div>
+      </div>`).join("");
+    document.querySelectorAll(".btn-copy-wifi").forEach((btn) => {
+      btn.addEventListener("click", () => copyToClipboard(btn.dataset.value, btn.dataset.label));
+    });
+  } catch (e) {
+    document.getElementById("wifi-info").innerHTML = `<p class="text-sm text-red-600">${e.message}</p>`;
+  }
+});
+
+document.getElementById("btn-reset-streak").addEventListener("click", async () => {
+  if (!confirm("Reset your streak to 0 and start fresh today?")) return;
+  await api("/student/streak/reset", { method: "POST" });
+  loadStreak();
+});
+
+// =====================================================================
+// Study Timer — start/pause/resume/stop, with:
+//  - a 4-hour safety auto-stop (checked every tick)
+//  - correct midnight rollover: if the tracked time spans across 12 AM,
+//    it's split and credited to BOTH calendar days, not just one
+// Implemented as a list of {start, end} intervals so pause/resume cycles
+// (even ones that themselves span midnight) are handled correctly.
+// =====================================================================
+let intervals = [];
+let timerTickHandle = null;
+const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
+
+function currentElapsedMs() {
+  let total = 0;
+  for (const iv of intervals) total += (iv.end || new Date()) - iv.start;
+  return total;
+}
+function formatDuration(ms) {
+  const totalSec = Math.max(0, Math.floor(ms / 1000));
+  const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+  const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
+  const s = String(totalSec % 60).padStart(2, "0");
+  return `${h}:${m}:${s}`;
+}
+function updateTimerTick() {
+  const elapsed = currentElapsedMs();
+  document.getElementById("timer-display").textContent = formatDuration(elapsed);
+  if (elapsed >= FOUR_HOURS_MS) {
+    stopTimer(true);
+  }
+}
+
+document.getElementById("btn-start").addEventListener("click", () => {
+  intervals.push({ start: new Date(), end: null });
+  timerTickHandle = setInterval(updateTimerTick, 1000);
+  document.getElementById("btn-start").disabled = true;
+  document.getElementById("btn-pause").disabled = false;
+  document.getElementById("btn-stop").disabled = false;
+});
+
+document.getElementById("btn-pause").addEventListener("click", () => {
+  const last = intervals[intervals.length - 1];
+  if (last && !last.end) last.end = new Date();
+  clearInterval(timerTickHandle);
+  document.getElementById("btn-start").disabled = false;
+  document.getElementById("btn-pause").disabled = true;
+});
+
+document.getElementById("btn-stop").addEventListener("click", () => stopTimer(false));
+
+async function stopTimer(isAutoStop) {
+  const last = intervals[intervals.length - 1];
+  if (last && !last.end) last.end = new Date();
+  clearInterval(timerTickHandle);
+
+  // Split every interval at midnight boundaries and bucket minutes per
+  // calendar date — this is what makes the rollover correct even across
+  // multiple pause/resume cycles.
+  const minutesByDate = {};
+  for (const iv of intervals) {
+    let segStart = iv.start;
+    const ivEnd = iv.end;
+    while (segStart < ivEnd) {
+      const nextMidnight = new Date(segStart.getFullYear(), segStart.getMonth(), segStart.getDate() + 1, 0, 0, 0, 0);
+      const segEnd = nextMidnight < ivEnd ? nextMidnight : ivEnd;
+      const dateStr = `${segStart.getFullYear()}-${String(segStart.getMonth() + 1).padStart(2, "0")}-${String(segStart.getDate()).padStart(2, "0")}`;
+      minutesByDate[dateStr] = (minutesByDate[dateStr] || 0) + (segEnd - segStart) / 60000;
+      segStart = segEnd;
+    }
+  }
+
+  const dateEntries = Object.entries(minutesByDate).map(([d, m]) => [d, Math.round(m)]).filter(([, m]) => m > 0);
+  let totalLogged = 0;
+  for (const [dateStr, mins] of dateEntries) {
+    try {
+      await api("/student/study-session", { method: "POST", body: { minutes: mins, date: dateStr } });
+      totalLogged += mins;
+    } catch (e) { toast(e.message, "error"); }
+  }
+
+  if (totalLogged > 0) {
+    if (dateEntries.length > 1) {
+      toast(`Session crossed midnight — logged ${totalLogged} minute(s) split automatically across ${dateEntries.length} days.`);
+    } else if (isAutoStop) {
+      toast(`Auto-stopped after 4 hours for safety. Logged ${totalLogged} minute(s).`, "info");
+    } else {
+      toast(`Logged ${totalLogged} minute(s) of study. Great work!`);
+    }
+    loadStreak(); loadStudyStats(); loadWeeklyStats(); loadMonthlyStats(); loadConsistency(); loadTodos();
+  }
+
+  intervals = [];
+  document.getElementById("timer-display").textContent = "00:00:00";
+  document.getElementById("btn-start").disabled = false;
+  document.getElementById("btn-pause").disabled = true;
+  document.getElementById("btn-stop").disabled = true;
+}
+
+(async () => {
+  const user = await guardRole("student");
+  if (!user) return;
+  renderStudentNav("/student/dashboard.html");
+
+  const hasProfile = await loadDigitalId();
+  if (!hasProfile) {
+    document.getElementById("dashboard-content").classList.add("hidden");
+    document.getElementById("pending-setup-box").classList.remove("hidden");
+    return;
+  }
+
+  loadMembershipStatus();
+  loadStreak();
+  loadStudyStats();
+  loadWeeklyStats();
+  loadMonthlyStats();
+  loadConsistency();
+  loadPaymentHistory();
+  loadTodos();
+})();
+
+// Warn before leaving the page while the timer is running, so an
+// accidental tab close doesn't silently lose an unsaved study session.
+window.addEventListener("beforeunload", (e) => {
+  if (intervals.length && !document.getElementById("btn-stop").disabled) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact the developer — Study Space</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+  <div id="contact-root"><p class="py-20 text-center text-gray-400">Loading…</p></div>
+</main>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script src="/assets/platform-widget.js?v=2"></script>
+<script>
+(async () => {
+  const user = await guardRole(["admin", "staff"]);
+  if (!user) return;
+  renderAdminNav("/admin/contact.html", user);
+  const ok = await PSW.ready;
+  if (!ok) { document.getElementById("contact-root").innerHTML = '<p class="py-20 text-center text-red-500">Could not load the contact page. Please refresh.</p>'; return; }
+  PSW.mountPage(document.getElementById("contact-root"));
+})();
+</script>
+</body>
+</html>

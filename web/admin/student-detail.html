@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Student Detail — Study Space Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <a href="/admin/students.html" class="inline-block text-sm text-gray-500 hover:text-primary">&larr; Back to Students</a>
+    <div id="live-clock" class="rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm"></div>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-3">
+    <div class="md:col-span-1">
+      <div class="rounded-xl bg-gradient-to-br from-primary to-blue-800 p-6 text-white shadow-sm">
+        <div class="mb-3 flex items-center gap-3">
+          <img id="dc-photo" class="hidden h-14 w-14 rounded-full border-2 border-white/40 object-cover" alt="Student photo" />
+          <div id="dc-photo-placeholder" class="flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/40 bg-white/10 text-xl">👤</div>
+          <div>
+            <div class="text-xs uppercase tracking-wide text-blue-100">Digital Library Card</div>
+            <h2 class="text-lg font-bold" id="dc-name">–</h2>
+          </div>
+        </div>
+        <div class="mb-3 text-sm text-blue-100" id="dc-card">–</div>
+        <div class="flex justify-between text-sm">
+          <span>Seat: <strong id="dc-seat">–</strong></span>
+          <span>Status: <strong id="dc-status">–</strong></span>
+        </div>
+        <div class="mt-2 text-sm text-blue-100" id="dc-expiry">–</div>
+      </div>
+
+      <div class="mt-4 rounded-xl bg-white p-5 shadow-sm text-sm">
+        <h3 class="mb-2 font-semibold text-gray-700">Contact</h3>
+        <p class="mb-1 text-gray-600">📞 <span id="s-phone">–</span></p>
+        <p class="mb-1 text-gray-600">✉️ <span id="s-email">–</span></p>
+        <p class="mb-1 text-gray-600">🏠 <span id="s-address">–</span></p>
+        <p class="mb-1 text-gray-600">🎓 <span id="s-education">–</span></p>
+        <p class="mb-1 text-gray-600">👪 <span id="s-parent">–</span> (<span id="s-parent-phone">–</span>)</p>
+        <p class="mt-2 border-t border-gray-100 pt-2 text-xs text-gray-400">🕒 Admitted: <span id="s-admitted-at">–</span></p>
+      </div>
+
+      <div class="mt-4 rounded-xl bg-white p-5 shadow-sm">
+        <h3 class="mb-3 text-sm font-semibold text-gray-700">Actions</h3>
+        <div class="grid gap-2">
+          <div id="wa-renew-box" class="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
+            <div class="mb-2 text-xs font-semibold text-emerald-800">Renewal reminder (WhatsApp)</div>
+            <div id="wa-renew-btn" class="text-sm text-gray-400">Loading…</div>
+          </div>
+          <button id="btn-checkin" class="rounded-md border border-emerald-300 px-3 py-1.5 text-sm font-medium text-emerald-700 hover:bg-emerald-50">Check-In</button>
+          <button id="btn-checkout" class="rounded-md border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-700 hover:bg-amber-50">Check-Out</button>
+          <button id="btn-reset-pw" class="rounded-md border border-blue-300 px-3 py-1.5 text-sm font-medium text-primary hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50">Reset Password</button>
+          <p id="reset-pw-cooldown-note" class="hidden text-center text-xs text-gray-400"></p>
+          <button id="btn-delete" class="rounded-md border border-red-300 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50">Delete Student</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="md:col-span-2">
+      <div class="mb-4 rounded-xl bg-white p-6 shadow-sm">
+        <h3 class="mb-3 text-sm font-semibold text-gray-700">Renew Membership</h3>
+        <div class="grid grid-cols-3 gap-2">
+          <div><label class="mb-1 block text-xs text-gray-500">Months</label><input type="number" min="1" max="12" value="1" id="renew-months" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+          <div>
+            <label class="mb-1 block text-xs text-gray-500">Payment Method</label>
+            <select id="renew-payment" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none">
+              <option value="cash">Cash</option>
+              <option value="online">Online</option>
+            </select>
+          </div>
+          <div class="flex items-end"><button id="btn-renew" class="w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-blue-700">Renew</button></div>
+        </div>
+        <div class="mt-3 grid grid-cols-2 gap-3">
+          <div class="flex items-center rounded-md bg-blue-50 px-3 py-2 text-sm text-blue-800">Estimated Fee: ₹<span id="renew-fee-preview">–</span></div>
+          <div>
+            <label class="mb-1 block text-xs text-gray-500">Amount Actually Paid (₹) <span class="text-gray-400">— editable</span></label>
+            <input type="number" min="0" step="1" id="renew-amount-paid" placeholder="Defaults to estimate" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4 rounded-xl bg-white p-6 shadow-sm">
+        <h3 class="mb-3 text-sm font-semibold text-gray-700">Membership History</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="border-b border-gray-200 text-xs uppercase text-gray-500">
+              <tr><th class="py-2 pr-4">Seat</th><th class="py-2 pr-4">Shifts</th><th class="py-2 pr-4">Start</th><th class="py-2 pr-4">Expiry</th><th class="py-2 pr-4">Amount</th><th class="py-2">Status</th></tr>
+            </thead>
+            <tbody id="memberships-body" class="divide-y divide-gray-100"><tr><td colspan="6" class="py-3 text-center text-gray-400">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="rounded-xl bg-white p-6 shadow-sm">
+        <div class="mb-3 flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-gray-700">Payment / Transaction History</h3>
+          <div class="flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-1.5">
+            <span class="text-xs font-medium text-emerald-700">Total Paid</span>
+            <span class="text-base font-bold text-emerald-800" id="transactions-total">₹0</span>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="border-b border-gray-200 text-xs uppercase text-gray-500">
+              <tr><th class="py-2 pr-4">Receipt No.</th><th class="py-2 pr-4">Amount</th><th class="py-2 pr-4">Method</th><th class="py-2">Date</th></tr>
+            </thead>
+            <tbody id="transactions-body" class="divide-y divide-gray-100"><tr><td colspan="4" class="py-3 text-center text-gray-400">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+const studentId = new URLSearchParams(window.location.search).get("id");
+let activeMembershipId = null;
+let activeMembershipShiftIds = [];
+let allShifts = [];
+let renewAmountManuallyEdited = false;
+let canManageStudents = true; // permission gate set once the logged-in user is known (below)
+
+async function updateRenewFeePreview() {
+  const months = Number(document.getElementById("renew-months").value) || 1;
+  const monthly = allShifts.filter((s) => activeMembershipShiftIds.includes(s._id)).reduce((sum, s) => sum + Number(s.price), 0);
+  const estimate = monthly * months;
+  document.getElementById("renew-fee-preview").textContent = estimate.toLocaleString("en-IN");
+  if (!renewAmountManuallyEdited) {
+    document.getElementById("renew-amount-paid").value = estimate || "";
+  }
+}
+document.getElementById("renew-months").addEventListener("input", updateRenewFeePreview);
+document.getElementById("renew-amount-paid").addEventListener("input", () => { renewAmountManuallyEdited = true; });
+
+let adminUser = null;
+function nEscSafe(v) { return String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+// WhatsApp renewal reminder: ready-written message, opens WhatsApp with the student's number.
+function renderRenewalWhatsApp(s, d) {
+  const box = document.getElementById("wa-renew-btn");
+  const m = d.activeMembership || (d.memberships && d.memberships[0]);
+  if (!m) { box.innerHTML = '<span class="text-xs text-gray-500">No membership to remind about.</span>'; return; }
+  const exp = new Date(String(m.expiryDate).replace(" ", "T"));
+  const midnight = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate());
+  const daysLeft = d.activeMembership ? d.daysLeft : Math.round((midnight(exp) - midnight(new Date())) / 86400000);
+  const msg = buildRenewalMessage({
+    name: s.userId.firstName, libraryName: adminUser && adminUser.libraryName, daysLeft, seat: m.seatNumber,
+    expiryDate: exp.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+  });
+  const label = daysLeft < 0 ? "Send 'membership expired' message" : daysLeft <= 7 ? "Send 'few days left' reminder" : "Send renewal reminder";
+  box.innerHTML = waButtonHtml(s.userId.phone, msg, label, "w-full justify-center !py-2 !text-sm")
+    + `<a href="/admin/notifications.html?student=${s._id}" class="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md border border-primary px-2.5 py-2 text-sm font-semibold text-primary hover:bg-blue-50">🔔 Send in-app alert to ${nEscSafe(s.userId.firstName)}</a>`;
+}
+
+async function loadDetail() {
+  try {
+    const { data: d } = await api(`/admin/students/${studentId}`);
+    const s = d.student;
+
+    document.getElementById("dc-name").textContent = `${s.userId.firstName} ${s.userId.lastName || ""}`;
+    if (s.userId.profilePhotoUrl) {
+      document.getElementById("dc-photo").src = s.userId.profilePhotoUrl;
+      document.getElementById("dc-photo").classList.remove("hidden");
+      document.getElementById("dc-photo-placeholder").classList.add("hidden");
+    }
+    document.getElementById("dc-card").textContent = s.libraryCardNumber;
+    document.getElementById("s-phone").textContent = s.userId.phone;
+    document.getElementById("s-email").textContent = s.userId.email || "–";
+    const addressParts = [s.address, s.city, s.state, s.pincode].filter(Boolean);
+    document.getElementById("s-address").textContent = addressParts.length ? addressParts.join(", ") : "–";
+    document.getElementById("s-education").textContent = s.education || "–";
+    document.getElementById("s-parent").textContent = s.parentName || "–";
+    document.getElementById("s-parent-phone").textContent = s.parentPhone || "–";
+    document.getElementById("s-admitted-at").textContent = s.createdAt ? new Date(s.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "–";
+
+    renderRenewalWhatsApp(s, d);
+
+    if (d.activeMembership) {
+      activeMembershipId = d.activeMembership._id;
+      activeMembershipShiftIds = (d.activeMembership.shifts || []).map((sh) => sh._id);
+      document.getElementById("dc-seat").textContent = "#" + d.activeMembership.seatNumber;
+      document.getElementById("dc-status").textContent = d.activeMembership.status;
+      document.getElementById("dc-expiry").textContent = `Expires: ${new Date(d.activeMembership.expiryDate).toLocaleDateString()} (${d.daysLeft} days left)`;
+      updateRenewFeePreview();
+    } else {
+      document.getElementById("dc-seat").textContent = "No membership";
+    }
+
+    document.getElementById("memberships-body").innerHTML = d.memberships.length
+      ? d.memberships.map((m) => `
+        <tr>
+          <td class="py-2 pr-4">#${m.seatNumber}</td>
+          <td class="py-2 pr-4">${(m.shifts || []).map((sh) => sh.name).join(", ")}</td>
+          <td class="py-2 pr-4">${new Date(m.startDate).toLocaleDateString()}</td>
+          <td class="py-2 pr-4">${new Date(m.expiryDate).toLocaleDateString()}</td>
+          <td class="py-2 pr-4">₹${m.totalAmountPaid}</td>
+          <td class="py-2"><span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">${m.status}</span></td>
+        </tr>`).join("")
+      : `<tr><td colspan="6" class="py-3 text-center text-gray-400">No membership history</td></tr>`;
+
+    const totalPaid = d.transactions.reduce((sum, t) => sum + Number(t.amount), 0);
+    document.getElementById("transactions-total").textContent = "₹" + totalPaid.toLocaleString("en-IN");
+
+    document.getElementById("transactions-body").innerHTML = d.transactions.length
+      ? d.transactions.map((t) => `
+        <tr><td class="py-2 pr-4">${t.receiptNumber}</td><td class="py-2 pr-4">₹${t.amount}</td><td class="py-2 pr-4">${t.paymentMethod}</td><td class="py-2">${new Date(t.createdAt).toLocaleString()}</td></tr>`).join("")
+      : `<tr><td colspan="4" class="py-3 text-center text-gray-400">No transactions yet</td></tr>`;
+  } catch (e) {
+    toast(e.message, "error");
+  }
+}
+
+document.getElementById("btn-checkin").addEventListener("click", async () => {
+  try { await api(`/admin/attendance/check-in/${studentId}`, { method: "POST" }); toast("Checked in successfully"); }
+  catch (e) { toast(e.message, "error"); }
+});
+document.getElementById("btn-checkout").addEventListener("click", async () => {
+  try { await api(`/admin/attendance/check-out/${studentId}`, { method: "POST" }); toast("Checked out successfully"); }
+  catch (e) { toast(e.message, "error"); }
+});
+document.getElementById("btn-reset-pw").addEventListener("click", async () => {
+  const email = document.getElementById("s-email").textContent.trim();
+  const hasEmail = email && email !== "–";
+  const confirmMsg = hasEmail
+    ? `This will generate a brand-new password and email it to ${email}.\n\nFor security, you'll only be able to send another reset email to this student after 10 days. Continue?`
+    : `This student has no email on file, so the new password can't be emailed — you'll need to share it with them directly.\n\nContinue?`;
+  if (!confirm(confirmMsg)) return;
+
+  try {
+    const { data } = await api(`/admin/students/${studentId}/reset-password`, { method: "POST" });
+    if (data.warning) {
+      toast(data.warning, "error");
+    } else {
+      toast(`Login email: ${data.loginCredentials.email} — New password: ${data.loginCredentials.password}`, "info");
+    }
+    loadResetPasswordStatus();
+  } catch (e) { toast(e.message, "error"); loadResetPasswordStatus(); }
+});
+
+async function loadResetPasswordStatus() {
+  const btn = document.getElementById("btn-reset-pw");
+  const note = document.getElementById("reset-pw-cooldown-note");
+  try {
+    const { data } = await api(`/admin/students/${studentId}/reset-password-status`);
+    if (data.canSend) {
+      if (canManageStudents) btn.disabled = false; // never re-enable for someone without permission
+      note.classList.add("hidden");
+    } else {
+      btn.disabled = true;
+      const nextDate = new Date(data.nextAvailableAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+      note.textContent = `Reset email sent recently — next one available ${nextDate} (in ${data.daysRemaining} day${data.daysRemaining === 1 ? "" : "s"}), for security.`;
+      note.classList.remove("hidden");
+    }
+  } catch (e) { /* status is a nice-to-have — don't block the page on it */ }
+}
+document.getElementById("btn-delete").addEventListener("click", () => {
+  const nm = (document.getElementById("dc-name") || {}).textContent || "this student";
+  DeleteUI.adminDelete(nm.trim(), studentId, () => { window.location.href = "/admin/students.html"; });
+});
+document.getElementById("btn-renew").addEventListener("click", async () => {
+  if (!activeMembershipId) { toast("No active membership to renew", "error"); return; }
+  try {
+    const { data } = await api(`/admin/memberships/${activeMembershipId}/renew`, {
+      method: "POST",
+      body: {
+        months: Number(document.getElementById("renew-months").value) || 1,
+        paymentMethod: document.getElementById("renew-payment").value,
+        amountPaid: document.getElementById("renew-amount-paid").value.trim(),
+      },
+    });
+    toast(`Renewed. New expiry: ${new Date(data.membership.expiryDate).toLocaleDateString()}, Paid: ₹${data.amountPaid}`);
+    renewAmountManuallyEdited = false;
+    loadDetail();
+  } catch (e) { toast(e.message, "error"); }
+});
+
+(async () => {
+  const user = await guardRole(["admin", "staff"]);
+  if (!user) return;
+  adminUser = user;
+  renderAdminNav("/admin/students.html", user);
+  startLiveClock("live-clock");
+
+  const canManage = user.role === "admin" || (user.permissions || []).includes("students");
+  canManageStudents = canManage;
+  if (!canManage) {
+    ["btn-checkin", "btn-checkout", "btn-reset-pw", "btn-delete", "btn-renew"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.disabled = true, el.classList.add("opacity-40", "cursor-not-allowed");
+    });
+  }
+
+  if (!studentId) { toast("No student id provided", "error"); return; }
+  try {
+    const { data } = await api("/admin/shifts");
+    allShifts = data;
+  } catch (e) { /* fee preview just won't compute if this fails */ }
+  loadDetail();
+  loadResetPasswordStatus();
+})();
+</script>
+<script src="/assets/delete-ui.js?v=1"></script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

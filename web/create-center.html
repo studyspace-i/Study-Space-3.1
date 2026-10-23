@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#047857" />
+  <title>Create your Study Center Account — Study Space Library Management System</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://study.mrharshit.in/create-center" />
+  <meta property="og:title" content="Create your Study Center Account — Study Space Library Management System" />
+  <meta property="og:description" content="Create a Study Center account on Study Space — manage seats, shifts, students, attendance and fees, and get discovered by students on the map." />
+  <meta property="og:image" content="https://study.mrharshit.in/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:site_name" content="Study Space" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Create your Study Center Account — Study Space Library Management System" />
+  <meta name="twitter:description" content="Create a Study Center account on Study Space — manage seats, shifts, students, attendance and fees, and get discovered by students on the map." />
+  <meta name="twitter:image" content="https://study.mrharshit.in/og-image.png" />
+  <meta name="description" content="Create a Study Center account on Study Space — manage seats, shifts, students, attendance and fees, and get discovered by students on the map." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://study.mrharshit.in/create-center" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.FX)document.documentElement.classList.add("fx-done")},2500);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+  <link rel="stylesheet" href="/assets/auth.css?v=3" />
+  <link rel="stylesheet" href="/assets/location.css?v=1" />
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="auth-body theme-center">
+<div class="auth">
+
+  <!-- ============ LEFT: step-by-step guide ============ -->
+  <aside class="aside">
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+    <canvas class="zpin" width="124" height="124" aria-hidden="true"></canvas>
+
+    <a class="brand" href="/index.html" data-fx><span class="brand-mark" data-icon="book"></span><span class="brand-name">Study Space</span></a>
+
+    <span class="aside-kicker" data-fx><span class="ic" data-icon="building"></span>Study Center account</span>
+    <h2 data-blur>Put your study center <em>on the map.</em></h2>
+    <p class="lede" data-fx>Set up seats, shifts and admissions — and let students nearby find you.</p>
+
+    <div class="steps-title" data-fx>Set up in 4 steps</div>
+    <ol class="steps" id="aside-steps">
+      <li data-fx><span class="dot">1</span><div><h4>Center &amp; owner details</h4><p>Your center's name, your name and your email.</p></div></li>
+      <li data-fx><span class="dot">2</span><div><h4>Verify your email</h4><p>Enter the 6-digit code we send you.</p></div></li>
+      <li data-fx><span class="dot">3</span><div><h4>Pin your center</h4><p>Tap “Use my current location” while at your center — we drop the pin and fill the address.</p></div></li>
+      <li data-fx><span class="dot">4</span><div><h4>Secure your account</h4><p>Set a password — your dashboard opens with 100 seats &amp; 5 shifts ready.</p></div></li>
+    </ol>
+
+    <div class="tipbox" id="tip" data-fx><span class="tip-ico"></span><div><b>Tip</b><span data-tip-text></span></div></div>
+
+    <div class="aside-spacer"></div>
+    <div class="pcard" id="pcard" data-fx>
+      <span class="pc-label">Listing preview</span>
+      <div class="pc-top"><span>Study Center</span><span class="pc-chip">Public listing</span></div>
+      <div class="pc-main">
+        <div class="pc-av" data-live="initial">?</div>
+        <div><div class="pc-name" data-live="name">Your study center</div><div class="pc-sub" data-live="sub">Owner · you</div></div>
+      </div>
+      <div class="pc-row">
+        <span class="pc-tag"><span class="ic" data-icon="pin"></span><span data-live="place">Add your location</span></span>
+        <span class="pc-tag">100 seats ready</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ RIGHT: the wizard ============ -->
+  <main class="main">
+    <div class="topbar">
+      <a href="/index.html"><span class="ic" data-icon="arrowLeft"></span>Home</a>
+      <span>Have an account? <a href="/login.html" style="color:var(--a1)">Sign in</a></span>
+    </div>
+
+    <div class="wrap">
+      <div class="seg" role="tablist" aria-label="Account type">
+        <a href="/register.html"><span class="ic" data-icon="grad"></span>Student</a>
+        <a href="/create-center.html" class="on" aria-current="page"><span class="ic" data-icon="building"></span>Study Center</a>
+      </div>
+
+      <div id="wizard-head">
+        <div class="prog-meta"><span id="prog-meta"></span></div>
+        <div class="prog" id="prog"><i></i></div>
+      </div>
+
+      <!-- Step 1 -->
+      <form id="details-form" class="step" novalidate>
+        <span class="acct-pill" data-fx><span class="ic" data-icon="building"></span>Study Center account</span>
+        <h1 class="title" data-fx>Create your study center</h1>
+        <p class="sub" data-fx>A brand-new, fully separate space for <b>your</b> students — with its own seats, shifts, fees and homepage.</p>
+        <div style="height:20px"></div>
+
+        <div class="field" id="f-libraryName" data-fx>
+          <label for="libraryName">Study center name</label>
+          <div class="inp"><span class="ico" data-icon="building"></span>
+            <input id="libraryName" type="text" required placeholder="e.g. Sunrise Study Point" autocomplete="organization" enterkeyhint="next" /></div>
+          <p class="hint">Students will see this name. You can change it later.</p>
+        </div>
+        <div class="field" id="f-fullName" data-fx>
+          <label for="fullName">Owner's full name</label>
+          <div class="inp"><span class="ico" data-icon="user"></span>
+            <input id="fullName" type="text" required placeholder="Your full name" autocomplete="name" enterkeyhint="next" /></div>
+        </div>
+        <div class="field" id="f-email" data-fx>
+          <label for="email">Owner's email <small>(this is your login)</small></label>
+          <div class="inp"><span class="ico" data-icon="mail"></span>
+            <input id="email" type="email" required placeholder="you@example.com" autocomplete="email" enterkeyhint="go" autocapitalize="none" spellcheck="false" /></div>
+        </div>
+        <div class="actions" data-fx>
+          <button id="details-btn" type="submit" class="btn"><span class="lbl">Send verification code</span></button>
+        </div>
+        <p class="foot-note" data-fx>Just want to study? <a href="/register.html">Create a Student account instead</a></p>
+      </form>
+
+      <!-- Step 2 -->
+      <form id="otp-form" class="step hidden" novalidate>
+        <span class="acct-pill" data-fx><span class="ic" data-icon="mailOpen"></span>Verify your email</span>
+        <h1 class="title" data-fx>Check your inbox</h1>
+        <p class="sub" data-fx>We sent a 6-digit code to confirm the owner's email. It works for 10 minutes.</p>
+        <div class="mail-card" data-fx><span class="mi" data-icon="mail"></span><div><small>Code sent to</small><b id="otp-email"></b></div></div>
+        <div id="otp-boxes" class="otp" data-fx role="group" aria-label="6-digit verification code"></div>
+        <div class="actions" data-fx>
+          <button id="verify-btn" type="submit" class="btn"><span class="lbl">Verify &amp; continue</span></button>
+        </div>
+        <div class="row-between" style="margin-top:6px" data-fx>
+          <button type="button" id="change-email-btn" class="linkbtn">Wrong email?</button>
+          <button type="button" id="resend-btn" class="linkbtn">Resend code</button>
+        </div>
+      </form>
+
+      <!-- Step 3 -->
+      <form id="location-form" class="step hidden" novalidate>
+        <span class="acct-pill" data-fx><span class="ic" data-icon="pin"></span>Center location</span>
+        <h1 class="title" data-fx>Where is your center?</h1>
+        <p class="sub" data-fx>Pin your center on the map so <b>students nearby can find you</b>. Best done while you're at the center.</p>
+        <div style="height:18px"></div>
+
+        <div class="field hidden" id="f-centerName2">
+          <label for="libraryName2">Study center name</label>
+          <div class="inp"><span class="ico" data-icon="building"></span>
+            <input id="libraryName2" type="text" placeholder="e.g. Sunrise Study Point" autocomplete="organization" /></div>
+          <p class="hint">Please enter it again — the page was reloaded after email verification.</p>
+        </div>
+
+        <div id="location-picker" data-fx></div>
+
+        <div id="pin-warning" class="wizard-note hidden" role="alert" style="margin-top:14px">
+          <span class="ic" data-icon="pin"></span>
+          <span><b>No map pin yet.</b> Students nearby won't see your center on the map until you add one. Drop a pin above — or tap <b>Continue</b> again to skip and add it later in <i>Settings → Center Location</i>.</span>
+        </div>
+
+        <div class="actions">
+          <div class="btn-row">
+            <button type="button" id="loc-back" class="btn btn-ghost"><span class="lbl">Back</span></button>
+            <button id="loc-next" type="submit" class="btn"><span class="lbl">Continue</span></button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Step 4 -->
+      <form id="password-form" class="step hidden" novalidate>
+        <span class="acct-pill" data-fx><span class="ic" data-icon="shield"></span>Secure your account</span>
+        <h1 class="title" data-fx>Create a password</h1>
+        <p class="sub" data-fx>You're the owner — this password protects your center's students, payments and data.</p>
+        <div style="height:20px"></div>
+
+        <div class="field" id="f-password" data-fx>
+          <label for="password">Password</label>
+          <div class="inp"><span class="ico" data-icon="lock"></span>
+            <input id="password" type="password" required autocomplete="new-password" placeholder="Create a password" enterkeyhint="next" />
+            <button type="button" class="eye" data-eye="password" aria-label="Show password"></button></div>
+          <div class="meter" id="pw-meter" data-score="0"><i></i><i></i><i></i><i></i></div>
+          <p class="hint" id="pw-label" aria-live="polite">Choose a strong password</p>
+          <ul class="reqs" id="pw-reqs" style="margin-top:8px">
+            <li data-req="len">8+ characters</li><li data-req="upper">Uppercase</li><li data-req="lower">Lowercase</li><li data-req="num">Number</li>
+          </ul>
+        </div>
+        <div class="field" id="f-confirm" data-fx>
+          <label for="confirmPassword">Confirm password</label>
+          <div class="inp"><span class="ico" data-icon="lock"></span>
+            <input id="confirmPassword" type="password" required autocomplete="new-password" placeholder="Type it again" enterkeyhint="go" />
+            <button type="button" class="eye" data-eye="confirmPassword" aria-label="Show password"></button></div>
+        </div>
+        <div class="consent-box" id="f-consent" data-fx>
+          <input type="checkbox" id="agree-terms" required />
+          <label for="agree-terms">I have read and agree to the
+            <a class="legal-link" href="/legal/terms-center.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> and
+            <a class="legal-link" href="/legal/terms-center.html#s31" target="_blank" rel="noopener">Privacy Policy</a>
+            for Study Center accounts.
+            <span class="consent-warn hidden" id="consent-warn">You must accept the Terms &amp; Conditions and Privacy Policy to create your center's account.</span>
+          </label>
+        </div>
+        <div class="actions">
+          <div class="btn-row">
+            <button type="button" id="pw-back" class="btn btn-ghost"><span class="lbl">Back</span></button>
+            <button id="finish-btn" type="submit" class="btn"><span class="lbl">Create my study center</span></button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Success -->
+      <div id="success-panel" class="success hidden" role="status">
+        <svg class="check-anim" viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="41"/><path d="M30 49l12 12 25-27"/></svg>
+        <span class="acct-pill"><span class="ic" data-icon="building"></span>Study Center account created</span>
+        <h1 class="title">Your center is live, <span id="success-name"></span>!</h1>
+        <p class="sub">Your study center starts with 100 seats and 5 shifts — customise everything from your dashboard. A welcome email is on its way.</p>
+        <dl class="summary" id="success-summary"></dl>
+        <a class="btn" href="/admin/dashboard.html" style="margin-bottom:10px"><span class="lbl">Open my dashboard</span></a>
+        <a class="btn btn-ghost" href="/find-centers.html"><span class="lbl">See my center on the map</span></a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  window.SIGNUP_CONFIG = {
+    type: "center",
+    titles: ["Center details", "Verify email", "Center location", "Secure account"],
+    tips: [
+      { icon: "lightbulb", text: "Use the name your students already know you by — it appears on the map and on your homepage." },
+      { icon: "mailOpen", text: "The code goes to the owner's email. Check spam if it doesn't arrive in a minute — you can resend it." },
+      { icon: "gps", text: "Standing at your center? Tap “Use my current location”, allow access, then drag the pin onto your exact doorway." },
+      { icon: "shield", text: "You're the owner: only you can add staff and change permissions. Choose a strong password." },
+    ],
+  };
+</script>
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/auth.js?v=2"></script>
+<script src="/assets/location.js?v=1"></script>
+<script src="/assets/signup.js?v=1"></script>
+<script src="/assets/vendor/motion.js?v=1" defer></script>
+<script src="/assets/fx.js?v=1" defer></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+/* Study Space — Legal document styling (Terms & Conditions / Privacy Policy) */
+:root{
+  --ink:#0f172a; --ink2:#334155; --muted:#566579; --line:#e6ebf3; --bg:#f6f8fc;
+  --a1:#2563eb; --a2:#7c3aed; --soft:#eef2ff;
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+body.theme-center{ --a1:#047857; --a2:#0f766e; --soft:#ecfdf5; }
+*{box-sizing:border-box}
+html,body{margin:0}
+body.legal-body{
+  font-family:var(--font); color:var(--ink); background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- top bar ---------- */
+.legal-topbar{
+  position:sticky; top:0; z-index:40; display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:14px 22px; background:rgba(255,255,255,.86); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.legal-topbar .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); font-weight:800;}
+.legal-topbar .brand .mark{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;font-size:16px;}
+.legal-topbar .doc-type{font-size:12px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:var(--a1); background:var(--soft); padding:5px 12px; border-radius:999px;}
+.legal-topbar .close-btn{display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 16px; border-radius:10px; border:1.5px solid var(--line); background:#fff; color:var(--ink2); font-weight:700; font-size:14px; text-decoration:none; cursor:pointer;}
+.legal-topbar .close-btn:hover{border-color:var(--a1); color:var(--a1);}
+
+/* ---------- hero ---------- */
+.legal-hero{ padding:44px 22px 26px; text-align:center; max-width:900px; margin:0 auto;}
+.legal-hero .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:999px; background:var(--soft); color:var(--a1); font-size:12px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; margin-bottom:16px;}
+.legal-hero h1{font-size:clamp(26px,4vw,40px); margin:0 0 10px; letter-spacing:-.02em;}
+.legal-hero p{color:var(--muted); font-size:15.5px; line-height:1.7; max-width:640px; margin:0 auto;}
+.legal-hero .meta{margin-top:18px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; font-size:12.5px; color:var(--muted);}
+.legal-hero .meta span{background:#fff; border:1px solid var(--line); border-radius:999px; padding:5px 12px;}
+
+/* ---------- layout ---------- */
+.legal-wrap{ max-width:1180px; margin:0 auto; padding:10px 22px 90px; display:grid; grid-template-columns:280px 1fr; gap:36px; align-items:start;}
+@media (max-width: 900px){ .legal-wrap{grid-template-columns:1fr;} }
+
+.legal-toc{ position:sticky; top:84px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 16px; max-height:calc(100vh - 110px); overflow:auto;}
+.legal-toc h3{margin:2px 6px 12px; font-size:12px; letter-spacing:.6px; text-transform:uppercase; color:var(--muted);}
+.legal-toc a{ display:block; padding:8px 10px; border-radius:9px; color:var(--ink2); text-decoration:none; font-size:13.5px; font-weight:600; line-height:1.4;}
+.legal-toc a:hover{background:var(--soft); color:var(--a1);}
+.legal-toc a.part-label{ margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--a1); font-weight:800; pointer-events:none; padding:8px 10px 2px;}
+@media (max-width:900px){ .legal-toc{position:static; max-height:none;} }
+
+.legal-content{ background:#fff; border:1px solid var(--line); border-radius:20px; padding:8px clamp(20px,4vw,56px) 40px; }
+.legal-content .part-divider{ margin:38px 0 6px; padding-top:26px; border-top:2px dashed var(--line); }
+.legal-content .part-divider .kicker{ font-size:12px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:var(--a1);}
+.legal-content .part-divider h2.big{font-size:26px; margin:6px 0 0;}
+
+.legal-content section{ padding:26px 0; border-bottom:1px solid var(--line); }
+.legal-content section:last-child{border-bottom:0;}
+.legal-content h2{ font-size:20px; margin:0 0 12px; display:flex; gap:10px; align-items:baseline; scroll-margin-top:90px;}
+.legal-content h2 .num{ color:var(--a1); font-variant-numeric:tabular-nums; }
+.legal-content h3{ font-size:15.5px; margin:20px 0 8px; color:var(--ink); scroll-margin-top:90px;}
+.legal-content p{ color:var(--ink2); line-height:1.8; font-size:14.8px; margin:0 0 12px;}
+.legal-content ul,.legal-content ol{ color:var(--ink2); line-height:1.8; font-size:14.8px; padding-left:22px; margin:0 0 14px;}
+.legal-content li{margin-bottom:6px;}
+.legal-content li::marker{color:var(--a1); font-weight:700;}
+.legal-content strong{color:var(--ink);}
+.legal-content table{width:100%; border-collapse:collapse; margin:10px 0 16px; font-size:13.8px;}
+.legal-content th,.legal-content td{ text-align:left; padding:10px 12px; border:1px solid var(--line); color:var(--ink2); vertical-align:top;}
+.legal-content th{background:var(--bg); color:var(--ink); font-weight:800;}
+.legal-content .note{ background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:14px 16px; font-size:13.8px; color:var(--ink2); margin:14px 0;}
+.legal-content .note b{color:var(--a1);}
+.legal-content .contact-card{ background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:18px 20px; font-size:14px; color:var(--ink2); line-height:1.9;}
+.legal-content .contact-card b{color:var(--ink);}
+
+.legal-footer{ max-width:1180px; margin:0 auto; padding:10px 22px 60px; color:var(--muted); font-size:13px; text-align:center;}
+.legal-footer a{color:var(--a1); text-decoration:none; font-weight:700;}
+
+.back-to-top{position:fixed; right:22px; bottom:22px; width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg,var(--a1),var(--a2)); color:#fff; display:grid; place-items:center; text-decoration:none; box-shadow:0 10px 24px -10px rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:50;}
+.back-to-top.show{opacity:1; pointer-events:auto;}
+.back-to-top:hover{transform:translateY(-3px);}
+
+/* ---------- print ---------- */
+@media print{
+  .legal-topbar, .legal-toc, .back-to-top, .legal-footer .no-print{display:none !important;}
+  .legal-wrap{grid-template-columns:1fr; display:block;}
+  .legal-content{border:0; padding:0;}
+  .legal-content section{ break-inside:avoid; page-break-inside:avoid; }
+  .legal-content .part-divider{ break-before:page; page-break-before:always; }
+  body{background:#fff;}
+}

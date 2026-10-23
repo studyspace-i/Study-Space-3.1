@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Students — Study Space Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <h1 class="text-2xl font-bold text-gray-900">Students</h1>
+      <span id="student-count-badge" class="rounded-full bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-800">–</span>
+    </div>
+    <div class="flex flex-wrap gap-2"><a href="/admin/deleted-accounts.html" class="rounded-md border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50">🗑 Deleted accounts <span id="deleted-count-badge" class="ml-1 hidden rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-bold text-white"></span></a>
+    <a href="/admin/add-student.html" id="btn-admit-link" class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">+ Admit New Student</a></div>
+  </div>
+
+  <div class="mb-4 rounded-xl bg-white p-4 shadow-sm">
+    <div class="grid gap-2 sm:grid-cols-4">
+      <input id="search" placeholder="Start typing a name, phone or card no. — results update live" class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none sm:col-span-2" />
+      <select id="status-filter" class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none">
+        <option value="">All statuses</option>
+        <option value="active">Active</option>
+        <option value="expired">Expired</option>
+        <option value="blocked">Blocked</option>
+        <option value="deleted">Deleted (30-day window)</option>
+      </select>
+      <select id="sort-by" class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none">
+        <option value="admissionDate">Sort: Admission Date</option>
+        <option value="name">Sort: Name</option>
+        <option value="daysLeft">Sort: Days Left</option>
+        <option value="seatNumber">Sort: Seat Number</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="rounded-xl bg-white p-4 shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="border-b border-gray-200 text-xs uppercase text-gray-500">
+          <tr><th class="py-2 pr-4">Card No.</th><th class="py-2 pr-4">Name</th><th class="py-2 pr-4">Phone</th><th class="py-2 pr-4">Seat</th><th class="py-2 pr-4">Shift(s)</th><th class="py-2 pr-4">Expiry</th><th class="py-2 pr-4">Status</th><th class="py-2 pr-4">WhatsApp</th><th class="py-2"></th></tr>
+        </thead>
+        <tbody id="students-body" class="divide-y divide-gray-100">
+          <tr><td colspan="9" class="py-4 text-center text-gray-400">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script src="/assets/delete-ui.js?v=1"></script>
+<script>
+const STATUS_BADGE = { deleted: "bg-red-600 text-white", active: "bg-emerald-100 text-emerald-700", expired: "bg-gray-200 text-gray-600", blocked: "bg-red-100 text-red-700" };
+
+let adminUser = null;
+// Renewal reminder button — only for students whose membership has <= 7 days left or has expired.
+function renewCell(s) {
+  const m = s.membership;
+  if (!m || m.daysLeft === null || m.daysLeft === undefined || m.daysLeft > 7 || s.status === "blocked") return `<span class="text-gray-300">–</span>`;
+  const msg = buildRenewalMessage({
+    name: s.userId.firstName, libraryName: adminUser && adminUser.libraryName, daysLeft: m.daysLeft, seat: m.seatNumber,
+    expiryDate: new Date(String(m.expiryDate).replace(" ", "T")).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+  });
+  return waButtonHtml(s.userId.phone, msg, m.daysLeft < 0 ? "Expired" : "Remind");
+}
+
+async function loadStudents() {
+  const params = new URLSearchParams({
+    search: document.getElementById("search").value.trim(),
+    status: document.getElementById("status-filter").value,
+    sortBy: document.getElementById("sort-by").value,
+  });
+  const tbody = document.getElementById("students-body");
+  tbody.innerHTML = `<tr><td colspan="9" class="py-4 text-center text-gray-400">Searching...</td></tr>`;
+  try {
+    const { data: rows } = await api(`/admin/students?${params.toString()}`);
+    const live = rows.filter((x) => !x.deleted).length, gone = rows.length - live;
+    document.getElementById("student-count-badge").textContent = `${live} ${live === 1 ? "student" : "students"}`;
+    const db = document.getElementById("deleted-count-badge"); db.textContent = gone; db.classList.toggle("hidden", !gone);
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="9" class="py-4 text-center text-gray-400">No students found.</td></tr>`;
+      return;
+    }
+    const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    tbody.innerHTML = rows.map((s) => s.deleted ? `
+      <tr class="border-l-4 border-red-500 bg-red-50">
+        <td class="py-2 pr-4 text-red-700 line-through">${esc(s.libraryCardNumber)}</td>
+        <td class="py-2 pr-4 font-medium text-red-700">${esc(s.userId.firstName)} ${esc(s.userId.lastName || "")}<div class="text-xs font-normal text-red-500">${s.deleted.by === "self" ? "Deleted by the student" : s.deleted.by === "owner" ? "Deleted by the platform owner" : "Deleted by your center"}${s.deleted.reason ? " — " + esc(s.deleted.reason) : ""}</div></td>
+        <td class="py-2 pr-4 text-red-700">${esc(s.userId.phone)}</td>
+        <td class="py-2 pr-4 text-red-300">–</td><td class="py-2 pr-4 text-red-300">–</td><td class="py-2 pr-4 text-red-300">–</td>
+        <td class="py-2 pr-4"><span class="rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">Deleted</span></td>
+        <td class="py-2 pr-4" colspan="1"><span class="rounded-md bg-white px-2 py-1 text-xs font-bold text-red-600 ring-1 ring-red-200">⏳ ${DeleteUI.left(s.deleted.secondsLeft)}</span><div class="mt-0.5 text-[10px] text-red-400">then → recycle bin</div></td>
+        <td class="py-2">${s.deleted.restorableByAdmin ? `<button class="btn-restore rounded-md bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-700" data-uid="${esc(s.deleted.userId)}" data-name="${esc(s.userId.firstName)}">Restore</button>` : `<span class="text-[11px] text-red-400">Only the developer can restore</span>`}</td>
+      </tr>` : `
+      <tr>
+        <td class="py-2 pr-4">${s.libraryCardNumber}</td>
+        <td class="py-2 pr-4">${s.userId.firstName} ${s.userId.lastName || ""}</td>
+        <td class="py-2 pr-4">${s.userId.phone}</td>
+        <td class="py-2 pr-4">${s.membership ? "#" + s.membership.seatNumber : "–"}</td>
+        <td class="py-2 pr-4">${s.membership ? s.membership.shifts.join(", ") : "–"}</td>
+        <td class="py-2 pr-4">${s.membership ? new Date(s.membership.expiryDate).toLocaleDateString() + (s.membership.daysLeft !== null ? ` (${s.membership.daysLeft}d)` : "") : "–"}</td>
+        <td class="py-2 pr-4"><span class="rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[s.status] || "bg-gray-100 text-gray-600"}">${s.status}</span></td>
+        <td class="py-2 pr-4">${renewCell(s)}</td>
+        <td class="py-2"><a href="/admin/student-detail.html?id=${s._id}" class="text-sm font-medium text-primary hover:underline">View</a></td>
+      </tr>`).join("");
+    tbody.querySelectorAll(".btn-restore").forEach((b) => b.addEventListener("click", () => DeleteUI.adminRestore(b.dataset.name, b.dataset.uid, loadStudents)));
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="9" class="py-4 text-center text-red-600">${e.message}</td></tr>`;
+  }
+}
+
+const loadStudentsDebounced = debounce(loadStudents, 300);
+
+(async () => {
+  const user = await guardRole(["admin", "staff"]);
+  if (!user) return;
+  adminUser = user;
+  renderAdminNav("/admin/students.html", user);
+  if (!(user.role === "admin" || (user.permissions || []).includes("students"))) {
+    document.getElementById("btn-admit-link").remove();
+  }
+  loadStudents();
+  document.getElementById("status-filter").addEventListener("change", loadStudents);
+  document.getElementById("sort-by").addEventListener("change", loadStudents);
+  // Live search: fires as you type (debounced 300ms so it doesn't hit the
+  // API on every single keystroke), no need to press Enter anymore.
+  document.getElementById("search").addEventListener("input", loadStudentsDebounced);
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

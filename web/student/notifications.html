@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Notifications — Study Space</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+  <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">🔔 Notifications</h1>
+      <p class="text-sm text-gray-500">Messages from your library — updates, notices and personal alerts.</p>
+    </div>
+    <div class="flex flex-wrap gap-2 text-sm">
+      <button id="btn-read-all" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 font-medium text-gray-700 hover:bg-gray-50">✓ Mark all read</button>
+      <button id="btn-clear-read" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 font-medium text-gray-700 hover:bg-gray-50">🧹 Clear read</button>
+      <button id="btn-clear-all" class="rounded-md border border-red-200 bg-white px-3 py-1.5 font-medium text-red-600 hover:bg-red-50">🗑 Delete all</button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="mb-4 rounded-xl bg-white p-3 shadow-sm">
+    <div class="flex flex-wrap items-center gap-2">
+      <div id="tabs" class="flex rounded-lg bg-gray-100 p-0.5 text-sm font-medium"></div>
+      <input id="search" type="search" placeholder="Search notifications…" class="min-w-[10rem] flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-primary focus:outline-none" />
+      <select id="sort" class="rounded-md border border-gray-300 px-2 py-1.5 text-sm">
+        <option value="new">Newest first</option>
+        <option value="old">Oldest first</option>
+        <option value="unread">Unread first</option>
+      </select>
+    </div>
+    <div id="type-chips" class="mt-3 flex flex-wrap gap-1.5 text-xs"></div>
+  </div>
+
+  <div id="list" class="space-y-2"></div>
+  <div id="empty" class="hidden rounded-xl bg-white p-10 text-center text-gray-400 shadow-sm">
+    <div class="mb-2 text-4xl">📭</div>
+    <p id="empty-text">No notifications yet.</p>
+  </div>
+  <div class="mt-4 text-center"><button id="btn-more" class="hidden rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Load older</button></div>
+</main>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/notifications.js?v=1"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+const PAGE = 30;
+const state = { filter: "all", type: "", q: "", sort: "new", items: [], total: 0, unread: 0, hasMore: false, open: new Set() };
+const params = new URLSearchParams(location.search);
+if (["all", "unread", "read"].includes(params.get("filter"))) state.filter = params.get("filter");
+const openFromUrl = params.get("open");
+
+function groupLabel(v) {
+  const d = new Date(String(v).replace(" ", "T"));
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const day = new Date(d); day.setHours(0, 0, 0, 0);
+  const diff = Math.round((today - day) / 86400000);
+  if (diff <= 0) return "Today";
+  if (diff === 1) return "Yesterday";
+  if (diff < 7) return "This week";
+  return d.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+}
+
+function renderTabs() {
+  const tabs = [["all", "All"], ["unread", `Unread${state.unread ? " (" + state.unread + ")" : ""}`], ["read", "Read"]];
+  document.getElementById("tabs").innerHTML = tabs.map(([k, l]) =>
+    `<button data-tab="${k}" class="rounded-md px-3 py-1 ${state.filter === k ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700"}">${l}</button>`).join("");
+  document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => { state.filter = b.dataset.tab; load(); }));
+}
+
+function renderChips() {
+  const chips = [["", "All types", ""]].concat(Object.entries(NOTIF_TYPES).map(([k, m]) => [k, m.label, m.icon]));
+  document.getElementById("type-chips").innerHTML = chips.map(([k, l, ic]) =>
+    `<button data-type="${k}" class="rounded-full border px-2.5 py-1 font-medium ${state.type === k ? "border-primary bg-primary text-white" : "border-gray-300 bg-white text-gray-600 hover:bg-gray-50"}">${ic ? ic + " " : ""}${l}</button>`).join("");
+  document.querySelectorAll("[data-type]").forEach((b) => b.addEventListener("click", () => { state.type = b.dataset.type; load(); }));
+}
+
+function cardHtml(n) {
+  const meta = NOTIF_TYPES[n.type] || NOTIF_TYPES.info;
+  const open = state.open.has(n._id);
+  const prio = n.priority === "urgent" ? `<span class="rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">Urgent</span>`
+    : n.priority === "important" ? `<span class="rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-orange-700">Important</span>` : "";
+  const hasBody = !!(n.body && n.body.trim());
+  return `
+  <div data-id="${n._id}" class="notif-card rounded-xl border bg-white shadow-sm transition ${n.read ? "border-gray-200" : "border-blue-300 ring-1 ring-blue-100"} ${n.priority === "urgent" && !n.read ? "!border-red-300 ring-red-100" : ""}">
+    <div class="flex gap-3 p-4">
+      <div class="flex h-11 w-11 flex-none items-center justify-center rounded-full text-2xl ${meta.bg}">${nEsc(n.icon)}</div>
+      <div class="min-w-0 flex-1">
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+          ${n.read ? "" : `<span class="h-2 w-2 flex-none rounded-full bg-primary" title="Unread"></span>`}
+          <button type="button" data-toggle class="text-left text-sm ${n.read ? "font-medium text-gray-700" : "font-bold text-gray-900"}">${nEsc(n.title)}</button>
+          ${n.isPinned ? `<span title="Pinned">📌</span>` : ""}${prio}
+        </div>
+        <div class="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-gray-400">
+          <span class="rounded-full px-2 py-0.5 font-medium ${meta.bg} ${meta.text}">${meta.label}</span>
+          <span title="${nEsc(nFullTime(n.createdAt))}">${nRelTime(n.createdAt)}</span>
+          <span>· from ${nEsc(n.from)}</span>
+        </div>
+        ${hasBody ? `<div class="notif-body mt-2 text-sm leading-relaxed text-gray-700 ${open ? "" : "max-h-14 overflow-hidden"}" style="${open ? "" : "-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)"}">${renderMarkdown(n.body)}</div>
+        <button type="button" data-toggle class="mt-1 text-xs font-medium text-primary hover:underline">${open ? "Show less" : "Read more"}</button>` : ""}
+      </div>
+      <div class="flex flex-none flex-col items-end gap-1 text-xs">
+        <button type="button" data-readtoggle class="rounded px-2 py-1 text-gray-500 hover:bg-gray-100" title="${n.read ? "Mark as unread" : "Mark as read"}">${n.read ? "◯ Unread" : "✓ Read"}</button>
+        <button type="button" data-delete class="rounded px-2 py-1 text-red-500 hover:bg-red-50" title="Delete from my profile">🗑 Delete</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function render() {
+  renderTabs(); renderChips();
+  const list = document.getElementById("list");
+  const empty = document.getElementById("empty");
+  if (!state.items.length) {
+    list.innerHTML = "";
+    empty.classList.remove("hidden");
+    document.getElementById("empty-text").textContent = (state.q || state.type || state.filter !== "all")
+      ? "Nothing matches these filters." : "No notifications yet — when your library sends something, it will appear here.";
+  } else {
+    empty.classList.add("hidden");
+    let html = "", last = "";
+    state.items.forEach((n) => {
+      if (state.sort !== "unread") {
+        const g = groupLabel(n.createdAt);
+        if (g !== last) { html += `<div class="px-1 pt-3 text-xs font-semibold uppercase tracking-wide text-gray-400">${nEsc(g)}</div>`; last = g; }
+      }
+      html += cardHtml(n);
+    });
+    list.innerHTML = html;
+  }
+  document.getElementById("btn-more").classList.toggle("hidden", !state.hasMore);
+  document.getElementById("btn-read-all").disabled = state.unread === 0;
+  document.getElementById("btn-read-all").classList.toggle("opacity-50", state.unread === 0);
+  NotifLive.setUnread(state.unread);
+}
+
+async function load(silent) {
+  const qs = new URLSearchParams({ filter: state.filter, type: state.type, q: state.q, sort: state.sort, limit: PAGE, offset: 0 });
+  try {
+    const { data } = await api("/student/notifications?" + qs);
+    state.items = data.items; state.total = data.total; state.unread = data.unread; state.hasMore = data.hasMore;
+    render();
+  } catch (e) { if (!silent) toast(e.message, "error"); }
+}
+
+async function loadMore() {
+  const qs = new URLSearchParams({ filter: state.filter, type: state.type, q: state.q, sort: state.sort, limit: PAGE, offset: state.items.length });
+  try {
+    const { data } = await api("/student/notifications?" + qs);
+    state.items = state.items.concat(data.items); state.hasMore = data.hasMore; state.unread = data.unread;
+    render();
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function setRead(n, read) {
+  try {
+    await api(`/student/notifications/${n._id}/${read ? "read" : "unread"}`, { method: "POST" });
+    n.read = read; state.unread = Math.max(0, state.unread + (read ? -1 : 1));
+    render();
+  } catch (e) { toast(e.message, "error"); }
+}
+
+document.getElementById("list").addEventListener("click", async (e) => {
+  const card = e.target.closest(".notif-card");
+  if (!card) return;
+  const n = state.items.find((x) => x._id === card.dataset.id);
+  if (!n) return;
+  if (e.target.closest("[data-delete]")) {
+    if (!confirm("Delete this notification from your profile?")) return;
+    try {
+      await api(`/student/notifications/${n._id}`, { method: "DELETE" });
+      if (!n.read) state.unread = Math.max(0, state.unread - 1);
+      state.items = state.items.filter((x) => x._id !== n._id);
+      render(); toast("Notification deleted");
+    } catch (err) { toast(err.message, "error"); }
+  } else if (e.target.closest("[data-readtoggle]")) {
+    setRead(n, !n.read);
+  } else if (e.target.closest("[data-toggle]")) {
+    if (state.open.has(n._id)) state.open.delete(n._id); else state.open.add(n._id);
+    if (!n.read) { await setRead(n, true); } else render();
+  }
+});
+
+document.getElementById("btn-read-all").addEventListener("click", async () => {
+  try { await api("/student/notifications/read-all", { method: "POST" }); toast("All marked as read"); load(); } catch (e) { toast(e.message, "error"); }
+});
+document.getElementById("btn-clear-read").addEventListener("click", async () => {
+  if (!confirm("Delete all notifications you have already read?")) return;
+  try { await api("/student/notifications?scope=read", { method: "DELETE" }); toast("Read notifications cleared"); load(); } catch (e) { toast(e.message, "error"); }
+});
+document.getElementById("btn-clear-all").addEventListener("click", async () => {
+  if (!confirm("Delete ALL your notifications? This cannot be undone.")) return;
+  try { await api("/student/notifications?scope=all", { method: "DELETE" }); toast("All notifications deleted"); load(); } catch (e) { toast(e.message, "error"); }
+});
+document.getElementById("btn-more").addEventListener("click", loadMore);
+document.getElementById("sort").addEventListener("change", (e) => { state.sort = e.target.value; load(); });
+let searchTimer;
+document.getElementById("search").addEventListener("input", (e) => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { state.q = e.target.value.trim(); load(); }, 300);
+});
+
+// The live poller calls this when a brand-new notification arrives while this page is open.
+window.NotifInbox = { reload: (silent) => load(silent) };
+
+(async () => {
+  const user = await guardRole("student");
+  if (!user) return;
+  renderStudentNav("/student/notifications.html");
+  if (openFromUrl) state.open.add(openFromUrl);
+  await load();
+  // Opened from a popup/link → mark that one read.
+  if (openFromUrl) {
+    const n = state.items.find((x) => x._id === openFromUrl);
+    if (n && !n.read) setRead(n, true);
+    const el = document.querySelector(`[data-id="${CSS.escape(openFromUrl)}"]`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

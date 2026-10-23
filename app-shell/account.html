@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/><title>Account — Study Space</title>
+<link rel="stylesheet" href="/assets/tailwind.css"/></head>
+<body class="px-4 pb-10 pt-3 text-slate-800">
+<section class="relative overflow-hidden rounded-[28px] p-6 text-white shadow-2xl" style="background:linear-gradient(140deg,#4f46e5,#7c3aed 55%,#db2777)">
+  <div class="pointer-events-none absolute -right-10 -top-10 h-44 w-44 rounded-full bg-white/20 blur-2xl"></div>
+  <div class="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-cyan-300/30 blur-2xl"></div>
+  <div class="relative">
+    <div class="grid h-14 w-14 place-items-center rounded-2xl bg-white/20 ring-1 ring-white/40"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 5.5C5 4 8.5 4 12 6c3.5-2 7-2 9.5-.5V19c-2.5-1.5-6-1.5-9.5.5-3.5-2-7-2-9.5-.5z"/><path d="M12 6v13.5"/></svg></div>
+    <h2 class="mt-4 text-2xl font-extrabold leading-tight">Welcome to<br/>Study Space</h2>
+    <p class="mt-2 text-sm text-white/85">Manage your study center, or join one as a student — seats, shifts, attendance and notices in one app.</p>
+    <div class="mt-5 grid grid-cols-2 gap-3">
+      <a href="/login.html" class="grid h-12 place-items-center rounded-2xl bg-white text-sm font-extrabold text-indigo-700 shadow-lg active:scale-95">Login</a>
+      <a href="/create-account.html" class="grid h-12 place-items-center rounded-2xl bg-white/15 text-sm font-extrabold text-white ring-1 ring-white/60 backdrop-blur active:scale-95">Create account</a>
+    </div>
+  </div>
+</section>
+
+<p class="mb-2 mt-7 px-1 text-[11px] font-extrabold uppercase tracking-[.22em] text-slate-500">Explore</p>
+<div class="space-y-2.5">
+  <a href="/find-centers.html" class="glass-row"><span class="gi" style="background:linear-gradient(135deg,#10b981,#14b8a6)">📍</span><span class="flex-1"><b>Find a study center</b><i>Search near you and send a join request</i></span><span class="chev">›</span></a>
+  <a href="/donate.html" class="glass-row"><span class="gi" style="background:linear-gradient(135deg,#ec4899,#8b5cf6)">💜</span><span class="flex-1"><b>Donate &amp; support</b><i>Keep Study Space free for students</i></span><span class="chev">›</span></a>
+  <a href="/supporters.html" class="glass-row"><span class="gi" style="background:linear-gradient(135deg,#f59e0b,#f97316)">🏆</span><span class="flex-1"><b>Supporters wall</b><i>People who power the platform</i></span><span class="chev">›</span></a>
+  <a href="/create-center.html" class="glass-row"><span class="gi" style="background:linear-gradient(135deg,#3b82f6,#6366f1)">🏢</span><span class="flex-1"><b>Create a study center</b><i>Free setup in a few minutes</i></span><span class="chev">›</span></a>
+</div>
+<p class="mt-8 text-center text-xs text-slate-400">Study Space app · <span id="v"></span></p>
+<style>
+.glass-row{display:flex;align-items:center;gap:14px;padding:14px;border-radius:22px;background:var(--ss-glass);border:1px solid var(--ss-line);box-shadow:0 12px 28px -16px rgba(79,70,229,.4);backdrop-filter:blur(16px)}
+.glass-row:active{transform:scale(.985)}
+.glass-row b{display:block;font-size:14.5px;color:var(--ss-ink)}.glass-row i{display:block;font-style:normal;font-size:12px;color:var(--ss-mut);margin-top:1px}
+.gi{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;font-size:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.chev{font-size:24px;color:var(--ss-faint);line-height:1}
+</style>
+<script src="/child.js"></script><script>document.getElementById("v").textContent="v"+(parent.APP_CONFIG&&parent.APP_CONFIG.VERSION||"1.0")</script>
+</body></html>

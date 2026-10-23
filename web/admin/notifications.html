@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Send Notifications — Study Space</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">🔔 Notifications to Students</h1>
+    <p class="text-sm text-gray-500">Send information, updates and notices to the students of <strong>your center only</strong> — everyone, a group, or one student.</p>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-5">
+    <!-- ============ COMPOSER ============ -->
+    <section class="space-y-5 lg:col-span-3">
+      <div class="rounded-xl bg-white p-5 shadow-sm">
+        <h2 class="mb-2 text-sm font-semibold text-gray-700">⚡ Quick templates</h2>
+        <div id="templates" class="flex flex-wrap gap-2 text-xs"></div>
+      </div>
+
+      <div class="rounded-xl bg-white p-5 shadow-sm">
+        <h2 class="mb-2 text-sm font-semibold text-gray-700">1. Type &amp; icon</h2>
+        <div id="type-grid" class="grid grid-cols-3 gap-2 sm:grid-cols-4"></div>
+        <div class="mt-3 flex items-center gap-2 text-sm">
+          <label class="text-xs text-gray-500" for="icon">Custom icon (optional emoji)</label>
+          <input id="icon" maxlength="4" placeholder="e.g. 🎓" class="w-20 rounded-md border border-gray-300 px-2 py-1 text-center text-lg focus:border-primary focus:outline-none" />
+        </div>
+      </div>
+
+      <div class="rounded-xl bg-white p-5 shadow-sm">
+        <h2 class="mb-2 text-sm font-semibold text-gray-700">2. Write your message</h2>
+        <div class="relative">
+          <input id="title" maxlength="160" placeholder="Title — e.g. Library closed on Diwali" class="w-full rounded-md border border-gray-300 px-3 py-2 pr-14 text-sm font-medium focus:border-primary focus:outline-none" />
+          <span id="title-count" class="absolute right-3 top-2.5 text-xs text-gray-400">0/160</span>
+        </div>
+        <div class="mt-3 flex flex-wrap items-center gap-1 text-xs" id="md-toolbar">
+          <button type="button" data-md="bold" class="rounded border border-gray-300 px-2 py-1 font-bold hover:bg-gray-50">B</button>
+          <button type="button" data-md="italic" class="rounded border border-gray-300 px-2 py-1 italic hover:bg-gray-50">I</button>
+          <button type="button" data-md="heading" class="rounded border border-gray-300 px-2 py-1 font-semibold hover:bg-gray-50">H</button>
+          <button type="button" data-md="list" class="rounded border border-gray-300 px-2 py-1 hover:bg-gray-50">• List</button>
+          <button type="button" data-md="quote" class="rounded border border-gray-300 px-2 py-1 hover:bg-gray-50">❝ Quote</button>
+          <button type="button" data-md="link" class="rounded border border-gray-300 px-2 py-1 hover:bg-gray-50">🔗 Link</button>
+          <span class="ml-2 text-gray-400">Insert:</span>
+          <span id="placeholders" class="flex flex-wrap gap-1"></span>
+        </div>
+        <textarea id="body" rows="7" maxlength="5000" placeholder="Write the details. You can use **bold**, *italic*, lists, links and {name} to greet each student by name." class="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:border-primary focus:outline-none"></textarea>
+        <p class="mt-1 text-xs text-gray-400">Markdown supported. Placeholders are filled in for every student when sent: <code>{name}</code> <code>{seat}</code> <code>{card}</code> <code>{expiry}</code> <code>{daysText}</code>.</p>
+      </div>
+
+      <div class="rounded-xl bg-white p-5 shadow-sm">
+        <h2 class="mb-2 text-sm font-semibold text-gray-700">3. Who should get it?</h2>
+        <div id="audience-opts" class="grid gap-2 sm:grid-cols-2"></div>
+        <div id="selected-box" class="mt-3 hidden">
+          <input id="student-search" placeholder="Search student by name, phone or card no…" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+          <div id="picked" class="mt-2 flex flex-wrap gap-1.5"></div>
+          <div id="student-results" class="mt-2 max-h-52 divide-y divide-gray-100 overflow-y-auto rounded-md border border-gray-200 text-sm"></div>
+        </div>
+        <p id="reach" class="mt-3 text-sm font-medium text-primary"></p>
+      </div>
+
+      <div class="rounded-xl bg-white p-5 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold text-gray-700">4. Priority &amp; options</h2>
+        <div id="priority-opts" class="grid gap-2 sm:grid-cols-3"></div>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2">
+          <label class="text-xs text-gray-500">Send later (leave empty = send now)
+            <input id="publish-at" type="datetime-local" class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm text-gray-800" /></label>
+          <label class="text-xs text-gray-500">Hide automatically after (optional)
+            <input id="expires-at" type="datetime-local" class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm text-gray-800" /></label>
+        </div>
+        <label class="mt-3 flex items-center gap-2 text-sm text-gray-700"><input id="pinned" type="checkbox" class="h-4 w-4" /> 📌 Pin on top of the student's list</label>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button id="btn-send" class="rounded-lg bg-primary px-6 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50">🚀 Send notification</button>
+        <button id="btn-reset" type="button" class="text-sm text-gray-500 hover:underline">Clear form</button>
+      </div>
+    </section>
+
+    <!-- ============ PREVIEW + HISTORY ============ -->
+    <aside class="space-y-5 lg:col-span-2">
+      <div class="rounded-xl bg-white p-5 shadow-sm lg:sticky lg:top-20">
+        <h2 class="mb-3 text-sm font-semibold text-gray-700">👀 Live preview <span class="font-normal text-gray-400">(how students see it)</span></h2>
+        <div id="preview"></div>
+      </div>
+
+      <div class="rounded-xl bg-white p-5 shadow-sm">
+        <div class="mb-3 flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-gray-700">📤 Sent history</h2>
+          <button id="btn-refresh" class="text-xs text-primary hover:underline">Refresh</button>
+        </div>
+        <div id="history" class="space-y-2 text-sm"><p class="text-gray-400">Loading…</p></div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/notifications.js?v=1"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+const F = { type: "info", priority: "normal", audience: "all", studentIds: new Set() };
+let STUDENTS = [];
+
+const TEMPLATES = [
+  { label: "🏖️ Holiday notice", type: "holiday", title: "Library closed on [date]", body: "Hello {name},\n\nThe library will remain **closed on [date]** on account of [occasion].\n\nWe reopen on **[date]** at the usual time. Plan your study accordingly. 📚" },
+  { label: "💰 Renewal reminder", type: "reminder", priority: "important", audience: "expiring", title: "Membership reminder — {daysText}", body: "Hi {name}, your membership (seat #{seat}) is valid till **{expiry}** — *{daysText}*.\n\nPlease renew at the desk (cash / UPI) to keep your seat. Thank you! 🙏" },
+  { label: "⚠️ Overdue notice", type: "payment", priority: "important", audience: "expired", title: "Your membership has expired", body: "Hi {name}, your membership ended on **{expiry}** ({daysText}).\n\nPlease renew soon — your seat **#{seat}** may be given to someone else. Visit the desk or reply on WhatsApp." },
+  { label: "🛠️ Maintenance", type: "maintenance", title: "Maintenance today", body: "Wi-Fi / AC maintenance is planned on **[date]** between **[time]**. Some services may be unavailable. Sorry for the inconvenience." },
+  { label: "🎉 Event", type: "event", title: "Special session this Sunday", body: "Join our **free doubt-clearing / motivation session** on [date] at [time].\n\n- Bring your questions\n- Seats are limited" },
+  { label: "💡 Study tip", type: "tip", title: "Tip of the day", body: "> Consistency beats intensity.\n\nStudy **at the same time every day**, take a 5-minute break every 45 minutes, and write a short revision at night. 💪" },
+  { label: "🆕 New feature", type: "developer", title: "New feature on your dashboard", body: "We have added **[feature name]** to your student dashboard.\n\nOpen your dashboard to try it out. Tell us what you think!" },
+  { label: "🔕 Silence please", type: "notice", title: "Please keep silence", body: "Dear students, kindly **keep your phone on silent** and avoid conversations inside the reading hall. Thank you for helping everyone focus. 🙏" },
+];
+
+const AUDIENCES = [
+  ["all", "👥 Everyone", "All students of your center"],
+  ["active", "✅ Active members", "Membership not expired"],
+  ["expiring", "⏳ Expiring soon", "0–7 days left"],
+  ["expired", "⛔ Expired / overdue", "Membership has lapsed"],
+  ["selected", "🎯 Specific students", "Pick one or more students"],
+];
+const PRIORITIES = [
+  ["normal", "Normal", "Appears in the inbox + a small popup"],
+  ["important", "Important", "Highlighted with an orange tag"],
+  ["urgent", "Urgent", "Red popup that stays until dismissed"],
+];
+const PLACEHOLDERS = ["{name}", "{seat}", "{card}", "{expiry}", "{daysText}"];
+
+function $(id) { return document.getElementById(id); }
+
+// ---------- builders ----------
+function buildTypes() {
+  $("type-grid").innerHTML = Object.entries(NOTIF_TYPES).map(([k, m]) =>
+    `<button type="button" data-type="${k}" class="flex flex-col items-center gap-1 rounded-lg border px-2 py-2 text-xs font-medium ${F.type === k ? "border-primary bg-blue-50 text-primary ring-1 ring-primary" : "border-gray-200 text-gray-600 hover:bg-gray-50"}"><span class="text-xl">${m.icon}</span>${m.label}</button>`).join("");
+  document.querySelectorAll("[data-type]").forEach((b) => b.addEventListener("click", () => { F.type = b.dataset.type; buildTypes(); preview(); }));
+}
+function buildChoice(elId, items, key) {
+  $(elId).innerHTML = items.map(([k, label, sub]) =>
+    `<label class="flex cursor-pointer items-start gap-2 rounded-lg border p-3 text-sm ${F[key] === k ? "border-primary bg-blue-50 ring-1 ring-primary" : "border-gray-200 hover:bg-gray-50"}">
+       <input type="radio" name="${key}" value="${k}" ${F[key] === k ? "checked" : ""} class="mt-1">
+       <span><span class="font-semibold text-gray-800">${label}</span><span class="block text-xs text-gray-500">${sub}</span></span></label>`).join("");
+  $(elId).querySelectorAll("input").forEach((r) => r.addEventListener("change", () => {
+    F[key] = r.value; buildChoice(elId, items, key);
+    if (key === "audience") { $("selected-box").classList.toggle("hidden", F.audience !== "selected"); updateReach(); }
+    preview();
+  }));
+}
+function buildTemplates() {
+  $("templates").innerHTML = TEMPLATES.map((t, i) => `<button type="button" data-tpl="${i}" class="rounded-full border border-gray-300 px-3 py-1 font-medium text-gray-700 hover:bg-gray-50">${t.label}</button>`).join("");
+  document.querySelectorAll("[data-tpl]").forEach((b) => b.addEventListener("click", () => {
+    const t = TEMPLATES[Number(b.dataset.tpl)];
+    F.type = t.type; F.priority = t.priority || "normal";
+    if (t.audience) F.audience = t.audience;
+    $("title").value = t.title; $("body").value = t.body;
+    buildAll(); updateReach();
+    $("selected-box").classList.toggle("hidden", F.audience !== "selected");
+    toast("Template loaded — edit the [brackets] before sending.", "info");
+  }));
+}
+function buildPlaceholders() {
+  $("placeholders").innerHTML = PLACEHOLDERS.map((p) => `<button type="button" data-ph="${p}" class="rounded bg-gray-100 px-1.5 py-1 font-mono text-gray-600 hover:bg-gray-200">${p}</button>`).join("");
+  document.querySelectorAll("[data-ph]").forEach((b) => b.addEventListener("click", () => insertAtCursor(b.dataset.ph)));
+}
+function buildAll() { buildTypes(); buildChoice("audience-opts", AUDIENCES, "audience"); buildChoice("priority-opts", PRIORITIES, "priority"); preview(); }
+
+// ---------- markdown toolbar ----------
+function insertAtCursor(text) {
+  const ta = $("body"), s = ta.selectionStart, e = ta.selectionEnd;
+  ta.value = ta.value.slice(0, s) + text + ta.value.slice(e);
+  ta.focus(); ta.selectionStart = ta.selectionEnd = s + text.length; preview();
+}
+function wrapSel(before, after, fallback) {
+  const ta = $("body"), s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.slice(s, e) || fallback;
+  ta.value = ta.value.slice(0, s) + before + sel + after + ta.value.slice(e);
+  ta.focus(); ta.selectionStart = s + before.length; ta.selectionEnd = s + before.length + sel.length; preview();
+}
+function prefixLines(prefix, fallback) {
+  const ta = $("body"), s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.slice(s, e) || fallback;
+  const out = sel.split("\n").map((l) => prefix + l).join("\n");
+  ta.value = ta.value.slice(0, s) + out + ta.value.slice(e);
+  ta.focus(); ta.selectionStart = s; ta.selectionEnd = s + out.length; preview();
+}
+document.querySelectorAll("[data-md]").forEach((b) => b.addEventListener("click", () => {
+  const k = b.dataset.md;
+  if (k === "bold") wrapSel("**", "**", "bold text");
+  else if (k === "italic") wrapSel("*", "*", "italic text");
+  else if (k === "heading") prefixLines("## ", "Heading");
+  else if (k === "list") prefixLines("- ", "List item");
+  else if (k === "quote") prefixLines("> ", "Quote");
+  else if (k === "link") wrapSel("[", "](https://)", "link text");
+}));
+
+// ---------- preview ----------
+function sample(t) {
+  return String(t).replace(/\{name\}/g, "Rahul").replace(/\{seat\}/g, "42").replace(/\{card\}/g, "LIB-0042")
+    .replace(/\{expiry\}/g, "12 Oct 2026").replace(/\{daysText\}/g, "3 days left").replace(/\{daysLeft\}/g, "3");
+}
+function preview() {
+  const meta = NOTIF_TYPES[F.type];
+  const icon = $("icon").value.trim() || meta.icon;
+  const title = sample($("title").value.trim() || "Your title appears here");
+  const body = sample($("body").value.trim());
+  const prio = F.priority === "urgent" ? `<span class="rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">Urgent</span>`
+    : F.priority === "important" ? `<span class="rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-orange-700">Important</span>` : "";
+  $("preview").innerHTML = `
+    <div class="rounded-xl border ${F.priority === "urgent" ? "border-red-300" : "border-blue-300"} bg-white p-4 shadow-sm">
+      <div class="flex gap-3">
+        <div class="flex h-11 w-11 flex-none items-center justify-center rounded-full text-2xl ${meta.bg}">${nEsc(icon)}</div>
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-wrap items-center gap-2"><span class="h-2 w-2 rounded-full bg-primary"></span><span class="text-sm font-bold text-gray-900">${nEsc(title)}</span>${$("pinned").checked ? "📌" : ""}${prio}</div>
+          <div class="mt-0.5 text-xs text-gray-400"><span class="rounded-full px-2 py-0.5 font-medium ${meta.bg} ${meta.text}">${meta.label}</span> just now</div>
+          ${body ? `<div class="mt-2 text-sm leading-relaxed text-gray-700">${renderMarkdown(body)}</div>` : ""}
+        </div>
+      </div>
+    </div>`;
+  $("title-count").textContent = $("title").value.length + "/160";
+}
+
+// ---------- audience size ----------
+let reachSeq = 0;
+async function updateReach() {
+  const seq = ++reachSeq, el = $("reach");
+  if (F.audience === "selected") { el.textContent = F.studentIds.size ? `Will reach ${F.studentIds.size} selected student(s).` : "Pick at least one student."; return; }
+  el.textContent = "Counting…";
+  try {
+    const { data } = await api("/admin/notifications/audience-count?audience=" + F.audience);
+    if (seq === reachSeq) el.textContent = `Will reach ${data.count} student(s).`;
+  } catch (e) { if (seq === reachSeq) el.textContent = ""; }
+}
+
+// ---------- student picker ----------
+function studentName(s) { return `${s.userId.firstName} ${s.userId.lastName || ""}`.trim(); }
+function renderPicked() {
+  $("picked").innerHTML = [...F.studentIds].map((id) => {
+    const s = STUDENTS.find((x) => Number(x._id) === id);
+    return `<span class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-primary">${nEsc(s ? studentName(s) : "#" + id)}<button type="button" data-unpick="${id}" class="text-primary/70 hover:text-primary">✕</button></span>`;
+  }).join("");
+  document.querySelectorAll("[data-unpick]").forEach((b) => b.addEventListener("click", () => { F.studentIds.delete(Number(b.dataset.unpick)); renderPicked(); renderResults(); updateReach(); }));
+}
+function renderResults() {
+  const q = $("student-search").value.trim().toLowerCase();
+  const rows = STUDENTS.filter((s) => !q || studentName(s).toLowerCase().includes(q) || String(s.userId.phone || "").includes(q) || String(s.libraryCardNumber || "").toLowerCase().includes(q)).slice(0, 60);
+  $("student-results").innerHTML = rows.length ? rows.map((s) => {
+    const id = Number(s._id), on = F.studentIds.has(id);
+    return `<label class="flex cursor-pointer items-center gap-2 px-3 py-2 hover:bg-gray-50"><input type="checkbox" data-pick="${id}" ${on ? "checked" : ""}>
+      <span class="font-medium text-gray-800">${nEsc(studentName(s))}</span><span class="text-xs text-gray-400">${nEsc(s.libraryCardNumber || "")} · ${nEsc(s.userId.phone || "")}</span></label>`;
+  }).join("") : `<p class="p-3 text-gray-400">No student found.</p>`;
+  document.querySelectorAll("[data-pick]").forEach((c) => c.addEventListener("change", () => {
+    const id = Number(c.dataset.pick);
+    if (c.checked) F.studentIds.add(id); else F.studentIds.delete(id);
+    renderPicked(); updateReach();
+  }));
+}
+$("student-search").addEventListener("input", renderResults);
+
+// ---------- send ----------
+function localToServer(v) { return v ? v.replace("T", " ") + ":00" : ""; }
+$("btn-send").addEventListener("click", async () => {
+  const title = $("title").value.trim();
+  if (!title) { toast("Please add a title.", "error"); $("title").focus(); return; }
+  if (F.audience === "selected" && !F.studentIds.size) { toast("Choose at least one student.", "error"); return; }
+  const later = $("publish-at").value;
+  const msg = F.audience === "selected" ? `Send to ${F.studentIds.size} selected student(s)?` : `Send to ${$("reach").textContent.replace(/^Will reach /, "").replace(/\.$/, "") || "the chosen group"}?`;
+  if (!confirm((later ? "Schedule: " : "") + msg)) return;
+  const btn = $("btn-send"); btn.disabled = true;
+  try {
+    const { data } = await api("/admin/notifications", { method: "POST", body: {
+      type: F.type, icon: $("icon").value.trim(), title, body: $("body").value.trim(),
+      priority: F.priority, audience: F.audience, studentIds: [...F.studentIds],
+      pinned: $("pinned").checked, publishAt: localToServer(later), expiresAt: localToServer($("expires-at").value),
+    }});
+    toast(data.scheduled ? `Scheduled for ${data.recipients} student(s).` : `Sent to ${data.recipients} student(s). 🎉`);
+    resetForm(); loadHistory();
+  } catch (e) { toast(e.message, "error"); }
+  finally { btn.disabled = false; }
+});
+
+function resetForm() {
+  F.type = "info"; F.priority = "normal"; F.audience = "all"; F.studentIds = new Set();
+  ["title", "body", "icon", "publish-at", "expires-at"].forEach((id) => { $(id).value = ""; });
+  $("pinned").checked = false; $("selected-box").classList.add("hidden");
+  renderPicked(); renderResults(); buildAll(); updateReach();
+}
+$("btn-reset").addEventListener("click", resetForm);
+["title", "body", "icon"].forEach((id) => $(id).addEventListener("input", preview));
+$("pinned").addEventListener("change", preview);
+
+// ---------- history ----------
+const AUD_LABEL = { all: "Everyone", active: "Active members", expiring: "Expiring soon", expired: "Expired", selected: "Selected" };
+const STATUS_BADGE = { live: "bg-emerald-100 text-emerald-700", scheduled: "bg-blue-100 text-blue-700", expired: "bg-gray-200 text-gray-600" };
+async function loadHistory() {
+  try {
+    const { data } = await api("/admin/notifications");
+    $("history").innerHTML = data.length ? data.map((n) => {
+      const pct = n.recipientCount ? Math.round((n.readCount / n.recipientCount) * 100) : 0;
+      const who = n.audience === "selected" && n.names.length ? n.names.join(", ") : `${AUD_LABEL[n.audience] || n.audience} · ${n.recipientCount}`;
+      return `<div class="rounded-lg border border-gray-200 p-3">
+        <div class="flex items-start gap-2">
+          <span class="text-xl">${nEsc(n.icon)}</span>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-1.5"><span class="truncate font-semibold text-gray-800">${nEsc(n.title)}</span>
+              <span class="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${STATUS_BADGE[n.status]}">${n.status}</span>
+              ${n.priority !== "normal" ? `<span class="rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-orange-700">${n.priority}</span>` : ""}</div>
+            <div class="text-xs text-gray-400">${nEsc(who)} · ${nEsc(nFullTime(n.status === "scheduled" ? n.publishAt : n.createdAt))}</div>
+            <div class="mt-2 flex items-center gap-2 text-xs text-gray-500"><div class="h-1.5 flex-1 rounded-full bg-gray-200"><div class="h-1.5 rounded-full bg-emerald-500" style="width:${pct}%"></div></div>
+              <span>👁 ${n.readCount}/${n.recipientCount} seen</span></div>
+          </div>
+          <button type="button" data-del="${n._id}" class="text-xs text-red-500 hover:underline" title="Delete for everyone">Delete</button>
+        </div></div>`;
+    }).join("") : `<p class="text-gray-400">Nothing sent yet.</p>`;
+    document.querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", async () => {
+      if (!confirm("Delete this notification? It will disappear from every student's inbox.")) return;
+      try { await api("/admin/notifications/" + b.dataset.del, { method: "DELETE" }); toast("Deleted"); loadHistory(); } catch (e) { toast(e.message, "error"); }
+    }));
+  } catch (e) { $("history").innerHTML = `<p class="text-red-500">${nEsc(e.message)}</p>`; }
+}
+$("btn-refresh").addEventListener("click", loadHistory);
+
+// ---------- init ----------
+(async () => {
+  const user = await guardRole(["admin", "staff"]);
+  if (!user) return;
+  renderAdminNav("/admin/notifications.html", user);
+  if (!requirePagePermission(user, "students", "Manage Students")) return;
+
+  buildTemplates(); buildPlaceholders(); buildAll(); updateReach(); loadHistory();
+  try {
+    const { data } = await api("/admin/students");
+    STUDENTS = data || [];
+  } catch (e) { toast(e.message, "error"); }
+
+  // Opened from a student's page ("Send alert") → pre-select that student.
+  const pre = new URLSearchParams(location.search).get("student");
+  if (pre) {
+    F.audience = "selected"; F.studentIds.add(Number(pre));
+    buildAll(); $("selected-box").classList.remove("hidden"); updateReach();
+  }
+  renderPicked(); renderResults();
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

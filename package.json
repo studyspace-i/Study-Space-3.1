@@ -1,0 +1,37 @@
+{
+  "name": "study-space-app",
+  "version": "2.5.1",
+  "private": true,
+  "scripts": {
+    "build:web": "node scripts/build-www.mjs",
+    "sync": "npm run build:web && npx cap sync android"
+  },
+  "dependencies": {
+    "@aparajita/capacitor-biometric-auth": "^10.0.0",
+    "@aparajita/capacitor-secure-storage": "^8.0.1",
+    "@capacitor-community/privacy-screen": "^8.0.0",
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/app-launcher": "^8.0.0",
+    "@capacitor/browser": "^8.0.0",
+    "@capacitor/camera": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/geolocation": "^8.0.0",
+    "@capacitor/local-notifications": "^8.0.0",
+    "@capacitor/network": "^8.0.0",
+    "@capacitor/push-notifications": "^8.0.0",
+    "@capacitor/share": "^8.0.0",
+    "@capacitor/splash-screen": "^8.0.0",
+    "@capacitor/status-bar": "^8.0.0",
+    "@capgo/capacitor-autofill-save-password": "^8.0.0",
+    "@vladmandic/face-api": "^1.7.13",
+    "aes-js": "3.1.2",
+    "capacitor-native-settings": "^8.0.0",
+    "qrcode-generator": "^2.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.0.0",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^3.4.17"
+  }
+}

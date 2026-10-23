@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Invoice — Study Space</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#eef1f7;font-family:'Segoe UI',system-ui,Roboto,Arial,sans-serif;color:#0f172a;padding:20px 12px}
+.bar{max-width:794px;margin:0 auto 14px;display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:11px 18px;font:700 14px system-ui;cursor:pointer;text-decoration:none;background:#4f46e5;color:#fff}
+.btn.g{background:#e2e8f0;color:#1e293b}
+.sheet{max-width:794px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 6px 30px rgba(15,23,42,.1);overflow:hidden;position:relative}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:30px 36px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff}
+.top h1{margin:0;font-size:28px;letter-spacing:3px}.top .m{font-size:13px;opacity:.9;line-height:1.6}
+.pad{padding:28px 36px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.k{font-size:11px;letter-spacing:.8px;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:5px}
+.v{font-size:14.5px;line-height:1.6}
+table{width:100%;border-collapse:collapse;margin:22px 0}
+th{text-align:left;font-size:11px;letter-spacing:.8px;color:#64748b;text-transform:uppercase;padding:10px 8px;border-bottom:2px solid #e2e8f0}
+td{padding:14px 8px;border-bottom:1px solid #eef2f7;font-size:14.5px;vertical-align:top}
+.r{text-align:right}.tot{font-size:22px;font-weight:800;color:#047857}
+.paid{position:absolute;right:40px;top:150px;transform:rotate(-12deg);border:4px solid #10b981;color:#10b981;font:800 34px system-ui;letter-spacing:4px;padding:2px 16px;border-radius:10px;opacity:.28}
+.box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px 18px}
+.note{font-size:12px;color:#64748b;line-height:1.7;margin-top:22px;border-top:1px dashed #cbd5e1;padding-top:14px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.top,.pad{padding:20px}.paid{top:200px;right:14px;font-size:24px}}
+@media print{body{background:#fff;padding:0}.bar{display:none}.sheet{box-shadow:none;border-radius:0}@page{margin:10mm}}
+</style>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body>
+<div class="bar"><button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button><a class="btn g" href="/my-donations.html">← My donations</a><a class="btn g" href="/index.html">Home</a></div>
+<div class="sheet" id="sheet"><div class="pad" style="text-align:center;color:#64748b">Loading invoice…</div></div>
+<script src="/assets/main.js?v=10"></script>
+<script>
+const qs = new URLSearchParams(location.search);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const money = (n) => "₹" + Number(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const when = (s) => s ? new Date(s.replace(" ", "T")).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true }) : "-";
+document.addEventListener("DOMContentLoaded", async () => {
+  setTimeout(async () => {
+    try {
+      const t = qs.get("t") ? "?t=" + encodeURIComponent(qs.get("t")) : "";
+      const { data: d } = await api("/donations/" + encodeURIComponent(qs.get("order_id") || "x") + "/invoice" + t);
+      document.title = "Invoice " + d.invoiceNo;
+      document.getElementById("sheet").innerHTML =
+        '<div class="top"><div><h1>INVOICE</h1><div class="m">' + esc(d.invoiceNo) + '<br>Date: ' + esc(when(d.date)) + '</div></div>' +
+        '<div class="m" style="text-align:right"><b style="font-size:18px">📚 ' + esc(d.merchant.name) + '</b><br>' + esc(d.merchant.site) + (d.merchant.email ? "<br>" + esc(d.merchant.email) : "") + (d.merchant.address ? "<br>" + esc(d.merchant.address) : "") + '</div></div>' +
+        '<div class="paid">PAID</div><div class="pad"><div class="grid"><div><div class="k">Billed to</div><div class="v"><b>' + esc(d.customer.name) + '</b><br>' + esc(d.customer.email) + '<br>+91 ' + esc(d.customer.phone) + '</div></div>' +
+        '<div><div class="k">Payment details</div><div class="v">Status: <b style="color:#047857">' + esc(d.payment.status) + '</b><br>Paid via: ' + esc(d.payment.method || "Online") + '<br>Order ID: ' + esc(d.orderId) + '</div></div></div>' +
+        '<table><thead><tr><th>Description</th><th class="r">Amount</th></tr></thead><tbody><tr><td>' + esc(d.description) + '</td><td class="r">' + money(d.amount) + '</td></tr></tbody></table>' +
+        '<div style="display:flex;justify-content:flex-end"><div style="text-align:right"><div class="k">Total paid</div><div class="tot">' + money(d.amount) + ' ' + esc(d.currency) + '</div></div></div>' +
+        '<div class="box" style="margin-top:22px"><div class="k">Transaction reference</div><div class="v">Transaction ID (Cashfree): <b>' + esc(d.payment.transactionId || "-") + '</b><br>Bank reference / UTR: <b>' + esc(d.payment.bankRef || "-") + '</b><br>Cashfree order ref: ' + esc(d.payment.cashfreeOrderRef || "-") + '</div></div>' +
+        '<div class="note">' + esc(d.note) + '</div></div>';
+      if (qs.get("print") === "1") setTimeout(() => window.print(), 500);
+    } catch (e) {
+      document.getElementById("sheet").innerHTML = '<div class="pad" style="text-align:center"><div style="font-size:42px">🧾</div><h2>' + esc(e.message) + '</h2><p style="color:#64748b">If you paid recently, wait a minute and refresh. You may need to log in to see invoices of your account.</p><a class="btn" href="/login.html">Login</a></div>';
+    }
+  }, 400);
+});
+</script>
+</body></html>

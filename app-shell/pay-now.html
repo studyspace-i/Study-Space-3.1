@@ -1,0 +1,138 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"/><title>Pay Now — Study Space</title>
+<style>
+:root{--a1:#4f46e5;--a2:#7c3aed}
+*{box-sizing:border-box}body{margin:0;padding:6px 16px 150px;color:var(--ss-ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.card{border-radius:26px;background:var(--ss-glass);border:1px solid var(--ss-line);box-shadow:0 16px 34px -18px rgba(79,70,229,.4);padding:18px;margin-bottom:14px}
+.hero{border-radius:28px;padding:22px;color:#fff;background:linear-gradient(140deg,var(--a1),var(--a2) 60%,#db2777);box-shadow:0 22px 40px -22px var(--a1);margin-bottom:16px;position:relative;overflow:hidden}.hero::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.16)}
+.hero h1{margin:0 0 4px;font-size:24px;font-weight:800;letter-spacing:-.02em}.hero p{margin:0;font-size:13.5px;opacity:.92;line-height:1.5}
+.h{font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--ss-mut);margin:0 0 12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:11px 18px;border-radius:16px;font-weight:800;font-size:15px;background:var(--ss-card);border:1.5px solid var(--ss-line);color:var(--ss-ink2)}.chip.on{background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;border-color:transparent;box-shadow:0 10px 20px -10px var(--a1)}
+.plan{display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;border:1.5px solid var(--ss-line);background:var(--ss-card);margin-top:10px;width:100%;text-align:left}.plan.on{border-color:var(--a1);background:var(--ss-soft)}.plan b{font-size:15px}.plan i{display:block;font-style:normal;font-size:12px;color:var(--ss-mut);margin-top:2px}.plan .p{margin-left:auto;font-weight:800;font-size:16px}
+label{display:block;font-size:12px;font-weight:800;color:var(--ss-ink2);margin:12px 0 6px;letter-spacing:.02em}
+input[type=text],input[type=tel],input[type=email],input[type=number]{width:100%;padding:14px;border-radius:15px;border:1.5px solid var(--ss-line);background:var(--ss-card);font-size:16px;color:var(--ss-ink);outline:none;-webkit-user-select:text;user-select:text}input:focus{border-color:var(--a1)}
+.hint{font-size:11.5px;color:var(--ss-faint);margin-top:5px}
+.meth{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:14px;border-radius:20px;border:1.5px solid var(--ss-line);background:var(--ss-card);margin-bottom:10px}.meth.on{border-color:var(--a1);background:var(--ss-soft)}.meth .ic{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;font-size:22px;color:#fff;flex:none}.meth b{font-size:14.5px}.meth i{display:block;font-style:normal;font-size:12px;color:var(--ss-mut);margin-top:2px}.meth .rd{margin-left:auto;width:22px;height:22px;border-radius:50%;border:2px solid #cbd5e1;flex:none}.meth.on .rd{border:6px solid var(--a1)}
+.tag{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:10px;background:#dcfce7;color:#15803d;font-size:10px;font-weight:800;vertical-align:middle}
+.go{width:100%;height:58px;border-radius:20px;border:0;font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--a1),var(--a2));box-shadow:0 16px 28px -12px var(--a1);margin-top:6px}.go:active{transform:scale(.98)}.go:disabled{opacity:.6}
+.ghost{width:100%;height:50px;border-radius:17px;border:1.5px solid var(--ss-line);background:var(--ss-card);font-weight:800;font-size:15px;color:var(--ss-ink2);margin-top:10px}
+.err{background:#fee2e2;color:#b91c1c;border-radius:16px;padding:12px 14px;font-size:13px;font-weight:600;margin-bottom:12px}
+.ck{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--ss-ink2);margin-top:14px;line-height:1.45}.ck input{width:20px;height:20px;margin-top:1px;flex:none}
+.steps{counter-reset:s;margin:14px 0 0;padding:0;list-style:none}.steps li{counter-increment:s;display:flex;gap:12px;align-items:center;margin-bottom:12px;font-size:14px;color:var(--ss-ink2)}.steps li::before{content:counter(s);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;font-weight:800;font-size:13px;flex:none}
+.pulse{width:92px;height:92px;border-radius:50%;margin:8px auto 14px;display:grid;place-items:center;font-size:40px;background:var(--ss-soft);position:relative}.pulse::before,.pulse::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--a1);animation:pl 1.8s infinite}.pulse::after{animation-delay:.9s}@keyframes pl{to{transform:scale(1.7);opacity:0}}
+.ok{width:96px;height:96px;border-radius:50%;margin:6px auto 14px;display:grid;place-items:center;font-size:48px;background:linear-gradient(135deg,#059669,#10b981);box-shadow:0 18px 34px -14px #059669;animation:pop .5s cubic-bezier(.3,1.5,.5,1)}@keyframes pop{from{transform:scale(.2);opacity:0}}
+.toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);padding:10px 18px;border-radius:18px;background:#0f172ae6;color:#fff;font-size:13px;font-weight:700;z-index:80;white-space:nowrap}
+.kv{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--ss-line);font-size:14px}.kv:first-child{border:0}.kv span{color:var(--ss-mut)}.kv b{font-weight:800}
+</style></head>
+<body><div id="app"></div>
+<script src="/child.js"></script>
+<script>
+(function () {
+  var Core = parent.AppCore, Shell = parent.AppShell, CFG = parent.APP_CONFIG, LS = Core.LS;
+  var $ = function (s, r) { return (r || document).querySelector(s); }, esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  function toast(t) { var e = document.createElement("div"); e.className = "toast"; e.textContent = t; document.body.appendChild(e); setTimeout(function () { e.remove(); }, 2300); }
+  function api(u, o) { return Core.fetch("/api" + u, o || {}).then(function (r) { return r.json(); }); }
+  var CF = { presets: [50, 100, 200, 500], plans: [], min: 10, max: 100000, env: "sandbox" }, S = { amount: 100, plan: "", method: "chrome", name: "", email: "", phone: "", upi: "", ok: false, busy: false, err: "" }, ORDER = null, poll = 0, view = "form";
+
+  async function init() {
+    var u = await Core.getUser(); if (u) { S.name = ((u.firstName || "") + " " + (u.lastName || "")).trim(); S.email = u.email || ""; S.phone = (u.phone || "").replace(/\D/g, "").slice(-10); }
+    var saved = JSON.parse(LS.get("ss_pay_prefs", "{}") || "{}"); S.upi = saved.upi || ""; if (saved.method) S.method = saved.method;
+    try { var j = await api("/donations/config"); if (j && j.success && j.data) { var d = j.data; CF.presets = (d.presets && d.presets.length) ? d.presets : CF.presets; CF.plans = d.plans || []; CF.min = d.minAmount || d.min || CF.min; CF.max = d.maxAmount || d.max || CF.max; CF.env = d.env || CF.env; } } catch (e) {}
+    S.amount = CF.presets[1] || CF.presets[0] || 100; draw();
+  }
+  function draw() {
+    if (view === "wait") return drawWait(); if (view === "done") return drawDone();
+    var plans = (CF.plans || []).map(function (p) { return '<button class="plan ' + (S.plan === p.key ? "on" : "") + '" data-plan="' + esc(p.key) + '"><div><b>' + esc(p.label || p.name || p.key) + '</b><i>' + (p.days ? "+" + p.days + " days Premium" : "Support Study Space") + '</i></div><span class="p">₹' + esc(p.amount) + '</span></button>'; }).join("");
+    $("#app").innerHTML = '<div class="hero"><h1>Pay Now 💜</h1><p>Support Study Space and get Premium. Your payment opens securely in Chrome and then in your UPI app.</p></div>' +
+      (S.err ? '<div class="err">' + esc(S.err) + '</div>' : "") +
+      '<div class="card"><p class="h">1 · Choose amount</p><div class="chips" id="am">' + CF.presets.map(function (a) { return '<button class="chip ' + (!S.plan && S.amount === a ? "on" : "") + '" data-a="' + a + '">₹' + a + '</button>'; }).join("") + '</div>' +
+      '<label>Other amount (₹)</label><input type="number" inputmode="numeric" id="ca" placeholder="Enter amount" value="' + (CF.presets.indexOf(S.amount) > -1 || S.plan ? "" : S.amount) + '"/>' + (plans ? '<div style="margin-top:6px">' + plans + '</div>' : "") + '</div>' +
+      '<div class="card"><p class="h">2 · Your details</p><label>Full name</label><input type="text" id="nm" autocomplete="name" value="' + esc(S.name) + '" placeholder="Your name"/>' +
+      '<label>Mobile number <span style="font-weight:600;color:#94a3b8">(for receipt SMS &amp; updates)</span></label><input type="tel" inputmode="numeric" id="ph" maxlength="10" autocomplete="tel-national" value="' + esc(S.phone) + '" placeholder="10-digit number"/>' +
+      '<label>Email</label><input type="email" id="em" autocomplete="email" value="' + esc(S.email) + '" placeholder="you@example.com"/>' +
+      '<label>UPI ID <span style="font-weight:600;color:#94a3b8">(optional)</span></label><input type="text" id="up" autocapitalize="none" autocomplete="off" value="' + esc(S.upi) + '" placeholder="name@bank"/><div class="hint">Add it to get a payment request directly in your UPI app.</div></div>' +
+      '<div class="card"><p class="h">3 · How do you want to pay?</p>' +
+      meth("chrome", "🌐", "linear-gradient(135deg,#4f46e5,#7c3aed)", "Pay in Chrome → UPI app", 'Recommended<span class="tag">BEST</span>', "Opens Chrome, then your UPI app (PhonePe, GPay, Paytm…)") +
+      meth("collect", "📲", "linear-gradient(135deg,#0ea5e9,#2563eb)", "Send request to my UPI ID", "Approve inside your UPI app", "Needs your UPI ID above") +
+      meth("qr", "▦", "linear-gradient(135deg,#10b981,#14b8a6)", "Scan QR / open UPI app", "Works without a browser", "Scan on another phone or open an app directly") + '</div>' +
+      '<label class="ck"><input type="checkbox" id="ac" ' + (S.ok ? "checked" : "") + '/><span>I understand donations are voluntary and non-refundable.</span></label>' +
+      '<button class="go" id="pay" ' + (S.busy ? "disabled" : "") + '>' + (S.busy ? "Please wait…" : "Pay Now · ₹" + total()) + '</button>';
+    wire();
+  }
+  function meth(k, ic, bg, t, d, d2) { return '<button class="meth ' + (S.method === k ? "on" : "") + '" data-m="' + k + '"><span class="ic" style="background:' + bg + '">' + ic + '</span><span><b>' + t + '</b><i>' + d2 + '</i></span><span class="rd"></span></button>'; }
+  function total() { if (S.plan) { var p = CF.plans.filter(function (x) { return x.key === S.plan; })[0]; return p ? p.amount : S.amount; } return S.amount; }
+  function sync() { var g = function (id) { var e = $(id); return e ? e.value : ""; }; S.name = g("#nm").trim(); S.phone = g("#ph").replace(/\D/g, "").slice(0, 10); S.email = g("#em").trim(); S.upi = g("#up").trim(); var c = $("#ca"); if (c && c.value) { S.amount = Math.floor(+c.value || 0); S.plan = ""; } var a = $("#ac"); if (a) S.ok = a.checked; }
+  function wire() {
+    $("#app").onclick = function (e) {
+      var a = e.target.closest("[data-a]"), p = e.target.closest("[data-plan]"), m = e.target.closest("[data-m]");
+      if (a) { sync(); S.amount = +a.dataset.a; S.plan = ""; S.err = ""; draw(); }
+      else if (p) { sync(); S.plan = p.dataset.plan; draw(); }
+      else if (m) { sync(); S.method = m.dataset.m; draw(); }
+    };
+    $("#ca").oninput = function () { var v = Math.floor(+this.value || 0); if (v) { S.plan = ""; S.amount = v; $("#pay").textContent = "Pay Now · ₹" + v; $("#am").querySelectorAll(".chip").forEach(function (c) { c.classList.remove("on"); }); } };
+    $("#pay").onclick = start;
+  }
+  function fail(m) { S.err = m; S.busy = false; view = "form"; draw(); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} }
+  async function start() {
+    sync(); var amt = total();
+    if (!S.plan && (!amt || amt < CF.min)) return fail("Please enter at least ₹" + CF.min + ".");
+    if (amt > CF.max) return fail("The maximum amount is ₹" + CF.max + ".");
+    if (S.name.length < 2) return fail("Please enter your name.");
+    if (!/^[6-9]\d{9}$/.test(S.phone)) return fail("Please enter a valid 10-digit mobile number.");
+    if (!/^\S+@\S+\.\S+$/.test(S.email)) return fail("Please enter a valid email address.");
+    if (S.method === "collect" && !/^[a-z0-9._-]{2,64}@[a-z0-9]{2,32}$/i.test(S.upi)) return fail("Please enter a valid UPI ID (like name@bank).");
+    if (S.upi && !/^[a-z0-9._-]{2,64}@[a-z0-9]{2,32}$/i.test(S.upi)) return fail("That UPI ID doesn't look right (example: name@bank).");
+    if (!S.ok) return fail("Please tick the box to continue.");
+    S.err = ""; S.busy = true; draw();
+    LS.set("ss_pay_prefs", JSON.stringify({ upi: S.upi, method: S.method }));
+    var body = { name: S.name, email: S.email, phone: S.phone, accepted: true };
+    if (S.plan) body.planKey = S.plan; else body.amount = amt;
+    if (S.method === "qr") body.mode = "qr"; if (S.method === "collect") { body.mode = "collect"; body.upiId = S.upi.toLowerCase(); }
+    try {
+      var j = await api("/donations/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      if (!j.success) return fail(j.message || "Please try again.");
+      ORDER = j.data; S.busy = false; ORDER._amt = amt; ORDER._m = S.method;
+      if (S.method === "chrome") { Core.openChrome(payUrl()); }
+      view = "wait"; drawWait(); startPoll();
+    } catch (e) { fail(Core.friendly(e.message)); }
+  }
+  function payUrl() { return CFG.API_ORIGIN + "/pay.html#s=" + encodeURIComponent(ORDER.paymentSessionId) + "&m=" + (CF.env === "production" ? "production" : "sandbox"); }
+  function drawWait() {
+    var m = ORDER._m, body;
+    if (m === "chrome") body = '<div class="pulse">🌐</div><h2 style="text-align:center;margin:0 0 6px;font-size:20px">Continue in Chrome</h2><p style="text-align:center;color:#64748b;font-size:14px;margin:0 0 6px;line-height:1.5">We opened Chrome for your ₹' + ORDER._amt + ' payment.</p><ol class="steps"><li>In Chrome, pick your UPI app</li><li>Approve the payment there</li><li>Come back here — we confirm it automatically</li></ol><button class="go" id="again">Open Chrome again</button><button class="ghost" id="share">Share payment link (SMS / WhatsApp)</button><button class="ghost" id="copy">Copy payment link</button>';
+    else if (m === "collect") body = '<div class="pulse">📲</div><h2 style="text-align:center;margin:0 0 6px;font-size:20px">' + (ORDER.collectSent ? "Check your UPI app" : "Request not sent") + '</h2><p style="text-align:center;color:#64748b;font-size:14px;margin:0 0 6px;line-height:1.5">' + (ORDER.collectSent ? "We sent a request of ₹" + ORDER._amt + " to <b>" + esc(S.upi) + "</b>. Open your UPI app and approve it." : "We couldn't send the request to that UPI ID. You can pay in Chrome instead.") + '</p><button class="go" id="again">' + (ORDER.collectSent ? "Open payment page in Chrome" : "Pay in Chrome instead") + '</button>';
+    else {
+      var qrImg = ORDER.qr || (ORDER.upiLink && parent.Native && parent.Native.qrSvg ? parent.Native.qrSvg(ORDER.upiLink, 220) : "");
+      body = '<h2 style="text-align:center;margin:0 0 4px;font-size:20px">Scan or tap to pay</h2><p style="text-align:center;color:var(--ss-mut);font-size:14px;margin:0 0 12px">Pay ₹' + ORDER._amt + ' with any UPI app</p>' +
+        (qrImg ? '<div style="text-align:center"><img src="' + esc(qrImg) + '" alt="QR" style="width:220px;height:220px;border-radius:20px;background:#fff;padding:10px;box-shadow:0 14px 30px -16px #4f46e5"></div>' : '<div class="err" style="margin-top:6px">The QR code could not be made right now. Use “Pay in Chrome” below — it opens your UPI app.</div>') +
+        (ORDER.upiLink ? '<a class="go" href="' + esc(ORDER.upiLink) + '" style="display:grid;place-items:center;text-decoration:none;margin-top:14px">Open my UPI app</a><button class="ghost" id="copyu">Copy UPI link</button>' : "") +
+        '<button class="' + (qrImg || ORDER.upiLink ? "ghost" : "go") + '" id="again">Pay in Chrome instead</button>';
+    }
+    $("#app").innerHTML = '<div class="card" style="padding:22px 18px">' + body + '<div style="text-align:center;margin-top:16px;font-size:12px;color:#94a3b8" id="st">Waiting for your payment…</div><button class="ghost" id="back" style="height:44px;font-size:13px">Cancel and go back</button></div>';
+    var el = function (id, fn) { var e = $(id); if (e) e.onclick = fn; };
+    el("#again", function () { Core.openChrome(payUrl()); }); el("#copy", function () { try { navigator.clipboard.writeText(payUrl()); toast("Link copied"); } catch (e) { toast("Couldn't copy"); } });
+    el("#copyu", function () { try { navigator.clipboard.writeText(ORDER.upiLink); toast("UPI link copied"); } catch (e) { toast("Couldn't copy"); } });
+    el("#share", function () { Core.share({ title: "Study Space payment", text: "Complete my ₹" + ORDER._amt + " Study Space payment: " + payUrl(), url: payUrl() }); });
+    el("#back", function () { clearInterval(poll); view = "form"; ORDER = null; draw(); });
+  }
+  function startPoll() { clearInterval(poll); var n = 0; poll = setInterval(check, 3500); function stopAt() { if (++n > 250) clearInterval(poll); } poll._t = stopAt; check(); }
+  async function check() {
+    if (!ORDER || view !== "wait") return;
+    try {
+      var j = await api("/donations/" + encodeURIComponent(ORDER.orderId) + "/status?t=" + encodeURIComponent(ORDER.token || ORDER.t || ""));
+      var st = j && j.data && (j.data.state || j.data.status);
+      if (st && /paid|success/i.test(st)) { clearInterval(poll); ORDER._res = j.data; view = "done"; drawDone(); Core.notifyOk && 0; parent.AppAlarms && parent.AppAlarms.notifyNow("Payment received 💜", "Thank you for supporting Study Space!", { path: "/my-donations.html" }); }
+      else if (st && /fail|expire|cancel|user_dropped/i.test(st)) { clearInterval(poll); var e = $("#st"); if (e) e.textContent = "This payment didn't go through. You can try again."; }
+    } catch (e) {}
+  }
+  window.addEventListener("ss:resume", function () { if (view === "wait") check(); });
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && view === "wait") check(); });
+  function drawDone() {
+    var r = ORDER._res || {}, days = r.days || ORDER.days || 0;
+    $("#app").innerHTML = '<div class="card" style="text-align:center;padding:26px 18px"><div class="ok">✅</div><h2 style="margin:0 0 4px;font-size:22px">Payment received</h2><p style="color:#64748b;font-size:14px;margin:0 0 14px">Thank you for supporting Study Space 💜</p><div style="text-align:left"><div class="kv"><span>Amount</span><b>₹' + ORDER._amt + '</b></div>' + (r.invoiceNo || ORDER.invoiceNo ? '<div class="kv"><span>Receipt</span><b>' + esc(r.invoiceNo || ORDER.invoiceNo) + '</b></div>' : "") + (days ? '<div class="kv"><span>Premium</span><b>+' + days + ' days</b></div>' : "") + '</div><button class="go" id="rc" style="margin-top:16px">View receipt</button><button class="ghost" id="dn">Done</button></div>';
+    $("#rc").onclick = function () { Shell.go("/donate-return.html?order_id=" + encodeURIComponent(ORDER.orderId) + "&t=" + encodeURIComponent(ORDER.token || ORDER.t || "")); };
+    $("#dn").onclick = function () { Shell.go("/my-donations.html"); };
+  }
+  init();
+})();
+</script></body></html>

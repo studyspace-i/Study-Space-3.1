@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Profile — Study Space</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+  <div data-subscription-card class="mb-6 hidden"></div>
+  <h1 class="mb-6 text-2xl font-bold text-gray-900">My Profile</h1>
+
+  <div class="grid gap-4 md:grid-cols-3">
+    <!-- Personal details -->
+    <div class="md:col-span-2">
+      <div class="mb-4 rounded-xl bg-white p-6 shadow-sm">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-gray-700">Personal Details</h2>
+          <span class="text-xs text-gray-400">Set by the library — request a change below if anything's wrong</span>
+        </div>
+        <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+          <div><dt class="text-xs text-gray-400">First Name</dt><dd class="font-medium text-gray-900" id="p-firstName">–</dd></div>
+          <div><dt class="text-xs text-gray-400">Last Name</dt><dd class="font-medium text-gray-900" id="p-lastName">–</dd></div>
+          <div><dt class="text-xs text-gray-400">Email (login ID)</dt><dd class="font-medium text-gray-900" id="p-email">–</dd></div>
+          <div><dt class="text-xs text-gray-400">Phone</dt><dd class="font-medium text-gray-900" id="p-phone">–</dd></div>
+          <div><dt class="text-xs text-gray-400">Parent Name</dt><dd class="font-medium text-gray-900" id="p-parentName">–</dd></div>
+          <div><dt class="text-xs text-gray-400">Parent Phone</dt><dd class="font-medium text-gray-900" id="p-parentPhone">–</dd></div>
+          <div><dt class="text-xs text-gray-400">Education</dt><dd class="font-medium text-gray-900" id="p-education">–</dd></div>
+          <div><dt class="text-xs text-gray-400">Library Card No.</dt><dd class="font-medium text-gray-900" id="p-card">–</dd></div>
+          <div class="col-span-2"><dt class="text-xs text-gray-400">Address</dt><dd class="font-medium text-gray-900" id="p-address">–</dd></div>
+        </dl>
+
+        <button id="toggle-change-form" class="mt-4 text-sm font-medium text-primary hover:underline">✏️ Request a change to my details</button>
+
+        <div id="change-form" class="mt-4 hidden rounded-lg border border-gray-200 p-4">
+          <p class="mb-3 text-xs text-gray-500">Pick a field, enter the corrected value, and submit — an admin will review and apply it. You can only have one pending request at a time.</p>
+          <div class="mb-3 grid grid-cols-2 gap-2">
+            <select id="change-field" class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none">
+              <option value="firstName">First Name</option>
+              <option value="lastName">Last Name</option>
+              <option value="email">Email</option>
+              <option value="phone">Phone</option>
+              <option value="parentName">Parent Name</option>
+              <option value="parentPhone">Parent Phone</option>
+              <option value="address">Address</option>
+              <option value="city">City</option>
+              <option value="state">State</option>
+              <option value="pincode">Pincode</option>
+              <option value="education">Education</option>
+            </select>
+            <input id="change-value" placeholder="New value" class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+          </div>
+          <textarea id="change-note" placeholder="Optional note for the admin (e.g. why)" rows="2" class="mb-3 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"></textarea>
+          <button id="btn-submit-change" class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Submit Request</button>
+        </div>
+
+        <div id="my-requests-box" class="mt-5 hidden border-t border-gray-100 pt-4">
+          <h3 class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Your Change Requests</h3>
+          <ul id="my-requests-list" class="space-y-2 text-sm"></ul>
+        </div>
+      </div>
+
+      <div class="rounded-xl bg-white p-6 shadow-sm">
+        <div class="mb-3 flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-gray-700">🧾 Payment History</h2>
+          <div class="flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-1.5">
+            <span class="text-xs font-medium text-emerald-700">Total Paid</span>
+            <span class="text-base font-bold text-emerald-800" id="p-total-paid">₹0</span>
+          </div>
+        </div>
+        <ul id="p-payment-list" class="divide-y divide-gray-100 text-sm"><li class="py-2 text-gray-400">Loading...</li></ul>
+      </div>
+    </div>
+
+    <!-- Membership + password -->
+    <div>
+      <div class="mb-4 rounded-xl bg-gradient-to-br from-primary to-blue-800 p-6 text-white shadow-sm">
+        <div class="text-xs uppercase tracking-wide text-blue-100">Membership</div>
+        <div class="mt-2 flex justify-between text-sm"><span>Seat</span><strong id="p-seat">–</strong></div>
+        <div class="flex justify-between text-sm"><span>Status</span><strong id="p-status">–</strong></div>
+        <div class="flex justify-between text-sm"><span>Expires</span><strong id="p-expiry">–</strong></div>
+      </div>
+
+      <div class="rounded-xl bg-white p-5 shadow-sm">
+        <h3 class="mb-2 text-sm font-semibold text-gray-700">🔑 Change Password</h3>
+        <p class="mb-3 text-xs text-gray-400">Enter your current password and choose a new one. You'll need to log back in with it — no email is sent for this.</p>
+        <form id="change-password-form" class="space-y-2">
+          <input type="password" id="current-password" placeholder="Current password" autocomplete="current-password" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+          <input type="password" id="new-password" placeholder="New password" autocomplete="new-password" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+          <input type="password" id="confirm-password" placeholder="Confirm new password" autocomplete="new-password" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+          <p class="text-xs text-gray-400">At least 8 characters, with an uppercase letter, a lowercase letter, and a number.</p>
+          <button type="submit" id="btn-change-password" class="w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60">Change Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<section class="mx-auto max-w-5xl px-4 pb-14 sm:px-6">
+  <div class="rounded-2xl border border-red-200 bg-white p-5 shadow-sm">
+    <h2 class="text-base font-bold text-red-700">Danger zone</h2>
+    <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="max-w-xl text-sm text-gray-600">
+        <p class="font-semibold text-gray-900">Delete my account</p>
+        <p class="mt-0.5">Your account is kept for <b>30 days</b> in case you change your mind — sign in again and verify with an 8-digit email code to restore it. After 30 days it is permanently removed.</p>
+      </div>
+      <button id="btn-delete-account" class="rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">Delete my account</button>
+    </div>
+  </div>
+</section>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+const FIELD_LABELS = {
+  firstName: "First Name", lastName: "Last Name", email: "Email", phone: "Phone",
+  parentName: "Parent Name", parentPhone: "Parent Phone", address: "Address",
+  city: "City", state: "State", pincode: "Pincode", education: "Education",
+};
+const STATUS_BADGE = { pending: "bg-amber-100 text-amber-700", approved: "bg-emerald-100 text-emerald-700", rejected: "bg-red-100 text-red-700" };
+
+async function loadProfile() {
+  const { data: p } = await api("/student/profile");
+  document.getElementById("p-firstName").textContent = p.userId.firstName;
+  document.getElementById("p-lastName").textContent = p.userId.lastName || "–";
+  document.getElementById("p-email").textContent = p.userId.email;
+  document.getElementById("p-phone").textContent = p.userId.phone;
+  document.getElementById("p-parentName").textContent = p.parentName || "–";
+  document.getElementById("p-parentPhone").textContent = p.parentPhone || "–";
+  document.getElementById("p-education").textContent = p.education || "–";
+  document.getElementById("p-card").textContent = p.libraryCardNumber;
+  const addressParts = [p.address, p.city, p.state, p.pincode].filter(Boolean);
+  document.getElementById("p-address").textContent = addressParts.length ? addressParts.join(", ") : "–";
+}
+
+async function loadMembership() {
+  try {
+    const { data: m } = await api("/student/membership-status");
+    if (!m) return;
+    document.getElementById("p-seat").textContent = "#" + m.seatNumber;
+    document.getElementById("p-status").textContent = m.status;
+    document.getElementById("p-expiry").textContent = new Date(m.expiryDate).toLocaleDateString();
+  } catch (e) {}
+}
+
+async function loadPayments() {
+  const { data } = await api("/student/payment-history");
+  const total = data.reduce((sum, t) => sum + Number(t.amount), 0);
+  document.getElementById("p-total-paid").textContent = "₹" + total.toLocaleString("en-IN");
+  document.getElementById("p-payment-list").innerHTML = data.length
+    ? data.map((t) => `<li class="flex justify-between py-2"><span>${t.receiptNumber} <span class="text-xs text-gray-400">(${new Date(t.createdAt).toLocaleDateString()})</span></span><span class="font-medium">₹${t.amount}</span></li>`).join("")
+    : `<li class="py-2 text-gray-400">No payments yet</li>`;
+}
+
+document.getElementById("toggle-change-form").addEventListener("click", () => {
+  document.getElementById("change-form").classList.toggle("hidden");
+});
+
+document.getElementById("btn-submit-change").addEventListener("click", async () => {
+  const field = document.getElementById("change-field").value;
+  const value = document.getElementById("change-value").value.trim();
+  const note = document.getElementById("change-note").value.trim();
+  if (!value) { toast("Enter the new value", "error"); return; }
+  try {
+    await api("/student/profile/change-request", { method: "POST", body: { changes: { [field]: value }, note } });
+    toast("Change request submitted");
+    document.getElementById("change-value").value = "";
+    document.getElementById("change-note").value = "";
+    document.getElementById("change-form").classList.add("hidden");
+    loadMyRequests();
+  } catch (e) { toast(e.message, "error"); }
+});
+
+async function loadMyRequests() {
+  const { data } = await api("/student/profile/change-requests");
+  const box = document.getElementById("my-requests-box");
+  const list = document.getElementById("my-requests-list");
+  if (!data.length) { box.classList.add("hidden"); return; }
+  box.classList.remove("hidden");
+  list.innerHTML = data.map((r) => {
+    const changesText = Object.entries(r.changes).map(([f, v]) => `${FIELD_LABELS[f] || f} → "${v}"`).join(", ");
+    return `
+      <li class="rounded-md border border-gray-100 p-2">
+        <div class="flex items-center justify-between">
+          <span>${changesText}</span>
+          <span class="rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[r.status]}">${r.status}</span>
+        </div>
+        ${r.adminNote ? `<div class="mt-1 text-xs text-gray-400">Admin note: ${r.adminNote}</div>` : ""}
+      </li>`;
+  }).join("");
+}
+
+document.getElementById("change-password-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const currentPassword = document.getElementById("current-password").value;
+  const newPassword = document.getElementById("new-password").value;
+  const confirmPassword = document.getElementById("confirm-password").value;
+
+  if (newPassword !== confirmPassword) { toast("New password and confirmation don't match", "error"); return; }
+  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(newPassword)) {
+    toast("New password must be at least 8 characters with an uppercase letter, a lowercase letter, and a number", "error");
+    return;
+  }
+
+  const btn = document.getElementById("btn-change-password");
+  btn.disabled = true; btn.textContent = "Changing...";
+  try {
+    await api("/auth/change-password", { method: "PUT", body: { currentPassword, newPassword } });
+    document.getElementById("change-password-form").reset();
+    toast("Password changed successfully");
+  } catch (e) {
+    toast(e.message, "error");
+  } finally {
+    btn.disabled = false; btn.textContent = "Change Password";
+  }
+});
+
+(async () => {
+  const user = await guardRole("student");
+  if (!user) return;
+  renderStudentNav("/student/profile.html");
+  try {
+    await loadProfile();
+    loadMembership();
+    loadPayments();
+    loadMyRequests();
+  } catch (e) {
+    document.querySelector("main").innerHTML = `
+      <div class="mx-auto max-w-md rounded-xl border border-amber-200 bg-amber-50 p-6 text-center text-amber-800">
+        <p class="font-semibold">Your membership isn't set up yet</p>
+        <p class="mt-1 text-sm">Visit the library to complete your admission — your profile will appear here after that.</p>
+      </div>`;
+  }
+})();
+</script>
+<script src="/assets/delete-ui.js?v=1"></script>
+<script>document.getElementById("btn-delete-account").addEventListener("click", () => DeleteUI.selfDelete());</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

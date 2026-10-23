@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Study Space – Study Center & Library Management System | Manage Seats, Students & Attendance Online</title>
+  <meta name="description" content="Study Space is an all-in-one study center & library management system. Manage seats, shifts, student attendance, study logs and more from one dashboard. Register free and take your study space online today." />
+  <meta name="keywords" content="study space, study center management system, library management system, seat booking software, study room management, student attendance system" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://study.mrharshit.in/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://study.mrharshit.in/" />
+  <meta property="og:title" content="Study Space – Study Center & Library Management System" />
+  <meta property="og:description" content="Manage your entire study space — seats, shifts, students, attendance and study logs — from one simple dashboard." />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:site_name" content="Study Space" />
+
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Study Space",
+    "url": "https://study.mrharshit.in/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+    "description": "Study Space is an all-in-one study center and library management system to manage seats, shifts, students, attendance and study logs online."
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" }, fontFamily: { sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"] } } } };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    details > summary { list-style: none; cursor: pointer; }
+    details > summary::-webkit-details-marker { display: none; }
+    details[open] .faq-chevron { transform: rotate(180deg); }
+  </style>
+<link rel="stylesheet" href="/assets/responsive.css?v=1" />
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+
+  <!-- Skip link for accessibility -->
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:shadow">Skip to content</a>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-30 border-b border-gray-100 bg-white/90 backdrop-blur">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 sm:px-6">
+      <a href="/index.html" class="flex items-center gap-2">
+        <span class="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-indigo-600 text-lg leading-none text-white">📚</span>
+        <span class="text-lg font-extrabold tracking-tight text-gray-900">Study Space</span>
+      </a>
+
+      <nav class="hidden items-center gap-7 text-sm font-semibold text-gray-600 md:flex">
+        <a href="#features" class="transition hover:text-primary">Features</a>
+        <a href="#how-it-works" class="transition hover:text-primary">How It Works</a>
+        <a href="#who-its-for" class="transition hover:text-primary">Who It's For</a>
+        <a href="#faq" class="transition hover:text-primary">FAQ</a>
+        <a href="/find-centers.html" class="transition hover:text-primary">Find Centers</a>
+        <a href="#support" class="font-bold text-amber-600 transition hover:text-amber-700">💜 Support</a>
+        <a href="#contact" class="transition hover:text-primary">Contact</a>
+      </nav>
+
+      <div data-auth="out" class="hidden items-center gap-2 sm:gap-3">
+        <a href="/login.html" class="rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-semibold text-gray-700 transition hover:border-primary hover:text-primary sm:px-4">Login</a>
+        <a href="/register.html" class="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-white shadow-sm shadow-blue-200 transition hover:bg-blue-700 sm:px-4">Register Free</a>
+      </div>
+
+      <div data-auth="in" class="hidden items-center gap-3">
+        <span class="hidden text-sm text-gray-600 sm:inline">Welcome, <span data-auth="name" class="font-semibold text-gray-900"></span></span>
+        <a data-dashboard-link href="/index.html" class="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-blue-700">Dashboard</a>
+        <button data-action="logout" class="rounded-lg bg-red-50 px-3 py-1.5 text-sm font-semibold text-red-600 transition hover:bg-red-100">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-blue-700 via-primary to-indigo-700 px-6 py-16 text-center text-white sm:py-24">
+    <div class="pointer-events-none absolute inset-0 opacity-20" style="background-image:radial-gradient(circle at 20% 20%, white 0, transparent 35%), radial-gradient(circle at 80% 0%, white 0, transparent 30%);"></div>
+
+    <div class="relative mx-auto max-w-3xl">
+      <span class="mb-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-blue-50 ring-1 ring-white/30">
+        🚀 Study Center &amp; Library Management System
+      </span>
+      <h1 id="hero-title" class="mx-auto max-w-3xl text-4xl font-extrabold leading-tight md:text-5xl lg:text-6xl">
+        Run your study space.<br class="hidden sm:block" /> Not a notebook.
+      </h1>
+      <p id="hero-tagline" class="mx-auto mt-5 max-w-2xl text-base text-blue-100 md:text-lg">
+        Study Space is the complete management system for your study center or library — seats, shifts, students, attendance and study logs, all in one simple, modern dashboard.
+      </p>
+
+      <div data-auth="out" class="hidden mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <a href="/register.html" class="w-full rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-primary shadow-lg transition hover:-translate-y-0.5 hover:bg-blue-50 sm:w-auto">🎓 Register as a Student — Free</a>
+        <a href="/create-center.html" class="w-full rounded-xl border-2 border-white/80 bg-white/10 px-8 py-3.5 text-sm font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20 sm:w-auto">🏢 Create a Study Center</a>
+      </div>
+      <div data-auth="out" class="hidden mt-3">
+        <a href="/login.html" class="text-sm font-semibold text-blue-100 underline-offset-4 hover:text-white hover:underline">Already have an account? Login →</a>
+      </div>
+
+      <div class="mt-5">
+        <a href="/find-centers.html" class="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/40 transition hover:bg-white/25">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.6"/></svg>
+          Find study centers near me
+        </a>
+      </div>
+
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-blue-100">
+        <p id="live-user-count" class="hidden">🟢 <strong id="live-user-count-number" class="text-white">0</strong> students already registered</p>
+        <p id="live-center-count" class="hidden">🏢 <strong id="live-center-count-number" class="text-white">0</strong> study centers on Study Space</p>
+        <span class="inline-flex items-center gap-1.5">🆓 100% free to get started</span>
+        <span class="inline-flex items-center gap-1.5">🔒 Secure, OTP-verified accounts</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust strip -->
+  <div class="border-b border-gray-100 bg-white px-6 py-5">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-400 sm:text-sm">
+      <span>No installation needed</span>
+      <span class="hidden h-1 w-1 rounded-full bg-gray-300 sm:inline-block"></span>
+      <span>Works on mobile &amp; desktop</span>
+      <span class="hidden h-1 w-1 rounded-full bg-gray-300 sm:inline-block"></span>
+      <span>Built for Indian study centers &amp; libraries</span>
+      <span class="hidden h-1 w-1 rounded-full bg-gray-300 sm:inline-block"></span>
+      <span>Free student accounts, forever</span>
+    </div>
+  </div>
+
+  <!-- About Study Space -->
+  <div id="about" class="mx-auto max-w-5xl px-6 pt-16">
+    <section class="mb-16 text-center">
+      <span class="mb-3 inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary">About Study Space</span>
+      <h2 class="text-2xl font-bold text-gray-900 md:text-3xl">One Dashboard to Manage Your Whole Study Space</h2>
+      <p class="mx-auto mt-4 max-w-3xl text-gray-600">
+        Study Space is a management system built for study centers and libraries. Instead of tracking seats on
+        paper, attendance in a register, and student details in a notebook, you get one clean dashboard to manage
+        your entire study space — seats, shifts, students, attendance and study logs — from any device. Register
+        once, set up your space in minutes, and let Study Space handle the day-to-day tracking for you.
+      </p>
+    </section>
+  </div>
+
+  <!-- How It Works -->
+  <div id="how-it-works" class="bg-white px-6 py-16">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-12 text-center">
+        <span class="mb-3 inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-emerald-600">How It Works</span>
+        <h2 class="text-2xl font-bold text-gray-900 md:text-3xl">Get set up in minutes, not days</h2>
+        <p class="mx-auto mt-3 max-w-2xl text-gray-600">Whether you're a student looking for a place to study, or a center owner ready to go digital — the process is quick and guided.</p>
+      </div>
+
+      <div class="grid gap-10 md:grid-cols-2">
+        <!-- Students -->
+        <div class="rounded-2xl border border-gray-100 bg-gray-50 p-6 sm:p-8">
+          <h3 class="mb-5 flex items-center gap-2 text-lg font-bold text-gray-900">🎓 For Students</h3>
+          <ol class="space-y-5">
+            <li class="flex gap-4"><span class="grid h-8 w-8 flex-none place-items-center rounded-full bg-primary text-sm font-bold text-white">1</span><div><p class="font-semibold text-gray-900">Create your free account</p><p class="text-sm text-gray-600">Sign up with your name and email, verified instantly with a 6-digit code.</p></div></li>
+            <li class="flex gap-4"><span class="grid h-8 w-8 flex-none place-items-center rounded-full bg-primary text-sm font-bold text-white">2</span><div><p class="font-semibold text-gray-900">Find a center near you</p><p class="text-sm text-gray-600">Use the map to discover study centers close to your location.</p></div></li>
+            <li class="flex gap-4"><span class="grid h-8 w-8 flex-none place-items-center rounded-full bg-primary text-sm font-bold text-white">3</span><div><p class="font-semibold text-gray-900">Study, track &amp; climb the leaderboard</p><p class="text-sm text-gray-600">Log your sessions, build a streak, and see your progress on your calendar.</p></div></li>
+          </ol>
+          <a href="/register.html" class="mt-7 inline-flex rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700">Register as a Student →</a>
+        </div>
+
+        <!-- Centers -->
+        <div class="rounded-2xl border border-gray-100 bg-gray-50 p-6 sm:p-8">
+          <h3 class="mb-5 flex items-center gap-2 text-lg font-bold text-gray-900">🏢 For Study Centers</h3>
+          <ol class="space-y-5">
+            <li class="flex gap-4"><span class="grid h-8 w-8 flex-none place-items-center rounded-full bg-emerald-600 text-sm font-bold text-white">1</span><div><p class="font-semibold text-gray-900">Create your center's account</p><p class="text-sm text-gray-600">Tell us your center's name and owner details — verified by email.</p></div></li>
+            <li class="flex gap-4"><span class="grid h-8 w-8 flex-none place-items-center rounded-full bg-emerald-600 text-sm font-bold text-white">2</span><div><p class="font-semibold text-gray-900">Pin your location &amp; set up seats</p><p class="text-sm text-gray-600">Your dashboard opens pre-configured with 100 seats &amp; 5 shifts — ready to customise.</p></div></li>
+            <li class="flex gap-4"><span class="grid h-8 w-8 flex-none place-items-center rounded-full bg-emerald-600 text-sm font-bold text-white">3</span><div><p class="font-semibold text-gray-900">Get discovered &amp; manage students</p><p class="text-sm text-gray-600">Appear on the map for nearby students and manage admissions, attendance &amp; fees from one panel.</p></div></li>
+          </ol>
+          <a href="/create-center.html" class="mt-7 inline-flex rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700">Create a Study Center →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platform Features -->
+  <div id="features" class="mx-auto max-w-6xl px-6 py-16">
+    <div class="mb-10 text-center">
+      <span class="mb-3 inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary">Features</span>
+      <h2 class="text-2xl font-bold text-gray-900 md:text-3xl">Everything You Need to Manage Your Study Space</h2>
+      <p class="mx-auto mt-3 max-w-2xl text-gray-600">Purpose-built tools for study center owners, library admins and students alike.</p>
+    </div>
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">🪑</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Seat &amp; Space Management</h3>
+        <p class="text-sm text-gray-600">See every seat at a glance, mark seats occupied or free, and avoid double-booking — all in real time.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">🕒</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Shift Management</h3>
+        <p class="text-sm text-gray-600">Create morning, afternoon, evening or custom shifts and assign students to the slot that fits your capacity.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">🧑‍🎓</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Student Database</h3>
+        <p class="text-sm text-gray-600">Keep every student's profile, contact details, fee status and shift in one organised, searchable dashboard.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">📈</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Attendance &amp; Study Logs</h3>
+        <p class="text-sm text-gray-600">Track daily attendance and study hours automatically, so you always know who's studying and how consistently.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">🏆</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Leaderboard &amp; Motivation</h3>
+        <p class="text-sm text-gray-600">Auto-generated daily and monthly leaderboards keep students motivated to log in, show up, and put in the hours.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">🗓️</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Study Calendar</h3>
+        <p class="text-sm text-gray-600">Students get their own calendar to review past study sessions and stay consistent with their routine.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">📍</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Map-Based Discovery</h3>
+        <p class="text-sm text-gray-600">Students find nearby study centers on an interactive map, with distance and directions built in.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">✅</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Change Requests &amp; Approvals</h3>
+        <p class="text-sm text-gray-600">Students can request shift or seat changes, and admins approve or decline them in one click.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">🛠️</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Admin Control Panel</h3>
+        <p class="text-sm text-gray-600">Manage your homepage content, notices, gallery, shifts and seats from one simple, no-code admin dashboard.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">🔒</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Secure Login for Everyone</h3>
+        <p class="text-sm text-gray-600">Role-based accounts for admins and students, with OTP-based verification and password recovery built in.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">📱</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Works on Any Device</h3>
+        <p class="text-sm text-gray-600">A clean, responsive design that works smoothly on mobile, tablet and desktop — no app install required.</p>
+      </div>
+      <div class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-3 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-2xl">🆓</div>
+        <h3 class="mb-1.5 font-semibold text-gray-900">Free to Get Started</h3>
+        <p class="text-sm text-gray-600">Student accounts are free forever, and every new study center starts with a ready-to-use workspace at no cost.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Who It's For -->
+  <div id="who-its-for" class="bg-gray-50 px-6 py-16">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-10 text-center">
+        <span class="mb-3 inline-block rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-indigo-600">Who It's For</span>
+        <h2 class="text-2xl font-bold text-gray-900 md:text-3xl">Built for students and study center owners alike</h2>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-gray-100">
+          <div class="mb-4 grid h-12 w-12 place-items-center rounded-xl bg-blue-50 text-2xl">🎓</div>
+          <h3 class="mb-2 text-lg font-bold text-gray-900">Students</h3>
+          <ul class="mb-6 space-y-2.5 text-sm text-gray-600">
+            <li class="flex gap-2"><span class="text-primary">✔</span> Discover study centers &amp; libraries near you</li>
+            <li class="flex gap-2"><span class="text-primary">✔</span> Track study sessions, streaks &amp; attendance</li>
+            <li class="flex gap-2"><span class="text-primary">✔</span> Compete on daily &amp; monthly leaderboards</li>
+            <li class="flex gap-2"><span class="text-primary">✔</span> Review your own study calendar anytime</li>
+            <li class="flex gap-2"><span class="text-primary">✔</span> Free forever — no hidden charges from us</li>
+          </ul>
+          <a href="/register.html" class="inline-flex rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700">Create Student Account</a>
+        </div>
+        <div class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-gray-100">
+          <div class="mb-4 grid h-12 w-12 place-items-center rounded-xl bg-emerald-50 text-2xl">🏢</div>
+          <h3 class="mb-2 text-lg font-bold text-gray-900">Study Center Owners</h3>
+          <ul class="mb-6 space-y-2.5 text-sm text-gray-600">
+            <li class="flex gap-2"><span class="text-emerald-600">✔</span> Go live with 100 seats &amp; 5 shifts, ready instantly</li>
+            <li class="flex gap-2"><span class="text-emerald-600">✔</span> Manage admissions, attendance &amp; fee status</li>
+            <li class="flex gap-2"><span class="text-emerald-600">✔</span> Get discovered by students searching nearby</li>
+            <li class="flex gap-2"><span class="text-emerald-600">✔</span> Customise your homepage, notices &amp; gallery</li>
+            <li class="flex gap-2"><span class="text-emerald-600">✔</span> Add staff accounts with controlled permissions</li>
+          </ul>
+          <a href="/create-center.html" class="inline-flex rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700">Create Study Center Account</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Highlighted Register CTA -->
+  <div data-auth="out" class="hidden px-6 py-16">
+    <section class="mx-auto max-w-5xl overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-primary shadow-xl">
+      <div class="flex flex-col items-center gap-6 px-6 py-12 text-center text-white sm:px-12">
+        <h2 class="text-2xl font-bold md:text-3xl">Ready to manage your study space the smart way?</h2>
+        <p class="max-w-xl text-blue-100">
+          Create your free account today and get instant access to seat management, attendance tracking, shift
+          scheduling and more — no paperwork required.
+        </p>
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <a href="/register.html" class="rounded-lg bg-white px-10 py-3.5 text-base font-bold text-primary shadow-lg transition hover:scale-105 hover:bg-blue-50">
+            Register Now — Get Started Free
+          </a>
+          <a href="/create-center.html" class="rounded-lg border-2 border-white/80 bg-white/10 px-10 py-3.5 text-base font-bold text-white backdrop-blur transition hover:scale-105 hover:bg-white/20">
+            Create a Study Center
+          </a>
+        </div>
+        <p class="text-xs text-blue-100">
+          Already have an account? <a href="/login.html" class="font-semibold underline underline-offset-2">Login here</a>
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Leaderboard (loaded dynamically, only shown if data exists) -->
+  <div id="leaderboard-wrap" class="mx-auto hidden max-w-5xl px-6">
+    <section class="mb-10 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
+        <h3 class="mb-3 font-semibold">🔥 Today's Top Studiers</h3>
+        <ol id="daily-top" class="space-y-2 text-sm"></ol>
+      </div>
+      <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
+        <h3 class="mb-3 font-semibold">🏆 Student of the Month</h3>
+        <ol id="monthly-top" class="space-y-2 text-sm"></ol>
+      </div>
+    </section>
+  </div>
+
+  <!-- Notices (loaded dynamically) -->
+  <div id="notices-wrap" class="mx-auto hidden max-w-5xl px-6">
+    <section class="mb-10 rounded-xl bg-yellow-50 p-5 ring-1 ring-yellow-100">
+      <h3 class="mb-3 font-semibold text-yellow-800">📢 Notices</h3>
+      <ul id="notices-list" class="space-y-2"></ul>
+    </section>
+  </div>
+
+  <!-- About this center (loaded dynamically) -->
+  <div id="center-about-wrap" class="mx-auto hidden max-w-5xl px-6">
+    <section class="mb-10">
+      <h3 id="center-about-title" class="mb-2 text-xl font-semibold"></h3>
+      <p id="center-about-text" class="text-gray-600"></p>
+    </section>
+  </div>
+
+  <!-- FAQ -->
+  <div id="faq" class="mx-auto max-w-3xl px-6 py-16">
+    <div class="mb-10 text-center">
+      <span class="mb-3 inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary">FAQ</span>
+      <h2 class="text-2xl font-bold text-gray-900 md:text-3xl">Frequently Asked Questions</h2>
+    </div>
+    <div class="space-y-3">
+      <details class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm" open>
+        <summary class="flex items-center justify-between gap-4 font-semibold text-gray-900">Is Study Space free for students?<svg class="faq-chevron h-5 w-5 flex-none text-gray-400 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <p class="mt-3 text-sm text-gray-600">Yes. Creating and using a student account on Study Space is completely free. Any fees charged for a seat or membership are set and collected independently by the study center you join, not by Study Space.</p>
+      </details>
+      <details class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <summary class="flex items-center justify-between gap-4 font-semibold text-gray-900">How do I register my study center or library?<svg class="faq-chevron h-5 w-5 flex-none text-gray-400 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <p class="mt-3 text-sm text-gray-600">Click "Create a Study Center," enter your center's name, your details and email, verify with the OTP we send you, then pin your location. Your dashboard opens instantly with 100 seats and 5 shifts ready to customise.</p>
+      </details>
+      <details class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <summary class="flex items-center justify-between gap-4 font-semibold text-gray-900">Does Study Space collect fees or payments on my behalf?<svg class="faq-chevron h-5 w-5 flex-none text-gray-400 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <p class="mt-3 text-sm text-gray-600">No, not by default. Study Space is a management and discovery tool — fee collection between a study center and its students happens outside the platform, directly between the two parties. See our Terms &amp; Conditions for full details.</p>
+      </details>
+      <details class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <summary class="flex items-center justify-between gap-4 font-semibold text-gray-900">Is my data safe on Study Space?<svg class="faq-chevron h-5 w-5 flex-none text-gray-400 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <p class="mt-3 text-sm text-gray-600">We use OTP-verified sign-up, hashed passwords, and role-based access controls to protect accounts. Read our full Privacy Policy for details on what data we collect and how it's used — linked in the footer below.</p>
+      </details>
+      <details class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <summary class="flex items-center justify-between gap-4 font-semibold text-gray-900">Can I add staff members to manage my center?<svg class="faq-chevron h-5 w-5 flex-none text-gray-400 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <p class="mt-3 text-sm text-gray-600">Yes. Center owners can create staff/sub-admin accounts with controlled permissions from their admin settings, so your team can help manage seats, students and attendance.</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- Contact (loaded dynamically) -->
+  <div id="contact" class="mx-auto hidden max-w-5xl px-6 pb-16">
+    <section>
+      <h3 class="mb-4 text-xl font-semibold">Contact Us</h3>
+      <div class="rounded-xl bg-white p-5 text-sm text-gray-600 shadow-sm ring-1 ring-gray-100">
+        <p id="contact-address" class="hidden"></p>
+        <p id="contact-phone" class="mt-1 hidden"></p>
+      </div>
+    </section>
+  </div>
+
+  </main>
+
+  <!-- Support the developer + Top 5 supporters -->
+  <section id="support" class="bg-gradient-to-b from-gray-50 to-white px-6 py-16">
+    <div class="mx-auto max-w-5xl">
+      <div class="text-center">
+        <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-extrabold text-amber-700">👑 PREMIUM SUPPORTERS</span>
+        <h2 class="mt-3 text-3xl font-extrabold text-gray-900">Love Study Space? Support the developer 💜</h2>
+        <p class="mx-auto mt-2 max-w-2xl text-gray-600">Development, secure hosting and maintenance never stop — and your support keeps Study Space free for every student. Give any amount from <b>₹10</b>, earn a Gold Premium badge and join our Supporters Wall.</p>
+        <div class="ds-premium-only mx-auto mt-6 max-w-xl rounded-2xl bg-amber-50 p-4 text-sm font-semibold text-amber-800 ring-1 ring-amber-200">👑 You are a Premium Supporter — thank you for keeping Study Space alive!</div>
+        <div class="mt-6 flex flex-wrap justify-center gap-3">
+          <button data-donate class="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-8 py-3.5 text-base font-extrabold text-white shadow-lg transition hover:scale-105">💜 Donate now</button>
+          <button data-donate="plans" class="rounded-xl bg-amber-400 px-8 py-3.5 text-base font-extrabold text-amber-950 shadow transition hover:scale-105 hover:bg-amber-300">👑 Premium plans from ₹299</button>
+        </div>
+        <div class="mx-auto mt-6 grid max-w-3xl gap-3 text-left text-sm sm:grid-cols-3">
+          <div class="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-100"><b>1. Pick an amount</b><br><span class="text-gray-500">₹10, 20, 50, 100… or type your own.</span></div>
+          <div class="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-100"><b>2. Pay in seconds</b><br><span class="text-gray-500">UPI, cards, net-banking — no login needed.</span></div>
+          <div class="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-100"><b>3. Add your details</b><br><span class="text-gray-500">After paying, enter your name &amp; links — you appear on the wall + get a thank-you email.</span></div>
+        </div>
+      </div>
+      <div class="mt-12">
+        <div class="mb-4 flex items-end justify-between"><h3 class="text-xl font-extrabold text-gray-900">🏆 Top 5 supporters</h3><a href="/supporters.html" class="text-sm font-bold text-primary hover:underline">See full list →</a></div>
+        <div id="top-supporters" class="space-y-3"><div class="py-6 text-center text-gray-400">Loading…</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-200 bg-white">
+    <div class="mx-auto max-w-7xl px-6 py-14">
+      <div class="grid grid-cols-2 gap-10 sm:grid-cols-4">
+        <div class="col-span-2 sm:col-span-1">
+          <a href="/index.html" class="mb-3 flex items-center gap-2">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-primary to-indigo-600 text-base text-white">📚</span>
+            <span class="text-base font-extrabold text-gray-900">Study Space</span>
+          </a>
+          <p class="text-sm text-gray-500">The complete study center &amp; library management system — seats, shifts, students and attendance, all in one place.</p>
+        </div>
+        <div>
+          <h4 class="mb-3 text-xs font-bold uppercase tracking-wide text-gray-400">Product</h4>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li><a href="#features" class="hover:text-primary">Features</a></li>
+            <li><a href="#how-it-works" class="hover:text-primary">How It Works</a></li>
+            <li><a href="/find-centers.html" class="hover:text-primary">Find Centers</a></li>
+            <li><a href="#faq" class="hover:text-primary">FAQ</a></li>
+            <li><a href="/donate.html" class="font-semibold text-amber-600 hover:text-amber-700">💜 Support the developer</a></li>
+            <li><a href="/supporters.html" class="hover:text-primary">🏆 Supporters Wall</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="mb-3 text-xs font-bold uppercase tracking-wide text-gray-400">Get Started</h4>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li><a href="/register.html" class="hover:text-primary">Register as a Student</a></li>
+            <li><a href="/create-center.html" class="hover:text-primary">Create a Study Center</a></li>
+            <li><a href="/login.html" class="hover:text-primary">Login</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="mb-3 text-xs font-bold uppercase tracking-wide text-gray-400">Legal</h4>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li><a href="/legal/terms-student.html" class="hover:text-primary">Student Terms &amp; Conditions</a></li>
+            <li><a href="/legal/terms-student.html#s19" class="hover:text-primary">Student Privacy Policy</a></li>
+            <li><a href="/legal/terms-center.html" class="hover:text-primary">Study Center Terms &amp; Conditions</a></li>
+            <li><a href="/legal/terms-center.html#s31" class="hover:text-primary">Study Center Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-gray-100 pt-6 text-center sm:flex-row sm:text-left">
+        <p class="text-xs text-gray-500">© <span id="year"></span> Study Space — Study Center &amp; Library Management System. All rights reserved.</p>
+        <p class="text-xs text-gray-400">Made for students &amp; study centers, everywhere.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/main.js?v=6"></script>
+  <script src="/assets/supporters.js?v=2"></script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    async function loadContent() {
+      try {
+        const { data: content } = await api("/content");
+
+        // The homepage is the whole Study Space platform, not any one
+        // center's page — so it stays branded "Study Space" and only
+        // shows platform-wide numbers, never a specific center's name,
+        // tagline, notices or contact details. (Those will get their
+        // own per-center public page later.)
+        if (typeof content.registeredUserCount === "number") {
+          document.getElementById("live-user-count-number").textContent = content.registeredUserCount;
+          document.getElementById("live-user-count").classList.remove("hidden");
+        }
+      } catch (e) {
+        // Backend not reachable yet — the static page above still renders fine on its own.
+        console.error(e);
+      }
+    }
+
+    async function loadCenterCount() {
+      try {
+        const { data } = await api("/organizations");
+        document.getElementById("live-center-count-number").textContent = data.count;
+        document.getElementById("live-center-count").classList.remove("hidden");
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadTopSupporters() {
+      const box = document.getElementById("top-supporters");
+      try {
+        const d = await fetchSupporters({ limit: 5 });
+        box.innerHTML = d.items.length ? renderSupportCards(d.items) : '<div class="rounded-2xl bg-white p-8 text-center text-gray-500 shadow-sm ring-1 ring-gray-100">Be the first name on the wall! 💜</div>';
+      } catch (e) { box.innerHTML = ""; }
+    }
+
+    loadContent();
+    loadCenterCount();
+    loadTopSupporters();
+  </script>
+</body>
+</html>

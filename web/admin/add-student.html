@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admit Student — Study Space Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div id="live-clock" class="rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm"></div>
+    <h1 class="text-2xl font-bold text-gray-900">Admit New Student</h1>
+  </div>
+
+  <div id="success-box" class="mb-6 hidden">
+    <!-- Hero -->
+    <div class="overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-100">
+      <div class="bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 px-6 py-7 text-center text-white">
+        <div class="mx-auto grid h-14 w-14 place-items-center rounded-full bg-white/20 text-3xl ring-4 ring-white/30">✓</div>
+        <h2 class="mt-3 text-2xl font-extrabold">Student admitted successfully</h2>
+        <p class="mt-1 text-sm text-emerald-50">Account created, seat booked and receipt generated. Share the welcome details below so the student can start right away.</p>
+      </div>
+
+      <div class="grid gap-5 p-5 sm:p-7 lg:grid-cols-2">
+        <!-- Left: student card + login -->
+        <div class="space-y-4">
+          <div class="rounded-2xl bg-gradient-to-br from-primary to-blue-800 p-5 text-white shadow">
+            <div class="flex items-center gap-3">
+              <img id="ok-photo" class="hidden h-14 w-14 rounded-full border-2 border-white/40 object-cover" alt="" />
+              <div id="ok-initial" class="grid h-14 w-14 place-items-center rounded-full border-2 border-white/40 bg-white/10 text-xl font-extrabold">?</div>
+              <div class="min-w-0">
+                <div class="text-[11px] uppercase tracking-wider text-blue-100">Digital Library Card</div>
+                <div id="ok-name" class="truncate text-lg font-extrabold">–</div>
+                <div id="ok-card" class="font-mono text-sm text-blue-100">–</div>
+              </div>
+            </div>
+            <dl class="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div class="rounded-xl bg-white/10 p-3"><dt class="text-[11px] uppercase text-blue-100">Seat</dt><dd id="ok-seat" class="font-bold">–</dd></div>
+              <div class="rounded-xl bg-white/10 p-3"><dt class="text-[11px] uppercase text-blue-100">Shift(s)</dt><dd id="ok-shifts" class="font-bold">–</dd></div>
+              <div class="rounded-xl bg-white/10 p-3"><dt class="text-[11px] uppercase text-blue-100">Valid till</dt><dd id="ok-expiry" class="font-bold">–</dd></div>
+              <div class="rounded-xl bg-white/10 p-3"><dt class="text-[11px] uppercase text-blue-100">Fee received</dt><dd id="ok-amount" class="font-bold">–</dd></div>
+            </dl>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 bg-white p-5">
+            <div class="mb-3 flex items-center justify-between">
+              <h3 class="text-sm font-bold text-gray-800">🔐 Login details</h3>
+              <span class="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-800">Shown only once</span>
+            </div>
+            <div class="space-y-2 text-sm">
+              <div class="flex items-center justify-between gap-2 rounded-xl bg-gray-50 px-3 py-2"><div class="min-w-0"><div class="text-[11px] font-semibold uppercase text-gray-400">Login email</div><div id="ok-email" class="truncate font-semibold text-gray-900">–</div></div><button type="button" data-copy="ok-email" class="rounded-md bg-white px-2.5 py-1 text-xs font-bold text-primary ring-1 ring-gray-200 hover:bg-blue-50">Copy</button></div>
+              <div class="flex items-center justify-between gap-2 rounded-xl bg-gray-50 px-3 py-2"><div class="min-w-0"><div class="text-[11px] font-semibold uppercase text-gray-400">Temporary password</div><div id="ok-pass" class="truncate font-mono font-semibold text-gray-900">••••••••••</div></div><div class="flex gap-1.5"><button type="button" id="ok-pass-eye" class="rounded-md bg-white px-2.5 py-1 text-xs font-bold text-gray-600 ring-1 ring-gray-200 hover:bg-gray-100">Show</button><button type="button" data-copy="ok-pass" class="rounded-md bg-white px-2.5 py-1 text-xs font-bold text-primary ring-1 ring-gray-200 hover:bg-blue-50">Copy</button></div></div>
+            </div>
+            <div class="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-[13px] leading-relaxed text-amber-900">
+              <b>⚠️ Ask the student to change this password after the first login:</b>
+              <ol class="mt-1 list-decimal space-y-0.5 pl-5"><li>Login → open <b>My Profile</b> → <b>Change Password</b></li><li>Enter the <b>current password</b> (the one above)</li><li>Enter a <b>new password</b> and <b>confirm</b> it</li><li>Tap <b>Save</b> — and remember it, don't share it</li></ol>
+            </div>
+            <p id="ok-email-note" class="mt-3 hidden rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-600"></p>
+          </div>
+        </div>
+
+        <!-- Right: WhatsApp welcome -->
+        <div class="flex flex-col rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5">
+          <div class="flex items-center gap-2">
+            <span class="grid h-9 w-9 place-items-center rounded-full bg-emerald-500 text-white" id="ok-wa-ic"></span>
+            <div><h3 class="text-sm font-bold text-gray-900">WhatsApp welcome message</h3><p class="text-xs text-gray-500">Ready-made &amp; editable — you press Send inside WhatsApp.</p></div>
+          </div>
+          <textarea id="ok-wa-text" rows="16" class="mt-3 w-full flex-1 rounded-xl border border-emerald-200 bg-white p-3 text-[13px] leading-relaxed text-gray-800 focus:border-emerald-500 focus:outline-none"></textarea>
+          <div class="mt-3 grid gap-2 sm:grid-cols-2">
+            <button type="button" id="ok-wa-student" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-bold text-white shadow hover:bg-emerald-600">Send to student</button>
+            <button type="button" id="ok-wa-parent" class="hidden items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-emerald-700 ring-1 ring-emerald-300 hover:bg-emerald-50">Send to parent</button>
+            <button type="button" id="ok-copy-msg" class="rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-gray-700 ring-1 ring-gray-300 hover:bg-gray-50 sm:col-span-2">📋 Copy message</button>
+          </div>
+          <p class="mt-2 text-[11px] text-gray-500">The message includes the password because it is only shown now. Parents receive the same message — remove the login section first if you don't want to share it.</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-3 border-t border-gray-100 bg-gray-50 px-5 py-4">
+        <a href="/admin/add-student.html" class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700">+ Admit another student</a>
+        <a id="ok-view" href="/admin/students.html" class="rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-gray-700 ring-1 ring-gray-300 hover:bg-gray-100">View student profile</a>
+        <a href="/admin/students.html" class="rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-gray-700 ring-1 ring-gray-300 hover:bg-gray-100">Students list</a>
+      </div>
+    </div>
+  </div>
+
+  <form id="admit-form" class="grid gap-4 md:grid-cols-2">
+
+    <!-- Photo -->
+    <div class="rounded-xl bg-white p-6 shadow-sm md:col-span-2">
+      <h2 class="mb-1 text-sm font-semibold text-gray-700">Student Photo <span class="font-normal text-gray-400">(optional)</span></h2>
+      <p class="mb-3 text-xs text-gray-400">Max 1MB — larger photos are automatically compressed to fit. Take a live photo with your camera, or choose an existing file.</p>
+      <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+        <div id="photo-preview-box" class="flex h-32 w-32 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 text-gray-400">
+          <span id="photo-placeholder-text" class="px-2 text-center text-xs">No photo<br>selected</span>
+          <img id="photo-preview-img" class="hidden h-full w-full object-cover" alt="Student photo preview" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-wrap gap-2">
+            <button type="button" id="btn-open-camera" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">📷 Take Live Photo</button>
+            <button type="button" id="btn-choose-file" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">📁 Choose File</button>
+            <input type="file" id="photo-file-input" accept="image/*" class="hidden" />
+          </div>
+          <button type="button" id="btn-remove-photo" class="hidden w-fit text-sm text-red-600 hover:underline">Remove photo</button>
+          <p id="photo-status-text" class="text-xs text-gray-500"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-xl bg-white p-6 shadow-sm">
+      <h2 class="mb-4 text-sm font-semibold text-gray-700">Personal Details</h2>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="col-span-1"><label class="mb-1 block text-xs font-medium text-gray-600">First Name *</label><input id="firstName" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <div class="col-span-1"><label class="mb-1 block text-xs font-medium text-gray-600">Last Name</label><input id="lastName" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <div class="col-span-1">
+          <label class="mb-1 block text-xs font-medium text-gray-600">Phone * (10-digit mobile)</label>
+          <div class="flex overflow-hidden rounded-md border border-gray-300 focus-within:border-primary">
+            <span class="flex items-center bg-gray-50 px-3 text-sm text-gray-500">+91</span>
+            <input id="phone" required inputmode="numeric" maxlength="10" placeholder="98765 43210" class="w-full border-0 px-3 py-2 text-sm focus:outline-none" />
+          </div>
+          <p id="phone-hint" class="mt-1 text-xs text-gray-400">Must start with 6, 7, 8, or 9</p>
+        </div>
+        <div class="col-span-1">
+          <label class="mb-1 block text-xs font-medium text-gray-600">Email * <span class="text-gray-400" title="This is what the student logs in with">(login ID)</span></label>
+          <div class="relative">
+            <input type="email" id="email" required autocomplete="off" class="w-full rounded-md border border-gray-300 px-3 py-2 pr-8 text-sm focus:border-primary focus:outline-none" />
+            <span id="email-check-spinner" class="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 text-gray-400">
+              <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+            </span>
+          </div>
+          <p id="email-check-msg" class="mt-1 text-xs"></p>
+        </div>
+        <div class="col-span-1"><label class="mb-1 block text-xs font-medium text-gray-600">Parent Name</label><input id="parentName" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <div class="col-span-1">
+          <label class="mb-1 block text-xs font-medium text-gray-600">Parent Phone</label>
+          <div class="flex overflow-hidden rounded-md border border-gray-300 focus-within:border-primary">
+            <span class="flex items-center bg-gray-50 px-3 text-sm text-gray-500">+91</span>
+            <input id="parentPhone" inputmode="numeric" maxlength="10" placeholder="98765 43210" class="w-full border-0 px-3 py-2 text-sm focus:outline-none" />
+          </div>
+        </div>
+        <div class="col-span-2"><label class="mb-1 block text-xs font-medium text-gray-600">Education</label><input id="education" placeholder="e.g. 12th, B.Tech, NEET Aspirant" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+
+        <!-- Structured address -->
+        <div class="col-span-2 mt-2 border-t border-gray-100 pt-3">
+          <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Address</p>
+        </div>
+        <div class="col-span-2"><label class="mb-1 block text-xs font-medium text-gray-600">Address Line</label><input id="address" placeholder="House no., street, locality" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <div class="col-span-1"><label class="mb-1 block text-xs font-medium text-gray-600">City</label><input id="city" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <div class="col-span-1"><label class="mb-1 block text-xs font-medium text-gray-600">State</label><input id="state" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <div class="col-span-1">
+          <label class="mb-1 block text-xs font-medium text-gray-600">Pincode</label>
+          <input id="pincode" inputmode="numeric" maxlength="6" placeholder="6-digit" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-xl bg-white p-6 shadow-sm">
+      <h2 class="mb-4 text-sm font-semibold text-gray-700">Seat, Shift &amp; Payment</h2>
+      <div class="mb-3">
+        <label class="mb-1 block text-xs font-medium text-gray-600">Admission Date *</label>
+        <div class="relative w-fit">
+          <button type="button" id="admission-date-btn" class="flex w-48 items-center justify-between gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm hover:border-primary focus:border-primary focus:outline-none">
+            <span id="admission-date-label">Today</span>
+            <span class="text-gray-400">📅</span>
+          </button>
+          <div id="mini-calendar" class="absolute z-20 mt-1 hidden w-64 rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
+            <div class="mb-2 flex items-center justify-between">
+              <button type="button" id="cal-prev" class="rounded p-1 text-gray-500 hover:bg-gray-100">&#8592;</button>
+              <span id="cal-month-label" class="text-sm font-semibold text-gray-800"></span>
+              <button type="button" id="cal-next" class="rounded p-1 text-gray-500 hover:bg-gray-100">&#8594;</button>
+            </div>
+            <div class="mb-1 grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-gray-400">
+              <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+            </div>
+            <div id="cal-days" class="grid grid-cols-7 gap-1 text-center text-sm"></div>
+            <button type="button" id="cal-today-btn" class="mt-2 w-full rounded-md bg-gray-50 px-2 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100">Jump to Today</button>
+          </div>
+        </div>
+        <p class="mt-1 text-xs text-gray-400">Defaults to today — pick an earlier date if this student joined before being entered into the system.</p>
+      </div>
+      <div class="mb-3">
+        <label class="mb-1 block text-xs font-medium text-gray-600">Seat Number *</label>
+        <div class="relative">
+          <input type="number" min="1" id="seatNumber" required class="w-full rounded-md border border-gray-300 px-3 py-2 pr-8 text-sm focus:border-primary focus:outline-none" />
+          <span id="seat-check-spinner" class="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 text-gray-400">
+            <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+          </span>
+        </div>
+        <p id="seat-check-msg" class="mt-1 text-xs"></p>
+      </div>
+      <div class="mb-3">
+        <label class="mb-1 block text-xs font-medium text-gray-600">Shift(s) * <span class="text-gray-400">(select 1 or more)</span></label>
+        <div id="shifts-checkboxes" class="rounded-md border border-gray-300 p-2 text-sm"><em class="text-gray-400">Loading shifts...</em></div>
+      </div>
+      <div class="mb-3 grid grid-cols-2 gap-3">
+        <div><label class="mb-1 block text-xs font-medium text-gray-600">Months Paid Upfront</label><input type="number" min="1" max="12" value="1" id="months" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+        <div>
+          <label class="mb-1 block text-xs font-medium text-gray-600">Payment Method</label>
+          <select id="paymentMethod" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none">
+            <option value="cash">Cash</option>
+            <option value="online">Online</option>
+          </select>
+        </div>
+      </div>
+      <div class="rounded-md bg-blue-50 px-3 py-2 text-sm text-blue-800">Estimated Fee: ₹<span id="fee-preview">0</span></div>
+      <div class="mt-3">
+        <label class="mb-1 block text-xs font-medium text-gray-600">Amount Actually Paid (₹) <span class="text-gray-400">— editable, e.g. for a discount</span></label>
+        <input type="number" min="0" step="1" id="amountPaid" placeholder="Defaults to the estimated fee above" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+      </div>
+    </div>
+
+    <div class="md:col-span-2">
+      <button type="submit" id="submit-btn" class="rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60">Admit Student</button>
+    </div>
+  </form>
+</main>
+
+<!-- Live camera modal -->
+<div id="camera-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
+  <div class="w-full max-w-md rounded-xl bg-white p-4 shadow-xl">
+    <div class="mb-3 flex items-center justify-between">
+      <h3 class="text-base font-bold text-gray-900">Take a Photo</h3>
+      <button type="button" id="btn-close-camera" class="text-gray-400 hover:text-gray-700">✕</button>
+    </div>
+    <div class="relative overflow-hidden rounded-lg bg-black">
+      <video id="camera-video" autoplay playsinline muted class="w-full"></video>
+      <canvas id="camera-canvas" class="hidden w-full"></canvas>
+    </div>
+    <p id="camera-error" class="mt-2 hidden text-sm text-red-600"></p>
+    <div class="mt-3 flex justify-center gap-2" id="camera-controls-live">
+      <button type="button" id="btn-capture" class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">📸 Capture</button>
+    </div>
+    <div class="mt-3 hidden justify-center gap-2" id="camera-controls-captured">
+      <button type="button" id="btn-retake" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">🔄 Retake</button>
+      <button type="button" id="btn-use-photo" class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">✅ Use This Photo</button>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+// Get your own free key at https://api.imgbb.com if you ever need to rotate this one.
+const IMGBB_API_KEY = "0207bed2c6637765c4bfc36c4973948f";
+const MAX_PHOTO_BYTES = 1024 * 1024; // 1MB
+
+let allShifts = [];
+let selectedPhotoBlob = null;
+let capturedCanvasBlob = null;
+let cameraStream = null;
+
+// ---------- phone sanitizers: digits-only AND must start with 6/7/8/9
+// (standard for Indian mobile numbers) — fixes "valid 10-digit number"
+// errors AND stops obviously-wrong numbers (e.g. starting with 0-5) from
+// ever being typed in the first place. ----------
+function sanitizePhoneOnInput(id) {
+  const el = document.getElementById(id);
+  el.addEventListener("input", () => {
+    let digits = el.value.replace(/\D/g, "");
+    // Drop leading digits that can't legally start an Indian mobile number
+    while (digits.length && !/[6-9]/.test(digits[0])) {
+      digits = digits.slice(1);
+    }
+    el.value = digits.slice(0, 10);
+  });
+}
+sanitizePhoneOnInput("phone");
+sanitizePhoneOnInput("parentPhone");
+
+function sanitizeDigitsOnInput(id, maxLen) {
+  const el = document.getElementById(id);
+  el.addEventListener("input", () => {
+    el.value = el.value.replace(/\D/g, "").slice(0, maxLen);
+  });
+}
+sanitizeDigitsOnInput("pincode", 6);
+
+// ---------- email: check availability as the admin types (not just at submit) ----------
+let emailIsAvailable = null; // null = unknown/not checked yet, true/false = known
+const emailInput = document.getElementById("email");
+const emailMsgEl = document.getElementById("email-check-msg");
+const emailSpinnerEl = document.getElementById("email-check-spinner");
+
+function setEmailMsg(text, cls) {
+  emailMsgEl.textContent = text;
+  emailMsgEl.className = "mt-1 text-xs " + cls;
+}
+
+const checkEmailAvailability = debounce(async (value) => {
+  const email = value.trim();
+  if (!email) { emailSpinnerEl.classList.add("hidden"); setEmailMsg("", ""); emailIsAvailable = null; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    emailSpinnerEl.classList.add("hidden");
+    setEmailMsg("Enter a valid email address", "text-red-500");
+    emailIsAvailable = null;
+    return;
+  }
+  try {
+    const { data } = await api(`/admin/students/check-email?email=${encodeURIComponent(email)}`);
+    // Ignore a stale response if the admin has since changed the field again
+    if (emailInput.value.trim() !== email) return;
+    emailSpinnerEl.classList.add("hidden");
+    if (data.available) {
+      emailIsAvailable = true;
+      setEmailMsg("✓ Available", "text-emerald-600");
+    } else {
+      emailIsAvailable = false;
+      setEmailMsg("This email is already in use — try a different one", "text-red-600");
+    }
+  } catch (err) {
+    emailSpinnerEl.classList.add("hidden");
+    emailIsAvailable = null; // couldn't verify — don't block submit on a network hiccup
+  }
+}, 500);
+
+emailInput.addEventListener("input", () => {
+  emailIsAvailable = null;
+  const val = emailInput.value.trim();
+  if (val) { emailSpinnerEl.classList.remove("hidden"); setEmailMsg("", ""); }
+  checkEmailAvailability(emailInput.value);
+});
+emailInput.addEventListener("blur", () => { if (emailInput.value.trim()) checkEmailAvailability(emailInput.value); });
+
+// ---------- seat: check availability as soon as seat / shift(s) / admission date are known ----------
+// Checked for the SELECTED admission date, not just "right now" — a seat
+// can be free today but was already occupied on a back-dated join date.
+let seatIsAvailable = null; // null = unknown/not checked, true/false = known
+const seatInput = document.getElementById("seatNumber");
+const seatMsgEl = document.getElementById("seat-check-msg");
+const seatSpinnerEl = document.getElementById("seat-check-spinner");
+
+function setSeatMsg(text, cls) {
+  seatMsgEl.textContent = text;
+  seatMsgEl.className = "mt-1 text-xs " + cls;
+}
+
+const runSeatCheck = debounce(async () => {
+  const seatNumber = Number(seatInput.value);
+  const shiftIds = Array.from(document.querySelectorAll(".shift-check:checked")).map((c) => c.value);
+  if (!seatNumber || seatNumber <= 0 || !shiftIds.length) {
+    seatSpinnerEl.classList.add("hidden");
+    setSeatMsg("", "");
+    seatIsAvailable = null;
+    return;
+  }
+  const dateStr = toISODate(selectedAdmissionDate);
+  const query = `seatNumber=${seatNumber}&shiftIds=${shiftIds.join(",")}&date=${dateStr}`;
+  try {
+    const { data } = await api(`/admin/seats/check-availability?${query}`);
+    // Ignore a stale response if the admin has since changed a field
+    const stillSame = Number(seatInput.value) === seatNumber
+      && toISODate(selectedAdmissionDate) === dateStr
+      && Array.from(document.querySelectorAll(".shift-check:checked")).map((c) => c.value).join(",") === shiftIds.join(",");
+    if (!stillSame) return;
+    seatSpinnerEl.classList.add("hidden");
+    const dateLabel = document.getElementById("admission-date-label").textContent;
+    if (data.reason === "not_found") {
+      seatIsAvailable = false;
+      setSeatMsg(`Seat #${seatNumber} does not exist`, "text-red-600");
+    } else if (data.reason === "blocked") {
+      seatIsAvailable = false;
+      setSeatMsg(`Seat #${seatNumber} is currently blocked for maintenance`, "text-red-600");
+    } else if (data.available) {
+      seatIsAvailable = true;
+      setSeatMsg(`✓ Seat #${seatNumber} is free on ${dateLabel} for the selected shift(s)`, "text-emerald-600");
+    } else {
+      seatIsAvailable = false;
+      setSeatMsg(`✗ Seat #${seatNumber} is already occupied on ${dateLabel} (${data.conflictingShifts.join(", ")}) — pick another seat or shift`, "text-red-600");
+    }
+  } catch (err) {
+    seatSpinnerEl.classList.add("hidden");
+    seatIsAvailable = null; // couldn't verify — don't block submit on a network hiccup
+  }
+}, 400);
+
+function triggerSeatCheck() {
+  const seatNumber = Number(seatInput.value);
+  const shiftIds = Array.from(document.querySelectorAll(".shift-check:checked")).map((c) => c.value);
+  seatIsAvailable = null;
+  if (seatNumber > 0 && shiftIds.length) { seatSpinnerEl.classList.remove("hidden"); setSeatMsg("", ""); }
+  else { seatSpinnerEl.classList.add("hidden"); setSeatMsg("", ""); }
+  runSeatCheck();
+}
+seatInput.addEventListener("input", triggerSeatCheck);
+// loadShifts() (below) attaches "change" -> updateFeePreview to each shift
+// checkbox; also re-check seat availability whenever a shift is (un)ticked.
+document.getElementById("shifts-checkboxes").addEventListener("change", (e) => {
+  if (e.target.classList.contains("shift-check")) triggerSeatCheck();
+});
+
+// ---------- admission date: small popover calendar (defaults to today, no future dates) ----------
+let selectedAdmissionDate = new Date(); // Date object, local time, defaults to today
+let calViewYear = selectedAdmissionDate.getFullYear();
+let calViewMonth = selectedAdmissionDate.getMonth();
+
+function toISODate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function isSameDay(a, b) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+function updateAdmissionDateLabel() {
+  const today = new Date();
+  const label = document.getElementById("admission-date-label");
+  label.textContent = isSameDay(selectedAdmissionDate, today)
+    ? "Today"
+    : selectedAdmissionDate.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function renderCalendar() {
+  document.getElementById("cal-month-label").textContent = `${MONTH_NAMES[calViewMonth]} ${calViewYear}`;
+  const daysBox = document.getElementById("cal-days");
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const firstOfMonth = new Date(calViewYear, calViewMonth, 1);
+  const startOffset = firstOfMonth.getDay(); // 0 = Sunday
+  const daysInMonth = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+
+  let html = "";
+  for (let i = 0; i < startOffset; i++) html += `<span></span>`;
+  for (let day = 1; day <= daysInMonth; day++) {
+    const cellDate = new Date(calViewYear, calViewMonth, day);
+    const isFuture = cellDate > today;
+    const isToday = isSameDay(cellDate, today);
+    const isSelected = isSameDay(cellDate, selectedAdmissionDate);
+    const classes = [
+      "h-7 w-7 rounded-full flex items-center justify-center mx-auto",
+      isFuture ? "text-gray-300 cursor-not-allowed" : "cursor-pointer hover:bg-blue-50 text-gray-700",
+      isSelected ? "bg-primary text-white hover:bg-primary" : "",
+      isToday && !isSelected ? "border border-primary text-primary" : "",
+    ].join(" ");
+    html += `<button type="button" data-day="${day}" ${isFuture ? "disabled" : ""} class="${classes}">${day}</button>`;
+  }
+  daysBox.innerHTML = html;
+  daysBox.querySelectorAll("button[data-day]:not(:disabled)").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      selectedAdmissionDate = new Date(calViewYear, calViewMonth, Number(btn.dataset.day));
+      updateAdmissionDateLabel();
+      renderCalendar();
+      closeCalendar();
+      triggerSeatCheck();
+    });
+  });
+}
+
+function openCalendar() {
+  calViewYear = selectedAdmissionDate.getFullYear();
+  calViewMonth = selectedAdmissionDate.getMonth();
+  renderCalendar();
+  document.getElementById("mini-calendar").classList.remove("hidden");
+}
+function closeCalendar() { document.getElementById("mini-calendar").classList.add("hidden"); }
+
+document.getElementById("admission-date-btn").addEventListener("click", (e) => {
+  e.stopPropagation();
+  const cal = document.getElementById("mini-calendar");
+  cal.classList.contains("hidden") ? openCalendar() : closeCalendar();
+});
+document.getElementById("cal-prev").addEventListener("click", () => {
+  calViewMonth--; if (calViewMonth < 0) { calViewMonth = 11; calViewYear--; }
+  renderCalendar();
+});
+document.getElementById("cal-next").addEventListener("click", () => {
+  calViewMonth++; if (calViewMonth > 11) { calViewMonth = 0; calViewYear++; }
+  renderCalendar();
+});
+document.getElementById("cal-today-btn").addEventListener("click", () => {
+  selectedAdmissionDate = new Date();
+  updateAdmissionDateLabel();
+  calViewYear = selectedAdmissionDate.getFullYear();
+  calViewMonth = selectedAdmissionDate.getMonth();
+  renderCalendar();
+  closeCalendar();
+  triggerSeatCheck();
+});
+document.addEventListener("click", (e) => {
+  const cal = document.getElementById("mini-calendar");
+  const btn = document.getElementById("admission-date-btn");
+  if (!cal.contains(e.target) && e.target !== btn) closeCalendar();
+});
+updateAdmissionDateLabel();
+
+// ---------- fee preview + editable "amount actually paid" ----------
+let amountPaidManuallyEdited = false;
+document.getElementById("amountPaid").addEventListener("input", () => { amountPaidManuallyEdited = true; });
+
+function updateFeePreview() {
+  const checked = Array.from(document.querySelectorAll(".shift-check:checked")).map((c) => c.value);
+  const monthly = allShifts.filter((s) => checked.includes(s._id)).reduce((sum, s) => sum + Number(s.price), 0);
+  const months = Number(document.getElementById("months").value) || 1;
+  const estimate = monthly * months;
+  document.getElementById("fee-preview").textContent = estimate.toLocaleString("en-IN");
+  // Keep "Amount Paid" in sync with the estimate until the admin types
+  // their own value in it (e.g. for a discount or partial payment).
+  if (!amountPaidManuallyEdited) {
+    document.getElementById("amountPaid").value = estimate || "";
+  }
+}
+
+async function loadShifts() {
+  const { data } = await api("/admin/shifts");
+  allShifts = data;
+  const box = document.getElementById("shifts-checkboxes");
+  const active = data.filter((s) => s.isActive);
+  box.innerHTML = active.length
+    ? active.map((s) => `
+      <label class="mb-1 flex items-center gap-2">
+        <input type="checkbox" class="shift-check" value="${s._id}">
+        <span>${s.name} — ₹${s.price}/month</span>
+      </label>`).join("")
+    : `<em class="text-gray-400">No shifts configured yet — add one in Shifts first.</em>`;
+  document.querySelectorAll(".shift-check").forEach((c) => c.addEventListener("change", updateFeePreview));
+}
+document.getElementById("months").addEventListener("input", updateFeePreview);
+
+// ---------- photo: shared preview helpers ----------
+function showPhotoPreview(url, statusText) {
+  document.getElementById("photo-preview-img").src = url;
+  document.getElementById("photo-preview-img").classList.remove("hidden");
+  document.getElementById("photo-placeholder-text").classList.add("hidden");
+  document.getElementById("btn-remove-photo").classList.remove("hidden");
+  document.getElementById("photo-status-text").textContent = statusText;
+}
+function clearPhotoPreview() {
+  selectedPhotoBlob = null;
+  document.getElementById("photo-preview-img").src = "";
+  document.getElementById("photo-preview-img").classList.add("hidden");
+  document.getElementById("photo-placeholder-text").classList.remove("hidden");
+  document.getElementById("btn-remove-photo").classList.add("hidden");
+  document.getElementById("photo-status-text").textContent = "";
+}
+function confirmReplaceIfNeeded() {
+  if (!selectedPhotoBlob) return true;
+  return confirm("This will replace the currently selected photo. Continue?");
+}
+document.getElementById("btn-remove-photo").addEventListener("click", () => {
+  if (confirm("Remove the selected photo?")) clearPhotoPreview();
+});
+
+// ---------- photo: choose from file ----------
+document.getElementById("btn-choose-file").addEventListener("click", () => {
+  if (!confirmReplaceIfNeeded()) return;
+  document.getElementById("photo-file-input").click();
+});
+document.getElementById("photo-file-input").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  e.target.value = ""; // allow re-choosing the same file again later
+  if (!file) return;
+  if (!file.type.startsWith("image/")) { toast("Please choose an image file", "error"); return; }
+
+  if (file.size <= MAX_PHOTO_BYTES) {
+    selectedPhotoBlob = file;
+    showPhotoPreview(URL.createObjectURL(file), `${(file.size / 1024).toFixed(0)} KB — ready to upload`);
+    return;
+  }
+
+  // Over 1MB: automatically compress it down instead of rejecting it.
+  toast(`That photo is ${(file.size / 1024 / 1024).toFixed(2)}MB — compressing to fit under 1MB...`, "info");
+  try {
+    const compressed = await compressImageFile(file, MAX_PHOTO_BYTES);
+    selectedPhotoBlob = compressed;
+    showPhotoPreview(URL.createObjectURL(compressed), `Compressed from ${(file.size / 1024 / 1024).toFixed(2)}MB to ${(compressed.size / 1024).toFixed(0)} KB — ready to upload`);
+  } catch (err) {
+    toast("Could not compress that image: " + err.message, "error");
+  }
+});
+
+/** Resizes + re-encodes an image file as JPEG, shrinking quality/dimensions
+ *  in steps until it fits under maxBytes. Used for file uploads over 1MB. */
+async function compressImageFile(file, maxBytes) {
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  const img = await new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = dataUrl;
+  });
+
+  let maxDim = 1280;
+  let quality = 0.85;
+  let blob = null;
+
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(img.width * scale);
+    canvas.height = Math.round(img.height * scale);
+    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+    blob = await new Promise((res) => canvas.toBlob(res, "image/jpeg", quality));
+    if (blob && blob.size <= maxBytes) return blob;
+    // Still too big: shrink quality first, then dimensions, and try again.
+    if (quality > 0.4) quality -= 0.15;
+    else maxDim = Math.round(maxDim * 0.75);
+  }
+  if (blob) return blob; // best effort after all attempts
+  throw new Error("unable to compress image");
+}
+
+// ---------- photo: live camera ----------
+function stopCamera() {
+  if (cameraStream) { cameraStream.getTracks().forEach((t) => t.stop()); cameraStream = null; }
+}
+function closeCameraModal() {
+  stopCamera();
+  const modal = document.getElementById("camera-modal");
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
+}
+document.getElementById("btn-open-camera").addEventListener("click", async () => {
+  if (!confirmReplaceIfNeeded()) return;
+  const modal = document.getElementById("camera-modal");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+  document.getElementById("camera-error").classList.add("hidden");
+  document.getElementById("camera-video").classList.remove("hidden");
+  document.getElementById("camera-canvas").classList.add("hidden");
+  document.getElementById("camera-controls-live").classList.remove("hidden");
+  document.getElementById("camera-controls-captured").classList.add("hidden");
+  capturedCanvasBlob = null;
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+    document.getElementById("camera-video").srcObject = cameraStream;
+  } catch (err) {
+    document.getElementById("camera-error").textContent = "Could not access camera: " + err.message;
+    document.getElementById("camera-error").classList.remove("hidden");
+  }
+});
+document.getElementById("btn-close-camera").addEventListener("click", closeCameraModal);
+
+document.getElementById("btn-capture").addEventListener("click", async () => {
+  const video = document.getElementById("camera-video");
+  const canvas = document.getElementById("camera-canvas");
+  const maxDim = 640;
+  const scale = Math.min(1, maxDim / Math.max(video.videoWidth, video.videoHeight));
+  canvas.width = Math.round(video.videoWidth * scale);
+  canvas.height = Math.round(video.videoHeight * scale);
+  canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // Compress in a loop so a live capture always fits under the 1MB limit.
+  let quality = 0.85;
+  let blob = await new Promise((res) => canvas.toBlob(res, "image/jpeg", quality));
+  while (blob && blob.size > MAX_PHOTO_BYTES && quality > 0.3) {
+    quality -= 0.1;
+    blob = await new Promise((res) => canvas.toBlob(res, "image/jpeg", quality));
+  }
+  capturedCanvasBlob = blob;
+
+  video.classList.add("hidden");
+  canvas.classList.remove("hidden");
+  document.getElementById("camera-controls-live").classList.add("hidden");
+  document.getElementById("camera-controls-captured").classList.remove("hidden");
+});
+
+document.getElementById("btn-retake").addEventListener("click", () => {
+  document.getElementById("camera-video").classList.remove("hidden");
+  document.getElementById("camera-canvas").classList.add("hidden");
+  document.getElementById("camera-controls-live").classList.remove("hidden");
+  document.getElementById("camera-controls-captured").classList.add("hidden");
+  capturedCanvasBlob = null;
+});
+
+document.getElementById("btn-use-photo").addEventListener("click", () => {
+  if (!capturedCanvasBlob) return;
+  selectedPhotoBlob = capturedCanvasBlob;
+  showPhotoPreview(URL.createObjectURL(capturedCanvasBlob), `${(capturedCanvasBlob.size / 1024).toFixed(0)} KB — ready to upload`);
+  closeCameraModal();
+});
+
+// ---------- upload to imgbb (only called once, right at submit time) ----------
+async function uploadPhotoToImgbb(blob) {
+  const form = new FormData();
+  form.append("key", IMGBB_API_KEY);
+  form.append("image", blob, "photo.jpg");
+  const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: form });
+  const json = await res.json();
+  if (!json.success) throw new Error((json.error && json.error.message) || "Photo upload failed");
+  return json.data.url;
+}
+
+// ---------- success screen: welcome card + manual WhatsApp message ----------
+let adminUser = null; // set after guardRole() below (gives us the center's name)
+const escHtml = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmtDay = (iso) => new Date(String(iso).replace(" ", "T")).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+
+function showAdmissionSuccess(data, payload, shiftIds) {
+  const cred = data.loginCredentials;
+  const fullName = `${payload.firstName} ${payload.lastName}`.trim();
+  const shiftNames = allShifts.filter((s) => shiftIds.includes(s._id)).map((s) => s.name).join(", ");
+  const m = data.membership;
+
+  document.getElementById("ok-name").textContent = fullName;
+  document.getElementById("ok-initial").textContent = payload.firstName.charAt(0).toUpperCase();
+  if (payload.profilePhotoUrl) {
+    const img = document.getElementById("ok-photo");
+    img.src = payload.profilePhotoUrl; img.classList.remove("hidden");
+    document.getElementById("ok-initial").classList.add("hidden");
+  }
+  document.getElementById("ok-card").textContent = data.student.libraryCardNumber;
+  document.getElementById("ok-seat").textContent = "#" + m.seatNumber;
+  document.getElementById("ok-shifts").textContent = shiftNames || "–";
+  document.getElementById("ok-expiry").textContent = fmtDay(m.expiryDate);
+  document.getElementById("ok-amount").textContent = "₹" + Number(data.transaction.amount).toLocaleString("en-IN");
+  document.getElementById("ok-email").textContent = cred.email;
+  document.getElementById("ok-pass").dataset.value = cred.password;
+  document.getElementById("ok-view").href = "/admin/student-detail.html?id=" + data.student._id;
+
+  if (data.emailResult && !data.emailResult.sent) {
+    const n = document.getElementById("ok-email-note");
+    n.textContent = `Automatic email was not sent (${data.emailResult.reason}). Use WhatsApp or share these details directly.`;
+    n.classList.remove("hidden");
+  }
+
+  const msg = buildWelcomeMessage({
+    libraryName: (adminUser && adminUser.libraryName) || "Study Space",
+    name: payload.firstName,
+    cardNumber: data.student.libraryCardNumber,
+    seat: m.seatNumber,
+    shifts: shiftNames,
+    startDate: fmtDay(m.startDate),
+    expiryDate: fmtDay(m.expiryDate),
+    amount: data.transaction.amount,
+    loginUrl: location.origin + "/login.html",
+    email: cred.email,
+    password: cred.password,
+  });
+  const ta = document.getElementById("ok-wa-text");
+  ta.value = msg;
+  document.getElementById("ok-wa-ic").innerHTML = WA_ICON;
+  document.getElementById("ok-wa-student").innerHTML = WA_ICON + " Send to student";
+
+  const openWa = (phone) => {
+    const url = waLink(phone, ta.value);
+    if (!url) { toast("No valid mobile number for this contact", "error"); return; }
+    window.open(url, "_blank", "noopener");
+  };
+  document.getElementById("ok-wa-student").onclick = () => openWa(payload.phone);
+  const pBtn = document.getElementById("ok-wa-parent");
+  if (payload.parentPhone && waNumber(payload.parentPhone)) {
+    pBtn.classList.remove("hidden"); pBtn.classList.add("inline-flex");
+    pBtn.innerHTML = WA_ICON + " Send to parent";
+    pBtn.onclick = () => openWa(payload.parentPhone);
+  }
+  document.getElementById("ok-copy-msg").onclick = () =>
+    navigator.clipboard.writeText(ta.value).then(() => toast("Message copied"), () => toast("Copy failed — select the text and copy it manually", "error"));
+
+  document.querySelectorAll("[data-copy]").forEach((b) => {
+    b.onclick = () => {
+      const el = document.getElementById(b.dataset.copy);
+      const text = el.dataset.value || el.textContent;
+      navigator.clipboard.writeText(text).then(() => toast("Copied"), () => toast("Copy failed", "error"));
+    };
+  });
+  const eye = document.getElementById("ok-pass-eye"), passEl = document.getElementById("ok-pass");
+  eye.onclick = () => {
+    const hidden = eye.textContent === "Show";
+    passEl.textContent = hidden ? passEl.dataset.value : "••••••••••";
+    eye.textContent = hidden ? "Hide" : "Show";
+  };
+
+  document.getElementById("success-box").classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ---------- form submit ----------
+document.getElementById("admit-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const shiftIds = Array.from(document.querySelectorAll(".shift-check:checked")).map((c) => c.value);
+  if (!shiftIds.length) { toast("Please select at least one shift", "error"); return; }
+  if (emailIsAvailable === false) { toast("That email is already in use — please use a different one", "error"); return; }
+  if (seatIsAvailable === false) { toast("That seat is already occupied for the selected shift(s)/date — please choose another", "error"); return; }
+
+  const btn = document.getElementById("submit-btn");
+  btn.disabled = true;
+
+  let profilePhotoUrl = "";
+  if (selectedPhotoBlob) {
+    btn.textContent = "Uploading photo...";
+    try {
+      profilePhotoUrl = await uploadPhotoToImgbb(selectedPhotoBlob);
+    } catch (err) {
+      const proceed = confirm(`Photo upload failed (${err.message}). Continue admitting the student without a photo?`);
+      if (!proceed) { btn.disabled = false; btn.textContent = "Admit Student"; return; }
+    }
+  }
+
+  const payload = {
+    firstName: document.getElementById("firstName").value.trim(),
+    lastName: document.getElementById("lastName").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    parentName: document.getElementById("parentName").value.trim(),
+    parentPhone: document.getElementById("parentPhone").value.trim(),
+    address: document.getElementById("address").value.trim(),
+    city: document.getElementById("city").value.trim(),
+    state: document.getElementById("state").value.trim(),
+    pincode: document.getElementById("pincode").value.trim(),
+    education: document.getElementById("education").value.trim(),
+    profilePhotoUrl,
+    admissionDate: toISODate(selectedAdmissionDate),
+    amountPaid: document.getElementById("amountPaid").value.trim(),
+    seatNumber: Number(document.getElementById("seatNumber").value),
+    shiftIds,
+    months: Number(document.getElementById("months").value) || 1,
+    paymentMethod: document.getElementById("paymentMethod").value,
+  };
+
+  btn.textContent = "Admitting...";
+
+  try {
+    const { data } = await api("/admin/students/register", { method: "POST", body: payload });
+    document.getElementById("admit-form").classList.add("hidden");
+    showAdmissionSuccess(data, payload, shiftIds);
+    toast("Student admitted successfully");
+  } catch (err) {
+    toast(err.message, "error");
+    btn.disabled = false; btn.textContent = "Admit Student";
+  }
+});
+
+(async () => {
+  const user = await guardRole(["admin", "staff"]);
+  if (!user) return;
+  adminUser = user;
+  renderAdminNav("/admin/add-student.html", user);
+  if (!requirePagePermission(user, "students", "Add Student")) return;
+  startLiveClock("live-clock");
+  loadShifts();
+
+  const preselectSeat = new URLSearchParams(window.location.search).get("seat");
+  if (preselectSeat) { document.getElementById("seatNumber").value = preselectSeat; triggerSeatCheck(); }
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

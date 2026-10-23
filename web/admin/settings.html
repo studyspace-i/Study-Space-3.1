@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Settings — Study Space Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<link rel="stylesheet" href="/assets/location.css?v=1" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" }, fontFamily: { sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"] } } } };</script>
+<style>
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.card{background:#fff;border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.05),0 0 0 1px #eef1f6;padding:22px}
+.card h3{font-weight:800;font-size:15px;color:#0f172a}
+.card .hint{font-size:12.5px;color:#64748b;line-height:1.55;margin-top:2px}
+.lbl{display:block;font-size:12px;font-weight:700;color:#475569;margin:0 0 5px}
+.inp{width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 12px;font-size:14px;font-weight:500;background:#fff;color:#0f172a;outline:0;transition:.15s}
+.inp:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12)}.inp[readonly]{background:#f8fafc;color:#64748b}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;border:0;transition:.15s;white-space:nowrap}
+.btn:disabled{opacity:.55;cursor:wait}.btn-p{background:#2563eb;color:#fff}.btn-p:hover:not(:disabled){background:#1d4ed8}
+.btn-g{background:#fff;color:#334155;box-shadow:inset 0 0 0 1.5px #e2e8f0}.btn-g:hover{background:#f8fafc}
+.btn-d{background:#fef2f2;color:#b91c1c}.btn-d:hover{background:#fee2e2}.btn-sm{padding:6px 12px;font-size:12.5px;border-radius:8px}
+.nav-i{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:10px 12px;border-radius:12px;font-size:14px;font-weight:600;color:#475569;cursor:pointer;border:0;background:none;transition:.15s}
+.nav-i:hover{background:#f1f5f9}.nav-i.on{background:#eff6ff;color:#1d4ed8}.nav-i .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:#f1f5f9;font-size:15px;flex:none}
+.nav-i.on .ic{background:#dbeafe}.nav-i small{display:block;font-size:11px;font-weight:500;color:#94a3b8}
+.stat{border-radius:14px;padding:14px 16px;background:#f8fafc;box-shadow:inset 0 0 0 1px #eef1f6}.stat b{display:block;font-size:24px;font-weight:800;color:#0f172a;line-height:1.1}.stat span{font-size:12px;color:#64748b;font-weight:600}
+.bar{height:8px;border-radius:99px;background:#e2e8f0;overflow:hidden}.bar i{display:block;height:100%;border-radius:99px;background:#2563eb;transition:width .5s}
+.tog{position:relative;width:42px;height:24px;flex:none}.tog input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}.tog span{position:absolute;inset:0;border-radius:99px;background:#cbd5e1;transition:.2s}.tog span:before{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:99px;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}.tog input:checked+span{background:#2563eb}.tog input:checked+span:before{transform:translateX(18px)}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#eff6ff;color:#1e40af;border-radius:99px;padding:5px 6px 5px 12px;font-size:13px;font-weight:600}.chip button{width:20px;height:20px;border-radius:99px;border:0;background:#dbeafe;color:#1e40af;cursor:pointer;line-height:1}
+.panel{display:none}.panel.on{display:block;animation:fi .25s}@keyframes fi{from{opacity:0;transform:translateY(6px)}}
+.soc{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+@media(prefers-reduced-motion:reduce){.panel.on{animation:none}.bar i{transition:none}}
+#tabs::-webkit-scrollbar{display:none}
+</style>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto w-full max-w-6xl px-4 py-7 sm:px-6">
+  <div class="mb-6">
+    <h1 class="text-2xl font-extrabold tracking-tight sm:text-3xl">Settings</h1>
+    <p class="mt-1 text-sm text-slate-500">Manage <b id="hdr-name" class="text-slate-700">your library</b> — profile, Wi-Fi, homepage, team, seats, location and billing in one place.</p>
+  </div>
+
+  <div id="extras-banner" class="mb-5 hidden rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+    <b>One-time step:</b> import <code class="rounded bg-amber-100 px-1">config/database/SETTINGS_ADDON.sql</code> in phpMyAdmin to switch on multiple Wi-Fi networks, social links and extra profile fields. Everything else already works.
+  </div>
+  <div id="no-access-notice" class="mb-5 hidden rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">You have no settings permissions yet — you can still edit your own profile and password. Ask the library owner to grant more.</div>
+
+  <div class="grid gap-4 sm:gap-6 lg:grid-cols-[250px_minmax(0,1fr)]">
+    <!-- sidebar / tabs -->
+    <aside id="tabs-wrap" class="min-w-0 sticky top-0 z-20 -mx-1 px-1 py-1 lg:top-4 lg:z-auto lg:self-start lg:p-0 lg:mx-0">
+      <nav id="tabs" role="tablist" aria-label="Settings sections" class="flex gap-1 rounded-2xl bg-white p-2 shadow-sm ring-1 ring-slate-100 lg:flex-col"></nav>
+    </aside>
+
+    <div class="min-w-0">
+      <div id="sec-head" class="sec-head" aria-live="polite"></div>
+      <!-- 1 PROFILE -->
+      <section class="panel" data-panel="profile">
+        <div class="card mb-5">
+          <h3>Library details</h3><p class="hint">Shown on your public homepage and the “Find Study Centers” list.</p>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2"><label class="lbl">Library name</label><input id="p-lib" class="inp" maxlength="150" /></div>
+            <div><label class="lbl">Public contact phone</label><input id="p-cphone" class="inp" inputmode="tel" maxlength="13" placeholder="10-digit number" /></div>
+            <div><label class="lbl">Public contact email</label><input id="p-cemail" type="email" class="inp" placeholder="hello@yourlibrary.in" /></div>
+            <div><label class="lbl">Alternate phone</label><input id="p-alt" class="inp" inputmode="tel" maxlength="13" /></div>
+            <div><label class="lbl">WhatsApp number</label><input id="p-wa" class="inp" inputmode="tel" maxlength="13" /></div>
+            <div><label class="lbl">Website</label><input id="p-web" class="inp" placeholder="yourlibrary.in" /></div>
+            <div><label class="lbl">Established (year)</label><input id="p-year" class="inp" inputmode="numeric" maxlength="4" placeholder="2019" /></div>
+            <div class="sm:col-span-2"><label class="lbl">Opening hours</label><input id="p-hours" class="inp" maxlength="150" placeholder="Mon–Sun · 6:00 AM – 10:00 PM" /></div>
+            <div class="sm:col-span-2"><label class="lbl">Address</label><input id="p-addr" class="inp" maxlength="255" /><p class="hint">Use <b>Center Location</b> to pin the exact spot on the map.</p></div>
+          </div>
+        </div>
+        <div class="card mb-5">
+          <h3>Owner / account holder</h3><p class="hint">Your own details. The login email can’t be changed here — it is your sign-in ID.</p>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div><label class="lbl">First name</label><input id="p-first" class="inp" maxlength="50" /></div>
+            <div><label class="lbl">Last name</label><input id="p-last" class="inp" maxlength="50" /></div>
+            <div><label class="lbl">Your mobile</label><input id="p-ophone" class="inp" inputmode="tel" maxlength="13" /></div>
+            <div><label class="lbl">Login email</label><input id="p-login" class="inp" readonly /></div>
+          </div>
+          <div class="mt-5"><button id="save-profile" class="btn btn-p">Save profile</button></div>
+        </div>
+        <div class="card">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-xl bg-emerald-50 text-xl">🔐</span>
+              <div><h3>Password &amp; security</h3><p class="hint">Change your account password.</p></div></div>
+            <a href="/admin/security.html" class="btn btn-p">Open secure password page</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 WIFI -->
+      <section class="panel" data-panel="wifi">
+        <div class="card">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div><h3>Wi-Fi networks</h3><p class="hint">Active students see every <b>active</b> network here from their dashboard. The ⭐ primary one is listed first.</p></div>
+            <button id="wifi-add" class="btn btn-p">+ Add network</button>
+          </div>
+          <div id="wifi-form" class="mt-4 hidden rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div><label class="lbl">Wi-Fi name (SSID) *</label><input id="w-ssid" class="inp" maxlength="100" /></div>
+              <div><label class="lbl">Password</label><input id="w-pass" class="inp" maxlength="100" placeholder="leave empty for an open network" /></div>
+              <div><label class="lbl">Label (optional)</label><input id="w-label" class="inp" maxlength="60" placeholder="e.g. Ground floor, Guest" /></div>
+              <div><label class="lbl">Band</label><select id="w-band" class="inp"><option value="dual">Dual band</option><option>2.4GHz</option><option>5GHz</option><option value="other">Other</option></select></div>
+            </div>
+            <div class="mt-4 flex gap-2"><button id="w-save" class="btn btn-p">Save network</button><button id="w-cancel" class="btn btn-g">Cancel</button></div>
+          </div>
+          <div id="wifi-list" class="mt-5 grid gap-3 md:grid-cols-2"></div>
+        </div>
+      </section>
+
+      <!-- 3 HOME -->
+      <section class="panel" data-panel="home">
+        <div class="card mb-5">
+          <div class="flex flex-wrap items-start justify-between gap-3"><div><h3>Homepage content</h3><p class="hint">The first thing visitors read on your public page.</p></div>
+            <div class="flex gap-2"><a href="/index.html" target="_blank" class="btn btn-g btn-sm">👁 View homepage</a><a href="/admin/manage-home.html" class="btn btn-g btn-sm">Notices &amp; gallery</a></div></div>
+          <div class="mt-4 space-y-4">
+            <div><label class="lbl">Tagline <span id="tg-count" class="float-right font-medium text-slate-400"></span></label><input id="h-tag" class="inp" maxlength="255" placeholder="A quiet, affordable place to study." /></div>
+            <div><label class="lbl">About your library <span id="ab-count" class="float-right font-medium text-slate-400"></span></label><textarea id="h-about" rows="5" maxlength="4000" class="inp" placeholder="Tell students what makes your space special…"></textarea></div>
+            <div><label class="lbl">Features &amp; amenities</label>
+              <div id="h-feats" class="mb-2 flex flex-wrap gap-2"></div>
+              <div class="flex gap-2"><input id="h-feat-in" class="inp" maxlength="80" placeholder="Type a feature and press Enter — e.g. AC hall, Free Wi-Fi, CCTV" /><button id="h-feat-add" class="btn btn-g">Add</button></div>
+              <div id="h-suggest" class="mt-2 flex flex-wrap gap-1.5"></div></div>
+            <label class="flex items-center justify-between gap-3 rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100"><span><b class="text-sm">Show leaderboard on homepage</b><span class="hint block">Top studying students, if you want to celebrate them.</span></span><span class="tog"><input type="checkbox" id="h-lb"><span></span></span></label>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Social media &amp; links</h3><p class="hint">Just type a <b>@username</b>, a plain username, a phone number (WhatsApp) or paste the full link — we turn it into a clean, safe link automatically.</p>
+          <div id="soc-grid" class="mt-4 grid gap-3 sm:grid-cols-2"></div>
+          <div class="mt-5 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100"><div class="mb-2 text-xs font-bold text-slate-500">Preview on your homepage</div><div id="soc-prev" class="flex flex-wrap gap-2"></div></div>
+          <div class="mt-5"><button id="save-home" class="btn btn-p">Save homepage</button></div>
+        </div>
+      </section>
+
+      <!-- 4 STAFF -->
+      <section class="panel" data-panel="staff">
+        <div class="card">
+          <div class="flex flex-wrap items-start justify-between gap-3"><div><h3>Staff &amp; admin accounts</h3><p class="hint">Staff sign in with their own email. New staff start with <b>no permissions</b> — grant what they need.</p></div>
+            <button id="staff-toggle" class="btn btn-p hidden">+ Add staff</button></div>
+          <div id="staff-form" class="mt-4 hidden rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div><label class="lbl">First name</label><input id="staff-first" class="inp" /></div><div><label class="lbl">Last name</label><input id="staff-last" class="inp" /></div>
+              <div><label class="lbl">Phone</label><input id="staff-phone" class="inp" inputmode="tel" /></div><div><label class="lbl">Email (login ID)</label><input id="staff-email" type="email" class="inp" /></div>
+              <div class="sm:col-span-2"><label class="lbl">Temporary password</label><input id="staff-password" type="text" class="inp" placeholder="8+ chars, upper, lower, number" /></div>
+            </div>
+            <div class="mt-4 flex gap-2"><button id="btn-add-staff" class="btn btn-p">Create account</button><button id="staff-cancel" class="btn btn-g">Cancel</button></div>
+          </div>
+          <div id="staff-list" class="mt-5 divide-y divide-slate-100"></div>
+        </div>
+      </section>
+
+      <!-- 5 SEATS -->
+      <section class="panel" data-panel="seats">
+        <div class="card mb-5">
+          <h3>Seat overview</h3><p class="hint">Live from active memberships.</p>
+          <div id="seat-stats" class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5"></div>
+          <div class="mt-5"><div class="mb-1.5 flex justify-between text-xs font-bold text-slate-500"><span>Overall occupancy</span><span id="seat-pct"></span></div><div class="bar"><i id="seat-bar" style="width:0"></i></div></div>
+          <div id="seat-shifts" class="mt-5 grid gap-3 sm:grid-cols-2"></div>
+        </div>
+        <div class="grid gap-5 md:grid-cols-2">
+          <div class="card" id="cap-card">
+            <h3>Seat capacity</h3><p class="hint">Increase to add empty seats. Decrease removes seats from the top — blocked if any are occupied.</p>
+            <div class="mt-4 flex items-center gap-2"><button id="cap-minus" class="btn btn-g px-3">−</button><input id="total-seats" type="number" min="1" class="inp text-center text-lg font-extrabold" /><button id="cap-plus" class="btn btn-g px-3">+</button></div>
+            <button id="btn-update-seats" class="btn btn-p mt-3 w-full">Update capacity</button>
+          </div>
+          <div class="card" id="blk-card">
+            <h3>🔒 Block / unblock a seat</h3><p class="hint">Whole seat (maintenance) or only some shifts.</p>
+            <div class="mt-4 grid grid-cols-2 gap-3"><div><label class="lbl">Seat number</label><input id="block-seat-number" type="number" min="1" class="inp" /></div><div><label class="lbl">Reason</label><input id="block-reason" class="inp" placeholder="Broken chair" /></div></div>
+            <label class="lbl mt-3">Shifts <span class="font-medium text-slate-400">(none ticked = whole seat)</span></label>
+            <div id="block-shifts" class="grid max-h-28 gap-1 overflow-y-auto rounded-xl border border-slate-200 p-2 text-sm"></div>
+            <div class="mt-3 flex gap-2"><button id="btn-block-seat" class="btn btn-d flex-1">Block</button><button id="btn-unblock-seat" class="btn btn-g flex-1">Unblock</button></div>
+          </div>
+        </div>
+        <div class="card mt-5"><h3>Currently blocked</h3><div id="blocked-list" class="mt-3 grid gap-2 text-sm"></div></div>
+      </section>
+
+      <!-- 6 LOCATION -->
+      <section class="panel" data-panel="location">
+        <div class="card">
+          <div class="flex flex-wrap items-center justify-between gap-2"><div><h3>Center location</h3><p class="hint">Shown on the “Find Study Centers” map. Stand at your center and tap <b>Use my current location</b>, or search / drag the pin.</p></div><span id="loc-badge" class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">Loading…</span></div>
+          <div id="loc-note" class="mt-3 hidden rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">Map features aren’t switched on yet. Run <code>PHASE1B_LOCATION_MIGRATION.sql</code> in phpMyAdmin, then reload.</div>
+          <div id="location-picker" class="mt-4"></div>
+          <div class="mt-4 flex flex-wrap items-center gap-3"><button id="btn-save-location" class="btn btn-p">Save center location</button><span class="text-xs text-slate-400">Also updates the address on your homepage.</span></div>
+        </div>
+      </section>
+
+      <!-- 7 BILLING -->
+      <section class="panel" data-panel="billing">
+        <div id="bill-prem" class="card mb-5"></div>
+        <div class="card">
+          <div class="flex flex-wrap items-center justify-between gap-2"><div><h3>Transactions &amp; invoices</h3><p class="hint">Every payment you made to support Study Space, with a printable invoice.</p></div><div id="bill-total" class="text-sm text-slate-500"></div></div>
+          <div id="bill-list" class="mt-4 overflow-x-auto"></div>
+        </div>
+      </section>
+
+      <!-- 8 HELP -->
+      <section class="panel" data-panel="help">
+        <div class="card text-center" style="padding:44px 22px">
+          <div class="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-blue-50 text-3xl">🛟</div>
+          <span class="mt-4 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-extrabold text-amber-800">COMING SOON</span>
+          <h2 class="mt-3 text-xl font-extrabold">Support &amp; Help Center</h2>
+          <p class="mx-auto mt-2 max-w-md text-sm text-slate-500">Guides, FAQs and a direct line to the developer are on the way. Until then, write to us from the contact section on the homepage.</p>
+          <div class="mx-auto mt-6 grid max-w-xl gap-3 text-left sm:grid-cols-3">
+            <div class="rounded-xl bg-slate-50 p-3 text-sm"><b>📖 Guides</b><br><span class="text-slate-500">Step-by-step how-tos</span></div>
+            <div class="rounded-xl bg-slate-50 p-3 text-sm"><b>💬 Live help</b><br><span class="text-slate-500">Chat with support</span></div>
+            <div class="rounded-xl bg-slate-50 p-3 text-sm"><b>🎫 Tickets</b><br><span class="text-slate-500">Track your requests</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<section id="account-zone" class="mx-auto max-w-7xl px-4 pb-14 sm:px-6"></section>
+
+<!-- modals -->
+<div id="perm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4"><div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+  <div class="mb-1 flex items-center justify-between"><h3 class="text-lg font-extrabold">Manage permissions</h3><button data-close class="text-slate-400 hover:text-slate-700">✕</button></div>
+  <p class="mb-4 text-sm text-slate-500">for <b id="perm-name">–</b></p><div id="perm-checks" class="mb-5 space-y-2 text-sm"></div><button id="perm-save" class="btn btn-p w-full">Save permissions</button></div></div>
+<div id="edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4"><div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+  <div class="mb-4 flex items-center justify-between"><h3 class="text-lg font-extrabold">Edit staff details</h3><button data-close class="text-slate-400 hover:text-slate-700">✕</button></div>
+  <div class="grid grid-cols-2 gap-3"><div><label class="lbl">First name</label><input id="e-first" class="inp" /></div><div><label class="lbl">Last name</label><input id="e-last" class="inp" /></div>
+  <div><label class="lbl">Phone</label><input id="e-phone" class="inp" /></div><div><label class="lbl">Email</label><input id="e-email" type="email" class="inp" /></div></div>
+  <button id="e-save" class="btn btn-p mt-5 w-full">Save changes</button></div></div>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script src="/assets/location.js?v=1"></script>
+<script src="/assets/settings.js?v=1"></script>
+<script src="/assets/delete-ui.js?v=1"></script>
+<script>
+(async () => {
+  try {
+    const { data: me } = await api("/auth/check");
+    const z = document.getElementById("account-zone");
+    const wrap = document.createElement("div"); wrap.className = "rounded-2xl border border-red-200 bg-white p-5 shadow-sm";
+    const isAdmin = me.role === "admin";
+    wrap.innerHTML = `<h2 class="text-base font-bold text-red-700">Danger zone</h2>
+      <div class="mt-3 flex flex-wrap items-center justify-between gap-3"><div class="max-w-xl text-sm text-gray-600">
+      <p class="font-semibold text-gray-900">${isAdmin ? "Close my study center" : "Delete my account"}</p>
+      <p class="mt-0.5">${isAdmin ? "Closing a center removes all its students and data, so the developer does it together with you. Send a request and we will confirm everything first — a full backup is kept in the recycle bin." : "Your account is kept for <b>30 days</b> so you can change your mind (sign in again + 8-digit email code). After that it is permanently removed."}</p></div>
+      <button id="btn-account-danger" class="rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">${isAdmin ? "Request center closure" : "Delete my account"}</button></div>`;
+    z.appendChild(wrap);
+    document.getElementById("btn-account-danger").addEventListener("click", () => {
+      if (isAdmin) location.href = "/admin/contact.html?tab=help&new=closure"; else DeleteUI.selfDelete();
+    });
+  } catch (e) {}
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

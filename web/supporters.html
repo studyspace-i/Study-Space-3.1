@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Supporters Wall — Study Space</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://study.mrharshit.in/supporters" />
+  <meta property="og:title" content="Supporters Wall — Study Space" />
+  <meta property="og:description" content="Thank you to everyone who supports Study Space. See the top supporters, students and study centers who keep the platform growing." />
+  <meta property="og:image" content="https://study.mrharshit.in/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:site_name" content="Study Space" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Supporters Wall — Study Space" />
+  <meta name="twitter:description" content="Thank you to everyone who supports Study Space. See the top supporters, students and study centers who keep the platform growing." />
+  <meta name="twitter:image" content="https://study.mrharshit.in/og-image.png" />
+<link rel="canonical" href="https://study.mrharshit.in/supporters" />
+<meta name="description" content="Thank you to everyone who supports Study Space. See the top supporters, students and study centers who keep the platform growing." />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#2563eb" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" }, fontFamily: { sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"] } } } };</script>
+<style>body{font-family:'Plus Jakarta Sans',system-ui,sans-serif}</style>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+<header class="sticky top-0 z-30 border-b border-gray-100 bg-white/90 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
+    <a href="/index.html" class="flex items-center gap-2">
+      <span class="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-indigo-600 text-lg leading-none text-white">📚</span>
+      <span class="text-lg font-extrabold tracking-tight text-gray-900">Study Space</span>
+    </a>
+    <nav class="flex items-center gap-4 text-sm font-semibold text-gray-600">
+      <a href="/supporters.html" class="hidden transition hover:text-primary sm:inline">🏆 Supporters</a>
+      <a href="/donate.html" class="hidden transition hover:text-primary sm:inline">Donate</a>
+      <span data-auth="out" class="hidden"><a href="/login.html" class="rounded-lg border border-gray-200 px-3 py-1.5 hover:border-primary hover:text-primary">Login</a></span>
+      <span data-auth="in" class="hidden items-center gap-2"><a href="/my-donations.html" class="hidden hover:text-primary sm:inline">My Donations</a><a data-dashboard-link href="/index.html" class="rounded-lg bg-primary px-3 py-1.5 text-white hover:bg-blue-700">Dashboard</a></span>
+    </nav>
+  </div>
+</header>
+<main class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+  <section class="mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-indigo-600 to-blue-600 p-7 text-center text-white shadow-xl">
+    <div class="text-4xl">🏆</div>
+    <h1 class="mt-2 text-3xl font-extrabold">Supporters Wall</h1>
+    <p class="mx-auto mt-2 max-w-xl text-sm text-indigo-100">A heartfelt thank-you to the students, study centers and well-wishers who help keep Study Space running, secure and free for everyone. Tap a name to see what they chose to share. 💜</p>
+    <div class="mt-5 flex justify-center text-sm">
+      <div class="rounded-xl bg-white/15 px-6 py-2"><div class="text-xl font-extrabold" id="st-count">–</div>supporters</div>
+    </div>
+  </section>
+
+  <div class="mb-4 flex flex-wrap items-center gap-2">
+    <input id="q" placeholder="Search name, center or city…" class="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-primary" />
+    <div id="types" class="flex gap-1.5 text-xs font-bold">
+      <button data-t="" class="rounded-full bg-primary px-3 py-2 text-white">All</button>
+      <button data-t="student" class="rounded-full bg-white px-3 py-2 text-gray-600 ring-1 ring-gray-200">🎓 Students</button>
+      <button data-t="center" class="rounded-full bg-white px-3 py-2 text-gray-600 ring-1 ring-gray-200">🏢 Centers</button>
+      <button data-t="individual" class="rounded-full bg-white px-3 py-2 text-gray-600 ring-1 ring-gray-200">💜 Others</button>
+    </div>
+  </div>
+
+  <div id="list" class="space-y-3"><div class="py-10 text-center text-gray-400">Loading…</div></div>
+  <div class="mt-6 text-center"><button id="more" class="hidden rounded-xl bg-white px-6 py-3 text-sm font-bold text-primary shadow ring-1 ring-gray-200 hover:bg-gray-50">Load more</button></div>
+</main>
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/supporters.js?v=2"></script>
+<script>
+  let page = 1, type = "", q = "";
+  const list = document.getElementById("list"), more = document.getElementById("more");
+  async function load(reset) {
+    if (reset) { page = 1; list.innerHTML = '<div class="py-10 text-center text-gray-400">Loading…</div>'; }
+    try {
+      const d = await fetchSupporters({ page, limit: 20, type, q });
+      document.getElementById("st-count").textContent = d.stats.supporters;
+      const html = renderSupportCards(d.items);
+      if (reset) list.innerHTML = "";
+      if (!d.items.length && reset) list.innerHTML = '<div class="rounded-2xl bg-white p-10 text-center text-gray-500 shadow-sm">No supporters to show yet.</div>';
+      list.insertAdjacentHTML("beforeend", html);
+      more.classList.toggle("hidden", page >= d.pages);
+    } catch (e) { list.innerHTML = '<div class="py-10 text-center text-red-500">' + e.message + "</div>"; }
+  }
+  more.onclick = () => { page++; load(false); };
+  document.getElementById("q").addEventListener("input", (() => { let t; return (e) => { clearTimeout(t); t = setTimeout(() => { q = e.target.value.trim(); load(true); }, 350); }; })());
+  document.querySelectorAll("#types button").forEach((b) => b.onclick = () => {
+    type = b.dataset.t;
+    document.querySelectorAll("#types button").forEach((x) => { const on = x === b; x.className = "rounded-full px-3 py-2 " + (on ? "bg-primary text-white" : "bg-white text-gray-600 ring-1 ring-gray-200"); });
+    load(true);
+  });
+  load(true);
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body></html>

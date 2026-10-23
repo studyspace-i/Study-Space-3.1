@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Seats — Study Space Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-2xl font-bold text-gray-900">Seat Layout</h1>
+    <a href="/admin/add-student.html" class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">+ Admit Student</a>
+  </div>
+
+  <div class="mb-4 rounded-xl bg-white p-4 shadow-sm">
+    <div class="grid gap-3 sm:grid-cols-3">
+      <div class="sm:col-span-2">
+        <label class="mb-1 block text-xs font-semibold text-gray-600">View seats for</label>
+        <select id="shift-filter" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none">
+          <option value="">All shifts (combined view)</option>
+        </select>
+      </div>
+      <div class="flex items-end gap-2">
+        <label class="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox" id="only-available" class="h-4 w-4"> Only show free seats</label>
+      </div>
+    </div>
+    <p class="mt-2 text-xs text-gray-500" id="context-hint"></p>
+  </div>
+
+  <div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4" id="summary-cards"></div>
+
+  <div class="mb-4 flex flex-wrap gap-4 text-sm" id="legend"></div>
+
+  <div class="mb-6 rounded-xl bg-white p-4 shadow-sm">
+    <div class="grid gap-2" style="grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));" id="seat-grid">
+      <p class="text-gray-400">Loading...</p>
+    </div>
+  </div>
+
+  <div id="detail-table-card" class="hidden rounded-xl bg-white p-6 shadow-sm">
+    <div class="mb-3 flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-gray-700" id="detail-table-title">Details</h2>
+      <button id="close-detail-table" class="text-sm text-gray-500 hover:text-primary">Close</button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="border-b border-gray-200 text-xs uppercase text-gray-500">
+          <tr><th class="py-2 pr-4">Seat</th><th class="py-2 pr-4">Shift</th><th class="py-2 pr-4">Student</th><th class="py-2 pr-4">Phone</th><th class="py-2 pr-4">Card No.</th><th class="py-2 pr-4">Expiry</th><th class="py-2"></th></tr>
+        </thead>
+        <tbody id="detail-table-body" class="divide-y divide-gray-100"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- Seat modal -->
+<div id="seat-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
+  <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+    <div class="mb-4 flex items-center justify-between">
+      <h3 id="seat-modal-title" class="text-lg font-bold text-gray-900">Seat Details</h3>
+      <button id="close-seat-modal" class="text-gray-400 hover:text-gray-700">✕</button>
+    </div>
+    <div id="seat-modal-body" class="text-sm text-gray-700"></div>
+  </div>
+</div>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+const STATUS_META = {
+  free:               { label: "Free",              chip: "bg-emerald-100 text-emerald-800", box: "border-emerald-300 bg-emerald-50 text-emerald-700" },
+  occupied:           { label: "Occupied",           chip: "bg-red-100 text-red-800",         box: "border-red-300 bg-red-50 text-red-700" },
+  fully_occupied:     { label: "Fully Occupied",     chip: "bg-red-100 text-red-800",         box: "border-red-400 bg-red-100 text-red-800" },
+  partially_occupied: { label: "Partially Occupied", chip: "bg-amber-100 text-amber-800",     box: "border-amber-300 bg-amber-50 text-amber-700" },
+  blocked:            { label: "Blocked",            chip: "bg-gray-200 text-gray-600",       box: "border-gray-300 bg-gray-100 text-gray-500 line-through cursor-not-allowed" },
+};
+
+let lastSeats = [];
+let activeShiftId = "";
+
+async function loadShiftOptions() {
+  const { data } = await api("/admin/shifts");
+  const sel = document.getElementById("shift-filter");
+  data.filter((s) => s.isActive).forEach((s) => {
+    const opt = document.createElement("option");
+    opt.value = s._id; opt.textContent = `${s.name} (₹${s.price}/mo)`;
+    sel.appendChild(opt);
+  });
+}
+
+function renderLegend(isShiftView) {
+  const keys = isShiftView ? ["free", "occupied", "blocked"] : ["free", "partially_occupied", "fully_occupied", "blocked"];
+  document.getElementById("legend").innerHTML = keys.map((k) => `
+    <span class="flex items-center gap-1.5"><span class="inline-block h-4 w-4 rounded ${STATUS_META[k].box.split(" ").filter(c=>c.startsWith("bg-")||c.startsWith("border-")).join(" ")} border"></span> ${STATUS_META[k].label}</span>`).join("");
+}
+
+function renderSummaryCards(summary, isShiftView) {
+  const cards = isShiftView
+    ? [["free", "Free for this shift"], ["occupied", "Occupied for this shift"], ["blocked", "Blocked"]]
+    : [["free", "Fully Free"], ["partially_occupied", "Partially Occupied"], ["fully_occupied", "Fully Occupied"], ["blocked", "Blocked"]];
+
+  document.getElementById("summary-cards").innerHTML = cards.map(([key, label]) => `
+    <button data-status="${key}" class="summary-card rounded-xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 ${STATUS_META[key].box}">
+      <div class="text-xs font-semibold">${label}</div>
+      <div class="mt-1 text-2xl font-bold">${summary[key] || 0}</div>
+    </button>`).join("");
+
+  document.querySelectorAll(".summary-card").forEach((card) => {
+    card.addEventListener("click", () => showDetailTable(card.dataset.status));
+  });
+}
+
+function showDetailTable(status) {
+  if (status === "free" || status === "blocked") {
+    document.getElementById("detail-table-card").classList.add("hidden");
+    if (status === "blocked") {
+      const nums = lastSeats.filter((s) => s.status === "blocked").map((s) => s.seatNumber);
+      alert(nums.length ? "Blocked seats: #" + nums.join(", #") : "No seats are currently blocked.");
+    }
+    return;
+  }
+
+  const seatsWithStatus = lastSeats.filter((s) => s.status === status);
+  const rows = [];
+  seatsWithStatus.forEach((seat) => (seat.occupants || []).forEach((o) => rows.push({ seat: seat.seatNumber, ...o })));
+
+  document.getElementById("detail-table-title").textContent = `${STATUS_META[status].label} Seats (${seatsWithStatus.length} seat(s), ${rows.length} booking(s))`;
+  document.getElementById("detail-table-body").innerHTML = rows.length
+    ? rows.map((r) => `
+      <tr>
+        <td class="py-2 pr-4 font-semibold">#${r.seat}</td>
+        <td class="py-2 pr-4">${r.shiftName}<div class="text-xs text-gray-400">${r.shiftTime}</div></td>
+        <td class="py-2 pr-4">${r.studentName}</td>
+        <td class="py-2 pr-4">${r.studentPhone}</td>
+        <td class="py-2 pr-4">${r.libraryCardNumber}</td>
+        <td class="py-2 pr-4">${new Date(r.expiryDate).toLocaleDateString()}</td>
+        <td class="py-2"><a href="/admin/student-detail.html?id=${r.studentId}" class="text-sm font-medium text-primary hover:underline">View</a></td>
+      </tr>`).join("")
+    : `<tr><td colspan="7" class="py-3 text-center text-gray-400">No bookings found</td></tr>`;
+
+  document.getElementById("detail-table-card").classList.remove("hidden");
+  document.getElementById("detail-table-card").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("close-detail-table").addEventListener("click", () => {
+  document.getElementById("detail-table-card").classList.add("hidden");
+});
+
+function openSeatModal(seat) {
+  const meta = STATUS_META[seat.status];
+  document.getElementById("seat-modal-title").innerHTML = `Seat #${seat.seatNumber} <span class="ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${meta.chip}">${meta.label}</span>`;
+
+  let body = "";
+  if (seat.status === "blocked" && !activeShiftId) {
+    body = `<p class="text-gray-500">${seat.blockReason || "Blocked for maintenance."}</p>`;
+  } else {
+    const occupantRows = (seat.occupants || []).map((o) => `
+      <div class="mb-3 flex items-center justify-between border-b border-gray-100 pb-3 last:mb-0 last:border-0 last:pb-0">
+        <div>
+          <div class="font-semibold text-gray-900">${o.studentName}</div>
+          <div class="text-xs text-gray-500">${o.shiftName} (${o.shiftTime})</div>
+          <div class="text-xs text-gray-500">Card: ${o.libraryCardNumber} · Phone: ${o.studentPhone} · Expires: ${new Date(o.expiryDate).toLocaleDateString()}</div>
+        </div>
+        <a href="/admin/student-detail.html?id=${o.studentId}" class="text-sm font-medium text-primary hover:underline">View</a>
+      </div>`);
+
+    const blockRows = (seat.shiftBlocks || []).map((b) => `
+      <div class="mb-3 flex items-center justify-between border-b border-gray-100 pb-3 last:mb-0 last:border-0 last:pb-0">
+        <div>
+          <div class="font-semibold text-gray-500">🚫 Blocked — ${b.shiftName}</div>
+          <div class="text-xs text-gray-500">${b.reason || "No reason given"}</div>
+        </div>
+      </div>`);
+
+    if (occupantRows.length || blockRows.length) {
+      body = occupantRows.join("") + blockRows.join("");
+    } else {
+      body = `
+        <p class="mb-3 text-gray-500">No active bookings on this seat${activeShiftId ? " for the selected shift" : ""}.</p>
+        <a href="/admin/add-student.html?seat=${seat.seatNumber}" class="inline-block rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">Admit a student here</a>`;
+    }
+  }
+  document.getElementById("seat-modal-body").innerHTML = body;
+  const modal = document.getElementById("seat-modal");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+document.getElementById("close-seat-modal").addEventListener("click", () => {
+  const modal = document.getElementById("seat-modal");
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
+});
+
+async function loadSeats() {
+  const grid = document.getElementById("seat-grid");
+  grid.innerHTML = `<p class="text-gray-400">Loading...</p>`;
+
+  activeShiftId = document.getElementById("shift-filter").value;
+  const params = new URLSearchParams();
+  if (activeShiftId) params.set("shiftId", activeShiftId);
+  if (document.getElementById("only-available").checked) params.set("onlyAvailable", "true");
+
+  const isShiftView = !!activeShiftId;
+  document.getElementById("context-hint").innerHTML = isShiftView
+    ? `ℹ️ Showing seat availability <strong>only for the selected shift</strong> — a seat may be free here even if booked for a different shift.`
+    : `ℹ️ Showing <strong>combined</strong> status across all shifts. Select a specific shift above to see availability for just that time slot.`;
+
+  try {
+    const { data } = await api(`/admin/seats?${params.toString()}`);
+    lastSeats = data.seats;
+
+    renderLegend(isShiftView);
+    renderSummaryCards(data.summary, isShiftView);
+
+    grid.innerHTML = lastSeats.map((s) => {
+      const meta = STATUS_META[s.status];
+      return `<button data-seat="${s.seatNumber}" title="Seat #${s.seatNumber} — ${meta.label}"
+        class="seat-box aspect-square rounded-lg border-2 text-sm font-bold transition hover:-translate-y-0.5 ${meta.box}">${s.seatNumber}</button>`;
+    }).join("") || `<p class="text-gray-400">No seats match this filter.</p>`;
+
+    grid.querySelectorAll(".seat-box").forEach((el) => {
+      el.addEventListener("click", () => {
+        const seat = lastSeats.find((s) => String(s.seatNumber) === el.dataset.seat);
+        if (seat) openSeatModal(seat);
+      });
+    });
+
+    document.getElementById("detail-table-card").classList.add("hidden");
+  } catch (e) {
+    grid.innerHTML = `<p class="text-red-600">${e.message}</p>`;
+  }
+}
+
+(async () => {
+  const user = await guardRole(["admin", "staff"]);
+  if (!user) return;
+  renderAdminNav("/admin/seats.html", user);
+  if (!requirePagePermission(user, "seats", "Seats")) return;
+  await loadShiftOptions();
+
+  const preselect = new URLSearchParams(window.location.search).get("shift");
+  if (preselect) document.getElementById("shift-filter").value = preselect;
+
+  loadSeats();
+  document.getElementById("shift-filter").addEventListener("change", loadSeats);
+  document.getElementById("only-available").addEventListener("change", loadSeats);
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

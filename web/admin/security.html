@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Secure password — Study Space Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" }, fontFamily: { sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"] } } } };</script>
+<style>
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.lbl{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:5px}
+.inp{width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:11px 44px 11px 12px;font-size:15px;font-weight:500;outline:0;background:#fff}
+.inp:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:6px;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:700;border:0;cursor:pointer;width:100%}
+.btn:disabled{opacity:.55;cursor:wait}.btn-p{background:#2563eb;color:#fff}.btn-p:hover:not(:disabled){background:#1d4ed8}.btn-g{background:#fff;color:#334155;box-shadow:inset 0 0 0 1.5px #e2e8f0}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;padding:6px 8px;font-size:12px;font-weight:700;color:#64748b}
+.seg{display:flex;background:#f1f5f9;border-radius:12px;padding:4px}.seg button{flex:1;border:0;background:none;border-radius:9px;padding:9px 6px;font-size:13px;font-weight:700;color:#64748b;cursor:pointer}.seg button.on{background:#fff;color:#1d4ed8;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.otp{display:flex;gap:8px;justify-content:center}.otp input{width:46px;height:54px;text-align:center;font-size:22px;font-weight:800;border:1.5px solid #e2e8f0;border-radius:12px;outline:0}.otp input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.sm{height:6px;border-radius:99px;background:#e2e8f0;flex:1}.sm.on{background:var(--c)}
+.step{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#94a3b8}.step i{width:24px;height:24px;border-radius:99px;display:grid;place-items:center;background:#e2e8f0;font-style:normal}.step.on{color:#1d4ed8}.step.on i{background:#2563eb;color:#fff}.step.done i{background:#10b981;color:#fff}
+.hid{display:none}
+</style>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+<div id="dashboard-nav"></div>
+<main class="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+  <a href="/admin/settings.html#profile" class="text-sm font-semibold text-slate-500 hover:text-primary">← Back to Settings</a>
+  <div class="mt-3 flex items-center gap-3"><span class="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-50 text-2xl">🔐</span>
+    <div><h1 class="text-2xl font-extrabold">Secure password change</h1><p class="text-sm text-slate-500">Verify with a code sent to your email, then choose a new password.</p></div></div>
+
+  <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
+      <div class="seg mb-6"><button id="m-pw" class="on">I know my password</button><button id="m-otp">Reset with email code (OTP)</button></div>
+
+      <!-- Method 1 -->
+      <form id="f-pw" class="space-y-4" autocomplete="off">
+        <div><label class="lbl">Current password</label><div class="relative"><input id="c-cur" type="password" class="inp" autocomplete="current-password" /><button type="button" class="eye" data-eye="c-cur">Show</button></div></div>
+        <div><label class="lbl">New password</label><div class="relative"><input id="c-new" type="password" class="inp" autocomplete="new-password" /><button type="button" class="eye" data-eye="c-new">Show</button></div></div>
+        <div class="strength"></div>
+        <div><label class="lbl">Confirm new password</label><div class="relative"><input id="c-conf" type="password" class="inp" autocomplete="new-password" /><button type="button" class="eye" data-eye="c-conf">Show</button></div><p id="c-match" class="mt-1 text-xs font-semibold"></p></div>
+        <button class="btn btn-p" id="c-go">Change password</button>
+        <p class="text-center text-xs text-slate-500">Forgot it? <button type="button" id="to-otp" class="font-bold text-primary">Reset with an email code instead</button></p>
+      </form>
+
+      <!-- Method 2 -->
+      <div id="f-otp" class="hid">
+        <div class="mb-6 flex items-center justify-between"><div class="step on" id="s1"><i>1</i>Send code</div><div class="h-px flex-1 bg-slate-200 mx-2"></div><div class="step" id="s2"><i>2</i>Verify</div><div class="h-px flex-1 bg-slate-200 mx-2"></div><div class="step" id="s3"><i>3</i>New password</div></div>
+
+        <div id="o1" class="space-y-4 text-center"><div class="text-5xl">📧</div><p class="text-sm text-slate-600">We will email a 6-digit one-time code to your login email <b id="o-mail"></b>. Enter it here to prove it’s you — no current password needed.</p><button class="btn btn-p" id="o-send">Send me the code</button></div>
+
+        <div id="o2" class="hid space-y-4 text-center"><p class="text-sm text-slate-600">Enter the 6-digit code sent to <b id="o-sent"></b></p>
+          <div class="otp" id="otp-boxes">
+            <input inputmode="numeric" maxlength="1" /><input inputmode="numeric" maxlength="1" /><input inputmode="numeric" maxlength="1" /><input inputmode="numeric" maxlength="1" /><input inputmode="numeric" maxlength="1" /><input inputmode="numeric" maxlength="1" /></div>
+          <button class="btn btn-p" id="o-verify">Verify code</button>
+          <p class="text-xs text-slate-500"><span id="o-timer"></span> <button type="button" id="o-resend" class="font-bold text-primary disabled:text-slate-400" disabled>Resend code</button></p></div>
+
+        <form id="o3" class="hid space-y-4" autocomplete="off"><div class="rounded-xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-800">✅ Verified. Now choose your new password.</div>
+          <div><label class="lbl">New password</label><div class="relative"><input id="n-new" type="password" class="inp" autocomplete="new-password" /><button type="button" class="eye" data-eye="n-new">Show</button></div></div>
+          <div class="strength"></div>
+          <div><label class="lbl">Confirm new password</label><div class="relative"><input id="n-conf" type="password" class="inp" autocomplete="new-password" /><button type="button" class="eye" data-eye="n-conf">Show</button></div><p id="n-match" class="mt-1 text-xs font-semibold"></p></div>
+          <button class="btn btn-p" id="n-go">Save new password</button></form>
+      </div>
+      <div id="done" class="hid py-6 text-center"><div class="text-6xl">✅</div><h2 class="mt-3 text-xl font-extrabold">Password changed</h2><p class="mt-1 text-sm text-slate-500">Your new password is active. Use it the next time you sign in.</p><a href="/admin/settings.html#profile" class="btn btn-p mt-5 !inline-flex !w-auto px-6">Back to Settings</a></div>
+    </div>
+
+    <aside class="space-y-4">
+      <div class="rounded-2xl bg-white p-5 text-[13px] text-slate-600 ring-1 ring-slate-100"><b class="text-slate-800">Strong password tips</b><ul class="mt-2 list-disc space-y-1 pl-4"><li>8+ characters (12+ is better)</li><li>Upper &amp; lower case letters and a number</li><li>Don’t reuse a password from another site</li></ul></div>
+    </aside>
+  </div>
+</main>
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+let resetToken = "", timer = null;
+const busy = (b, on) => { b.disabled = on; };
+
+function strength(pw) {
+  let s = 0; if (pw.length >= 8) s++; if (pw.length >= 12) s++; if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) s++; if (/\d/.test(pw)) s++; if (/[^A-Za-z0-9]/.test(pw)) s++;
+  const need = pw.length >= 8 && /[a-z]/.test(pw) && /[A-Z]/.test(pw) && /\d/.test(pw);
+  if (!need) s = Math.min(s, 2);
+  return { s, need, label: ["Too weak", "Too weak", "Weak", "Good", "Strong", "Excellent"][s], color: ["#ef4444", "#ef4444", "#f59e0b", "#3b82f6", "#10b981", "#059669"][s] };
+}
+function drawStrength(input, box) {
+  const r = strength(input.value);
+  box.innerHTML = `<div class="flex gap-1.5" style="--c:${r.color}">${[1, 2, 3, 4, 5].map((i) => `<span class="sm ${input.value && i <= r.s ? "on" : ""}"></span>`).join("")}</div><div class="mt-1.5 flex justify-between text-xs font-semibold"><span style="color:${input.value ? r.color : "#94a3b8"}">${input.value ? r.label : "Use 8+ chars with upper, lower & a number"}</span><span class="${r.need ? "text-emerald-600" : "text-slate-400"}">${r.need ? "✓ meets rules" : ""}</span></div>`;
+}
+function wire(pwId, confId, matchId, box) {
+  const p = $(pwId), c = $(confId), m = $(matchId);
+  const upd = () => { drawStrength(p, box); m.textContent = c.value ? (p.value === c.value ? "✓ Passwords match" : "✗ Passwords do not match") : ""; m.style.color = p.value === c.value ? "#059669" : "#dc2626"; };
+  p.addEventListener("input", upd); c.addEventListener("input", upd); upd();
+}
+const boxes = document.querySelectorAll(".strength");
+wire("c-new", "c-conf", "c-match", boxes[0]); wire("n-new", "n-conf", "n-match", boxes[1]);
+document.querySelectorAll("[data-eye]").forEach((b) => (b.onclick = () => { const i = $(b.dataset.eye); const h = i.type === "password"; i.type = h ? "text" : "password"; b.textContent = h ? "Hide" : "Show"; }));
+
+function method(m) {
+  $("m-pw").classList.toggle("on", m === "pw"); $("m-otp").classList.toggle("on", m === "otp");
+  $("f-pw").classList.toggle("hid", m !== "pw"); $("f-otp").classList.toggle("hid", m !== "otp");
+}
+$("m-pw").onclick = () => method("pw"); $("m-otp").onclick = () => method("otp"); $("to-otp").onclick = () => method("otp");
+const finish = () => { ["f-pw", "f-otp"].forEach((i) => $(i).classList.add("hid")); document.querySelector(".seg").classList.add("hid"); $("done").classList.remove("hid"); };
+
+$("f-pw").onsubmit = async (e) => {
+  e.preventDefault(); const b = $("c-go"); busy(b, true);
+  try { await api("/auth/password/change", { method: "POST", body: { currentPassword: $("c-cur").value, newPassword: $("c-new").value, confirmPassword: $("c-conf").value } }); finish(); }
+  catch (err) { toast(err.message, "error"); } busy(b, false);
+};
+
+function step(n) { [1, 2, 3].forEach((i) => { $("s" + i).className = "step" + (i < n ? " done" : i === n ? " on" : ""); $("o" + i).classList.toggle("hid", i !== n); }); }
+function startTimer(sec) {
+  clearInterval(timer); const rs = $("o-resend"); rs.disabled = true;
+  timer = setInterval(() => { sec--; $("o-timer").textContent = sec > 0 ? `Resend available in ${sec}s ·` : ""; if (sec <= 0) { clearInterval(timer); rs.disabled = false; } }, 1000);
+}
+async function sendCode(btn) {
+  busy(btn, true);
+  try { const { data } = await api("/auth/password/otp/send", { method: "POST", body: {} }); $("o-sent").textContent = data.sentTo; step(2); startTimer(60); $("otp-boxes").children[0].focus(); toast("Code sent — check your inbox (and spam)"); }
+  catch (err) { toast(err.message, "error"); } busy(btn, false);
+}
+$("o-send").onclick = (e) => sendCode(e.currentTarget);
+$("o-resend").onclick = (e) => sendCode(e.currentTarget);
+const ob = [...$("otp-boxes").children];
+ob.forEach((el, i) => {
+  el.addEventListener("input", () => { el.value = el.value.replace(/\D/g, "").slice(0, 1); if (el.value && ob[i + 1]) ob[i + 1].focus(); });
+  el.addEventListener("keydown", (e) => { if (e.key === "Backspace" && !el.value && ob[i - 1]) ob[i - 1].focus(); if (e.key === "Enter") $("o-verify").click(); });
+  el.addEventListener("paste", (e) => { const t = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, 6); if (!t) return; e.preventDefault(); t.split("").forEach((ch, k) => (ob[k].value = ch)); (ob[Math.min(t.length, 5)]).focus(); });
+});
+$("o-verify").onclick = async (e) => {
+  const code = ob.map((x) => x.value).join(""); if (code.length !== 6) return toast("Enter all 6 digits", "error");
+  const b = e.currentTarget; busy(b, true);
+  try { const { data } = await api("/auth/password/otp/verify", { method: "POST", body: { otp: code } }); resetToken = data.resetToken; step(3); $("n-new").focus(); }
+  catch (err) { toast(err.message, "error"); ob.forEach((x) => (x.value = "")); ob[0].focus(); } busy(b, false);
+};
+$("o3").onsubmit = async (e) => {
+  e.preventDefault(); const b = $("n-go"); busy(b, true);
+  try { await api("/auth/password/otp/confirm", { method: "POST", body: { resetToken, newPassword: $("n-new").value, confirmPassword: $("n-conf").value } }); finish(); }
+  catch (err) { toast(err.message, "error"); if (/expired|start again/i.test(err.message)) step(1); } busy(b, false);
+};
+
+(async () => {
+  const me = await guardRole(["admin", "staff"]); if (!me) return;
+  renderAdminNav("/admin/settings.html", me);
+  $("o-mail").textContent = me.email || "";
+  if (location.hash === "#otp") method("otp");
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body></html>

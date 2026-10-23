@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shifts — Study Space Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+  <h1 class="mb-6 text-2xl font-bold text-gray-900">Manage Shifts</h1>
+
+  <div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
+    <div class="mb-3 flex items-center justify-between">
+      <h2 id="form-title" class="text-sm font-semibold text-gray-700">Add New Shift</h2>
+      <span id="duration-preview" class="text-xs font-medium text-gray-400"></span>
+    </div>
+    <form id="shift-form" class="grid grid-cols-2 gap-3 sm:grid-cols-5">
+      <input type="hidden" id="edit-shift-id" value="" />
+      <div class="col-span-2 sm:col-span-1"><label class="mb-1 block text-xs text-gray-500">Name</label><input id="name" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+      <div><label class="mb-1 block text-xs text-gray-500">Start Time</label><input type="time" id="startTime" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+      <div><label class="mb-1 block text-xs text-gray-500">End Time</label><input type="time" id="endTime" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+      <div><label class="mb-1 block text-xs text-gray-500">Price (₹/mo)</label><input type="number" min="0" id="price" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+      <div class="flex items-end gap-2">
+        <button type="submit" id="submit-btn" class="w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-blue-700">Add Shift</button>
+        <button type="button" id="cancel-edit-btn" class="hidden whitespace-nowrap rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="rounded-xl bg-white p-6 shadow-sm">
+    <h2 class="mb-3 text-sm font-semibold text-gray-700">Existing Shifts</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="border-b border-gray-200 text-xs uppercase text-gray-500">
+          <tr><th class="py-2 pr-4">Name</th><th class="py-2 pr-4">Time</th><th class="py-2 pr-4">Duration</th><th class="py-2 pr-4">Price</th><th class="py-2 pr-4">Active</th><th class="py-2">Actions</th></tr>
+        </thead>
+        <tbody id="shifts-body" class="divide-y divide-gray-100"><tr><td colspan="6" class="py-3 text-center text-gray-400">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+// Duration between two "HH:MM" times, handling shifts that cross midnight
+// (e.g. the Night shift, 21:00 -> 06:00 the next day).
+function shiftDurationLabel(startTime, endTime) {
+  const [sh, sm] = startTime.split(":").map(Number);
+  const [eh, em] = endTime.split(":").map(Number);
+  let minutes = (eh * 60 + em) - (sh * 60 + sm);
+  if (minutes <= 0) minutes += 24 * 60; // crosses midnight
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m ? `${h}h ${m}m` : `${h}h`;
+}
+
+function updateDurationPreview() {
+  const start = document.getElementById("startTime").value;
+  const end = document.getElementById("endTime").value;
+  const el = document.getElementById("duration-preview");
+  el.textContent = (start && end) ? `Duration: ${shiftDurationLabel(start, end)}` : "";
+}
+document.getElementById("startTime").addEventListener("input", updateDurationPreview);
+document.getElementById("endTime").addEventListener("input", updateDurationPreview);
+
+function resetForm() {
+  document.getElementById("shift-form").reset();
+  document.getElementById("edit-shift-id").value = "";
+  document.getElementById("form-title").textContent = "Add New Shift";
+  document.getElementById("submit-btn").textContent = "Add Shift";
+  document.getElementById("cancel-edit-btn").classList.add("hidden");
+  updateDurationPreview();
+}
+document.getElementById("cancel-edit-btn").addEventListener("click", resetForm);
+
+function startEditShift(s) {
+  document.getElementById("edit-shift-id").value = s._id;
+  document.getElementById("name").value = s.name;
+  document.getElementById("startTime").value = s.startTime;
+  document.getElementById("endTime").value = s.endTime;
+  document.getElementById("price").value = s.price;
+  document.getElementById("form-title").textContent = `Editing "${s.name}"`;
+  document.getElementById("submit-btn").textContent = "Save Changes";
+  document.getElementById("cancel-edit-btn").classList.remove("hidden");
+  updateDurationPreview();
+  document.getElementById("shift-form").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+async function loadShifts() {
+  const tbody = document.getElementById("shifts-body");
+  try {
+    const { data } = await api("/admin/shifts");
+    tbody.innerHTML = data.length ? data.map((s) => `
+      <tr>
+        <td class="py-2 pr-4">${s.name}</td>
+        <td class="py-2 pr-4">${s.startTime} – ${s.endTime}</td>
+        <td class="py-2 pr-4 text-gray-500">${shiftDurationLabel(s.startTime, s.endTime)}</td>
+        <td class="py-2 pr-4">₹${s.price}</td>
+        <td class="py-2 pr-4"><input type="checkbox" class="toggle-active h-4 w-4" data-id="${s._id}" ${s.isActive ? "checked" : ""}></td>
+        <td class="py-2">
+          <button class="btn-edit mr-3 text-sm font-medium text-primary hover:underline" data-shift='${JSON.stringify(s)}'>Edit</button>
+          <button class="btn-delete text-sm font-medium text-red-600 hover:underline" data-id="${s._id}">Delete</button>
+        </td>
+      </tr>`).join("") : `<tr><td colspan="6" class="py-3 text-center text-gray-400">No shifts yet — add one above.</td></tr>`;
+
+    tbody.querySelectorAll(".toggle-active").forEach((cb) => {
+      cb.addEventListener("change", async () => {
+        try { await api(`/admin/shifts/${cb.dataset.id}`, { method: "PUT", body: { isActive: cb.checked } }); }
+        catch (e) { toast(e.message, "error"); cb.checked = !cb.checked; }
+      });
+    });
+    tbody.querySelectorAll(".btn-edit").forEach((btn) => {
+      btn.addEventListener("click", () => startEditShift(JSON.parse(btn.dataset.shift)));
+    });
+    tbody.querySelectorAll(".btn-delete").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("Delete this shift?")) return;
+        try { await api(`/admin/shifts/${btn.dataset.id}`, { method: "DELETE" }); loadShifts(); }
+        catch (e) { toast(e.message, "error"); }
+      });
+    });
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="6" class="py-3 text-center text-red-600">${e.message}</td></tr>`;
+  }
+}
+
+document.getElementById("shift-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const editingId = document.getElementById("edit-shift-id").value;
+  const body = {
+    name: document.getElementById("name").value.trim(),
+    startTime: document.getElementById("startTime").value,
+    endTime: document.getElementById("endTime").value,
+    price: Number(document.getElementById("price").value),
+  };
+  try {
+    if (editingId) {
+      await api(`/admin/shifts/${editingId}`, { method: "PUT", body });
+      toast("Shift updated successfully");
+    } else {
+      await api("/admin/shifts", { method: "POST", body });
+      toast("Shift added successfully");
+    }
+    resetForm();
+    loadShifts();
+  } catch (err) { toast(err.message, "error"); }
+});
+
+(async () => {
+  const user = await guardRole(["admin", "staff"]);
+  if (!user) return;
+  renderAdminNav("/admin/shifts.html", user);
+  if (!requirePagePermission(user, "shifts", "Shifts")) return;
+  loadShifts();
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

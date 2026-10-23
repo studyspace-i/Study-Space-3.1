@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Change Requests — Study Space Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-2xl font-bold text-gray-900">Profile Change Requests</h1>
+    <select id="status-filter" class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none">
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+      <option value="">All</option>
+    </select>
+  </div>
+
+  <div id="requests-list" class="space-y-3"></div>
+</main>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+const FIELD_LABELS = {
+  firstName: "First Name", lastName: "Last Name", email: "Email", phone: "Phone",
+  parentName: "Parent Name", parentPhone: "Parent Phone", address: "Address",
+  city: "City", state: "State", pincode: "Pincode", education: "Education",
+};
+
+async function loadRequests() {
+  const status = document.getElementById("status-filter").value;
+  const list = document.getElementById("requests-list");
+  list.innerHTML = `<p class="text-gray-400">Loading...</p>`;
+  try {
+    const { data } = await api(`/admin/change-requests${status ? `?status=${status}` : ""}`);
+    if (!data.length) { list.innerHTML = `<p class="rounded-xl bg-white p-6 text-center text-gray-400 shadow-sm">No requests here.</p>`; return; }
+
+    list.innerHTML = data.map((r) => {
+      const changesHtml = Object.entries(r.changes).map(([f, v]) => `<div><span class="text-gray-400">${FIELD_LABELS[f] || f}:</span> <strong>${v}</strong></div>`).join("");
+      const badge = { pending: "bg-amber-100 text-amber-700", approved: "bg-emerald-100 text-emerald-700", rejected: "bg-red-100 text-red-700" }[r.status];
+      return `
+        <div class="rounded-xl bg-white p-5 shadow-sm">
+          <div class="mb-2 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-gray-900">${r.studentName}</span>
+              <span class="ml-2 text-xs text-gray-400">${r.libraryCardNumber}</span>
+            </div>
+            <span class="rounded-full px-2 py-0.5 text-xs font-medium ${badge}">${r.status}</span>
+          </div>
+          <div class="mb-2 text-sm">${changesHtml}</div>
+          ${r.note ? `<div class="mb-2 text-xs italic text-gray-500">Student note: "${r.note}"</div>` : ""}
+          <div class="text-xs text-gray-400">Requested ${new Date(r.createdAt).toLocaleString()}</div>
+          ${r.status === "pending" ? `
+            <div class="mt-3 flex gap-2">
+              <button class="btn-approve rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700" data-id="${r._id}">Approve &amp; Apply</button>
+              <button class="btn-reject rounded-md border border-red-300 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50" data-id="${r._id}">Reject</button>
+            </div>` : (r.adminNote ? `<div class="mt-2 text-xs text-gray-500">Admin note: ${r.adminNote}</div>` : "")}
+        </div>`;
+    }).join("");
+
+    document.querySelectorAll(".btn-approve").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("Approve and apply this change to the student's record?")) return;
+        try { await api(`/admin/change-requests/${btn.dataset.id}/approve`, { method: "POST" }); toast("Approved and applied"); loadRequests(); }
+        catch (e) { toast(e.message, "error"); }
+      });
+    });
+    document.querySelectorAll(".btn-reject").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const note = prompt("Optional note for the student (why it was rejected):") || "";
+        try { await api(`/admin/change-requests/${btn.dataset.id}/reject`, { method: "POST", body: { note } }); toast("Request rejected"); loadRequests(); }
+        catch (e) { toast(e.message, "error"); }
+      });
+    });
+  } catch (e) {
+    list.innerHTML = `<p class="text-center text-red-600">${e.message}</p>`;
+  }
+}
+
+(async () => {
+  const user = await guardRole(["admin", "staff"]);
+  if (!user) return;
+  renderAdminNav("/admin/change-requests.html", user);
+  if (!requirePagePermission(user, "students", "Change Requests")) return;
+  document.getElementById("status-filter").addEventListener("change", loadRequests);
+  loadRequests();
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

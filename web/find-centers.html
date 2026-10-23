@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2563eb" />
+  <title>Find Study Centers & Libraries Near You — Study Space</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://study.mrharshit.in/find-centers" />
+  <meta property="og:title" content="Find Study Centers & Libraries Near You — Study Space" />
+  <meta property="og:description" content="Find study centers, self study centers and libraries near you on the map — see distance, address and directions, and join the one that suits you." />
+  <meta property="og:image" content="https://study.mrharshit.in/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:site_name" content="Study Space" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Find Study Centers & Libraries Near You — Study Space" />
+  <meta name="twitter:description" content="Find study centers, self study centers and libraries near you on the map — see distance, address and directions, and join the one that suits you." />
+  <meta name="twitter:image" content="https://study.mrharshit.in/og-image.png" />
+  <meta name="description" content="Find study centers, self study centers and libraries near you on the map — see distance, address and directions, and join the one that suits you." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://study.mrharshit.in/find-centers" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.FX)document.documentElement.classList.add("fx-done")},2500);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+  <link rel="stylesheet" href="/assets/auth.css?v=3" />
+  <style>
+    html, body { height: 100%; }
+    .fc-body { display: flex; flex-direction: column; min-height: 100%; background: #fff; }
+    .fc-head { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 20px; padding-top: calc(10px + env(safe-area-inset-top)); border-bottom: 1px solid var(--line); background: #fff; z-index: 10; }
+    .fc-head .brand { color: var(--ink); }
+    .fc-head .brand-mark { background: linear-gradient(135deg, var(--a1), var(--a2)); border: 0; color: #fff; width: 38px; height: 38px; }
+    .fc-head nav { display: flex; align-items: center; gap: 4px; }
+    .fc-head nav a, .fc-head nav button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; border-radius: 10px; font: 600 14px var(--font); color: var(--ink2); text-decoration: none; background: none; border: 0; cursor: pointer; }
+    .fc-head nav a:hover { background: var(--soft); color: var(--a1); }
+    .fc-head nav a.cta { color: #fff; background: linear-gradient(135deg, var(--a1), var(--a2)); }
+    .fc-head nav a.cta:hover { color: #fff; opacity: .92; }
+
+    .fc { flex: 1; display: grid; grid-template-columns: 430px 1fr; min-height: 0; height: calc(100vh - 59px); height: calc(100dvh - 59px); }
+    .fc-panel { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--line); background: #fff; }
+    .fc-top { padding: 18px 18px 8px; }
+    .fc-top h1 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+    .fc-top p { margin-top: 4px; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+    .fc-search { display: grid; gap: 10px; margin-top: 14px; }
+    .fc-search .btn { height: 48px; }
+    .fc-chips { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+    .fc-chips > span { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .4px; text-transform: uppercase; }
+    .chip { min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--line); background: #fff; color: var(--ink2); font: 700 13px var(--font); cursor: pointer; transition: all .2s; }
+    .chip:hover { border-color: var(--a1); color: var(--a1); }
+    .chip[aria-pressed="true"] { color: #fff; border-color: transparent; background: linear-gradient(135deg, var(--a1), var(--a2)); }
+    .fc-status { margin: 10px 18px 0; padding: 10px 12px; border-radius: 12px; font-size: 13px; font-weight: 600; line-height: 1.5; background: var(--soft); color: var(--a1); display: flex; gap: 10px; align-items: flex-start; }
+    .fc-status.warn { background: #fffbeb; color: #b45309; } .fc-status.err { background: #fef2f2; color: #b91c1c; }
+    .fc-status[hidden] { display: none; }
+    .fc-status .sp { flex: none; width: 15px; height: 15px; margin-top: 3px; border-radius: 50%; border: 2.5px solid currentColor; border-top-color: transparent; animation: spin .7s linear infinite; }
+    .fc-count { padding: 14px 18px 6px; font-size: 13px; font-weight: 700; color: var(--ink2); display: flex; justify-content: space-between; }
+    .fc-count b { color: var(--a1); font-size: 15px; }
+    .fc-list { flex: 1; overflow-y: auto; padding: 4px 18px 24px; -webkit-overflow-scrolling: touch; }
+
+    .cc { position: relative; margin-bottom: 12px; padding: 14px 14px 12px; border: 1.5px solid var(--line); border-radius: 16px; background: #fff; cursor: pointer; transition: border-color .2s, box-shadow .25s, transform .2s; }
+    .cc:hover { border-color: #c7d2fe; box-shadow: 0 14px 26px -18px var(--ring); transform: translateY(-1px); }
+    .cc.sel { border-color: var(--a1); box-shadow: 0 0 0 4px var(--ring); }
+    .cc-top { display: flex; gap: 12px; align-items: flex-start; }
+    .cc-av { flex: none; width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 17px; background: linear-gradient(135deg, var(--a1), var(--a2)); }
+    .cc h3 { font-size: 16px; font-weight: 800; line-height: 1.25; }
+    .cc .addr { margin-top: 3px; font-size: 13px; line-height: 1.5; color: var(--muted); }
+    .cc .tag { margin-top: 6px; font-size: 12.5px; color: var(--ink2); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .dist { flex: none; margin-left: auto; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; color: #047857; background: #ecfdf5; white-space: nowrap; }
+    .cc-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .cc-actions a, .cc-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 11px; font: 700 13.5px var(--font); text-decoration: none; cursor: pointer; border: 1.5px solid var(--line); background: #fff; color: var(--ink2); transition: all .2s; }
+    .cc-actions a:hover, .cc-actions button:hover { border-color: var(--a1); color: var(--a1); }
+    .cc-actions .primary { border-color: transparent; color: #fff; background: linear-gradient(135deg, var(--a1), var(--a2)); }
+    .cc-actions .primary:hover { color: #fff; opacity: .92; }
+    .cc-actions svg { width: 16px; height: 16px; }
+
+    .skel { height: 128px; margin-bottom: 12px; border-radius: 16px; background: linear-gradient(90deg, #f1f5f9 25%, #e8edf4 37%, #f1f5f9 63%); background-size: 400% 100%; animation: shimmer 1.3s infinite; }
+    @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+    .empty { text-align: center; padding: 34px 18px; border: 1.5px dashed var(--line); border-radius: 18px; }
+    .empty .ei { width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 18px; display: grid; place-items: center; color: var(--a1); background: var(--soft); }
+    .empty .ei svg { width: 28px; height: 28px; }
+    .empty b { display: block; font-size: 16px; } .empty p { margin: 6px 0 14px; font-size: 13.5px; color: var(--muted); line-height: 1.55; }
+    .empty .btn { height: 46px; max-width: 260px; margin: 0 auto; }
+    .list-cta { margin-top: 6px; padding: 16px; border-radius: 18px; color: #fff; background: linear-gradient(135deg, #047857, #0f766e); display: flex; gap: 14px; align-items: center; }
+    .list-cta .ei { flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: rgba(255, 255, 255, .18); }
+    .list-cta .ei svg { width: 24px; height: 24px; }
+    .list-cta b { display: block; font-size: 15px; } .list-cta span { display: block; margin-top: 2px; font-size: 12.5px; opacity: .92; line-height: 1.45; }
+    .list-cta a { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 11px; background: #fff; color: #047857; font: 800 13px var(--font); text-decoration: none; }
+
+    .fc-map { position: relative; min-height: 0; background: #eef2f7; }
+    #fc-map { position: absolute; inset: 0; }
+    .fc-map .ph { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); font-size: 14px; line-height: 1.6;
+      background: repeating-linear-gradient(45deg, #f8fafc, #f8fafc 14px, #f1f5f9 14px, #f1f5f9 28px); }
+    .fc-map .ph b { display: block; margin-bottom: 4px; font-size: 16px; color: var(--ink2); }
+    .me-dot { width: 18px; height: 18px; border-radius: 50%; background: #2563eb; border: 3px solid #fff; box-shadow: 0 0 0 0 rgba(37, 99, 235, .5); animation: meRing 2s infinite; }
+    @keyframes meRing { 0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, .5); } 100% { box-shadow: 0 0 0 22px rgba(37, 99, 235, 0); } }
+    .iw { font-family: var(--font); max-width: 230px; } .iw b { font-size: 14.5px; display: block; } .iw p { margin: 4px 0 8px; font-size: 12.5px; color: #475569; line-height: 1.45; }
+    .iw a { font-weight: 700; font-size: 13px; color: #2563eb; text-decoration: none; }
+
+    /* ---------- phones & tablets: map on top, results in a rounded sheet ---------- */
+    @media (max-width: 899px) {
+      .fc-body { height: auto; }
+      .fc { display: flex; flex-direction: column; height: auto; }
+      .fc-map { order: -1; height: 40vh; height: 40dvh; min-height: 260px; flex: none; }
+      .fc-panel { border-right: 0; margin-top: -22px; border-radius: 24px 24px 0 0; position: relative; z-index: 4; box-shadow: 0 -14px 30px -18px rgba(2, 6, 23, .4); padding-bottom: env(safe-area-inset-bottom); }
+      .fc-list { overflow: visible; }
+      .fc-head { padding-left: 14px; padding-right: 10px; }
+      .fc-head nav .hide-sm { display: none; }
+      .inp input { font-size: 16px; }
+      .fc-top { padding-top: 22px; }
+    }
+    @media (max-width: 440px) { .fc-chips > span { display: none; } .chip { padding: 0 13px; } .fc-chips { gap: 6px; } }
+    @media (prefers-reduced-motion: reduce) { .skel, .me-dot { animation: none; } }
+  </style>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Study Space", "item": "https://study.mrharshit.in/"}, {"@type": "ListItem", "position": 2, "name": "Find Study Centers", "item": "https://study.mrharshit.in/find-centers"}]}</script>
+</head>
+<body class="auth-body theme-student fc-body">
+
+<header class="fc-head">
+  <a class="brand" href="/index.html"><span class="brand-mark" data-icon="book"></span><span class="brand-name">Study Space</span></a>
+  <nav>
+    <a href="/index.html" class="hide-sm"><span class="ic" data-icon="home"></span>Home</a>
+    <span data-auth="out" class="hidden" style="display:flex;gap:4px">
+      <a href="/login.html">Sign in</a>
+      <a href="/create-center.html" class="cta hide-sm">List your center</a>
+    </span>
+    <span data-auth="in" class="hidden" style="display:flex;gap:4px">
+      <a data-dashboard-link href="/index.html" class="cta">Dashboard</a>
+    </span>
+  </nav>
+</header>
+
+<div class="fc">
+  <section class="fc-panel" aria-label="Study centers">
+    <div class="fc-top">
+      <h1>Find study centers near you</h1>
+      <p>Search by area, city, PIN code or center name — or let us find the closest ones to you.</p>
+
+      <div class="fc-search">
+        <div class="inp">
+          <span class="ico" data-icon="search"></span>
+          <input id="q" type="search" placeholder="Area, city, PIN or center name" autocomplete="off" enterkeyhint="search" aria-label="Search study centers" />
+        </div>
+        <button id="near-btn" class="btn" type="button"><span class="lbl"><span class="ic" data-icon="gps" style="vertical-align:-3px;margin-right:6px"></span>Use my current location</span></button>
+      </div>
+
+      <div class="fc-chips" role="group" aria-label="Search radius">
+        <span>Within</span>
+        <button class="chip" data-r="5" aria-pressed="false">5 km</button>
+        <button class="chip" data-r="10" aria-pressed="false">10 km</button>
+        <button class="chip" data-r="25" aria-pressed="true">25 km</button>
+        <button class="chip" data-r="50" aria-pressed="false">50 km</button>
+      </div>
+    </div>
+
+    <div id="fc-status" class="fc-status" role="status" aria-live="polite" hidden></div>
+    <div class="fc-count"><span id="fc-heading">Study centers</span><span><b id="fc-num">0</b> found</span></div>
+    <div id="fc-list" class="fc-list"></div>
+  </section>
+
+  <section class="fc-map">
+    <div id="fc-map" aria-label="Map of study centers"></div>
+    <div class="ph" id="fc-ph"><div><b>Loading map…</b>Just a moment.</div></div>
+  </section>
+</div>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/auth.js?v=2"></script>
+<script src="/assets/location.js?v=1"></script>
+<script src="/assets/vendor/motion.js?v=1" defer></script>
+<script src="/assets/fx.js?v=1" defer></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const esc = LocationKit.esc;
+  const ICON = AuthUI.ICONS;
+
+  let radius = 25;
+  let origin = null;          // { lat, lng, label }  — the user's location or a searched place
+  let centers = [];
+  let map = null, libs = null, markers = new Map(), meMarker = null, infoWindow = null;
+  let mapReady = false;
+  let reqToken = 0;
+
+  // ---------------- status + list helpers ----------------
+  function status(msg, kind) {
+    const el = $("fc-status");
+    if (!msg) { el.hidden = true; return; }
+    el.hidden = false;
+    el.className = "fc-status " + (kind || "");
+    el.innerHTML = (kind === "load" ? '<span class="sp"></span>' : "") + `<span>${msg}</span>`;
+  }
+  function skeleton() { $("fc-list").innerHTML = '<div class="skel"></div><div class="skel"></div><div class="skel"></div>'; }
+
+  const fmtDist = (d) => (d == null ? "" : d < 0.1 ? "< 0.1 km" : d + " km");
+  const initial = (s) => ((s || "?").trim()[0] || "?").toUpperCase();
+
+  function ctaCard() {
+    return `<div class="list-cta" data-fx>
+      <span class="ei">${ICON.building}</span>
+      <div><b>Run a study center?</b><span>Add it to this map so students nearby can find you — free.</span></div>
+      <a href="/create-center.html">Add mine</a></div>`;
+  }
+
+  function cardHtml(c) {
+    const call = c.phone ? `<a href="tel:${esc(c.phone)}" onclick="event.stopPropagation()">${ICON.phone}Call</a>` : "";
+    const dir = c.directionsUrl ? `<a class="primary" href="${esc(c.directionsUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${ICON.navigate}Directions</a>` : "";
+    const show = c.latitude != null ? `<button type="button" data-show="${esc(c._id)}">${ICON.pin}On map</button>` : "";
+    return `<article class="cc" data-id="${esc(c._id)}" data-fx tabindex="0" aria-label="${esc(c.name)}">
+      <div class="cc-top">
+        <div class="cc-av">${esc(initial(c.name))}</div>
+        <div style="min-width:0;flex:1">
+          <h3>${esc(c.name)}</h3>
+          <div class="addr">${esc(c.fullAddress || "Address not added yet")}</div>
+        </div>
+        ${c.distanceKm != null ? `<span class="dist">${fmtDist(c.distanceKm)}</span>` : ""}
+      </div>
+      ${c.tagline ? `<div class="tag">${esc(c.tagline)}</div>` : ""}
+      <div class="cc-actions">${dir}${show}${call}</div>
+    </article>`;
+  }
+
+  function renderList(extraNotice) {
+    const list = $("fc-list");
+    if (!centers.length) {
+      list.innerHTML = `<div class="empty" data-fx>
+          <div class="ei">${ICON.pin}</div>
+          <b>No study centers found here yet</b>
+          <p>Try a bigger radius, search a nearby city — or be the first to put your center on the map.</p>
+          <a class="btn" href="/create-center.html"><span class="lbl">List my study center</span></a>
+        </div>`;
+    } else {
+      list.innerHTML = (extraNotice || "") + centers.map(cardHtml).join("") + ctaCard();
+    }
+    $("fc-num").textContent = "0";
+    window.FX ? FX.countUp($("fc-num"), centers.length, 600) : ($("fc-num").textContent = centers.length);
+    window.FX && FX.enter(list, { stagger: 0.05, y: 10 });
+  }
+
+  // ---------------- data ----------------
+  async function fetchCenters(params) {
+    const qs = new URLSearchParams(params).toString();
+    const { data } = await api("/organizations/nearby" + (qs ? "?" + qs : ""));
+    return data.centers;
+  }
+
+  async function search({ q = "", useOrigin = true } = {}) {
+    const my = ++reqToken;
+    skeleton(); status("");
+    try {
+      const params = {};
+      if (q) params.q = q;
+      if (origin && useOrigin) { params.lat = origin.lat; params.lng = origin.lng; params.radius = radius; }
+      let list = await fetchCenters(params);
+      if (my !== reqToken) return;
+
+      let notice = "";
+      let heading = "Study centers";
+      if (origin && useOrigin) heading = q ? `Matches for “${q}”` : `Near ${origin.label}`;
+      else heading = q ? `Matches for “${q}”` : "All study centers";
+
+      // Text search found nothing? Maybe it's a place name (e.g. a city) — look it up and search around it.
+      if (!list.length && q && q.length >= 3) {
+        status("Looking up that place…", "load");
+        const place = await LocationKit.geocodeText(q);
+        if (my !== reqToken) return;
+        if (place) {
+          origin = { lat: place.lat, lng: place.lng, label: place.city || q };
+          list = await fetchCenters({ lat: place.lat, lng: place.lng, radius });
+          if (my !== reqToken) return;
+          heading = `Near ${origin.label}`;
+        }
+        status("");
+      }
+
+      // Nothing within the radius? Show the nearest ones anyway, clearly labelled.
+      if (!list.length && origin && !q) {
+        const far = await fetchCenters({ lat: origin.lat, lng: origin.lng, radius: 500 });
+        if (my !== reqToken) return;
+        if (far.length) {
+          list = far.slice(0, 12);
+          notice = `<div class="fc-status warn" style="margin:0 0 12px"><span>No centers within ${radius} km — here are the nearest ones instead.</span></div>`;
+        }
+      }
+      centers = list;
+      $("fc-heading").textContent = heading;
+      renderList(notice);
+      drawMarkers();
+    } catch (err) {
+      if (my !== reqToken) return;
+      centers = [];
+      $("fc-list").innerHTML = "";
+      status(err.message || "Couldn't load study centers. Please try again.", "err");
+      $("fc-num").textContent = "0";
+    }
+  }
+
+  // ---------------- map ----------------
+  async function initMap() {
+    const ok = await LocationKit.googleOk();
+    if (!ok) {
+      const cfg = await LocationKit.getConfig();
+      $("fc-ph").innerHTML = cfg.googleMapsKey
+        ? "<div><b>Map couldn't load</b>Google Maps didn't accept the key yet — check billing and the website restrictions. You can still browse the list and get directions.</div>"
+        : "<div><b>Map view is off</b>Add your Google Maps key in <code>config/config.php</code> to see centers on a map. The list, search and directions work without it.</div>";
+      return;
+    }
+    try {
+      const cfg = await LocationKit.getConfig();
+      const [maps, marker] = await Promise.all([google.maps.importLibrary("maps"), google.maps.importLibrary("marker")]);
+      libs = { maps, marker };
+      map = new maps.Map($("fc-map"), {
+        center: { lat: 22.9734, lng: 78.6569 }, zoom: 5, mapId: cfg.googleMapId || "DEMO_MAP_ID",
+        disableDefaultUI: true, zoomControl: true, fullscreenControl: true, streetViewControl: false, mapTypeControl: false,
+        gestureHandling: "greedy", clickableIcons: false,
+      });
+      infoWindow = new google.maps.InfoWindow();
+      $("fc-ph").style.display = "none";
+      mapReady = true;
+      drawMarkers();
+    } catch (e) {
+      console.warn("[Study Space] map init failed", e);
+      $("fc-ph").innerHTML = "<div><b>Map couldn't load</b>You can still browse the list and get directions.</div>";
+    }
+  }
+  document.addEventListener("gmaps-auth-failure", () => {
+    $("fc-ph").style.display = "grid";
+    $("fc-ph").innerHTML = "<div><b>Map couldn't load</b>Google Maps didn't accept the key yet — check billing and the website restrictions. The list still works.</div>";
+  });
+
+  function drawMarkers() {
+    if (!mapReady) return;
+    markers.forEach((m) => (m.map = null));
+    markers.clear();
+    const { AdvancedMarkerElement, PinElement } = libs.marker;
+    const bounds = new google.maps.LatLngBounds();
+    let any = false;
+
+    centers.forEach((c) => {
+      if (c.latitude == null) return;
+      const pin = new PinElement({ background: "#4f46e5", borderColor: "#ffffff", glyphColor: "#ffffff" });
+      const m = new AdvancedMarkerElement({ map, position: { lat: c.latitude, lng: c.longitude }, content: pin.element, title: c.name });
+      m.addListener("click", () => select(c._id, { fromMarker: true }));
+      markers.set(c._id, m);
+      bounds.extend({ lat: c.latitude, lng: c.longitude });
+      any = true;
+    });
+
+    if (origin) {
+      if (meMarker) meMarker.map = null;
+      const dot = document.createElement("div"); dot.className = "me-dot";
+      meMarker = new AdvancedMarkerElement({ map, position: { lat: origin.lat, lng: origin.lng }, content: dot, title: "You are here", zIndex: 1 });
+      bounds.extend({ lat: origin.lat, lng: origin.lng });
+      any = true;
+    }
+    if (any) {
+      map.fitBounds(bounds, { top: 60, right: 40, bottom: 40, left: 40 });
+      google.maps.event && google.maps.event.addListenerOnce && google.maps.event.addListenerOnce(map, "idle", () => { if (map.getZoom() > 16) map.setZoom(16); });
+    }
+  }
+
+  function select(id, o) {
+    o = o || {};
+    document.querySelectorAll(".cc.sel").forEach((n) => n.classList.remove("sel"));
+    const card = document.querySelector(`.cc[data-id="${CSS.escape(id)}"]`);
+    if (card) {
+      card.classList.add("sel");
+      if (o.fromMarker) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    const c = centers.find((x) => x._id === id);
+    if (c && mapReady && c.latitude != null) {
+      if (!o.fromMarker) { map.panTo({ lat: c.latitude, lng: c.longitude }); if ((map.getZoom() || 0) < 15) map.setZoom(15); }
+      infoWindow.setContent(`<div class="iw"><b>${esc(c.name)}</b><p>${esc(c.fullAddress)}</p>${c.directionsUrl ? `<a href="${esc(c.directionsUrl)}" target="_blank" rel="noopener">Get directions →</a>` : ""}</div>`);
+      infoWindow.open({ map, anchor: markers.get(id) });
+    }
+  }
+
+  $("fc-list").addEventListener("click", (e) => {
+    const show = e.target.closest("[data-show]");
+    const card = e.target.closest(".cc");
+    if (show) { select(show.dataset.show); if (window.innerWidth < 900) window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    if (card && !e.target.closest("a")) select(card.dataset.id);
+  });
+  $("fc-list").addEventListener("keydown", (e) => { const card = e.target.closest(".cc"); if (card && e.key === "Enter") select(card.dataset.id); });
+
+  // ---------------- near me (live location) ----------------
+  $("near-btn").addEventListener("click", () => {
+    const btn = $("near-btn");
+    if (!navigator.geolocation) { status("This browser can't share its location — search for your area instead.", "warn"); return; }
+    if (!window.isSecureContext) { status("Location only works on a secure (https) page.", "warn"); return; }
+    AuthUI.loading(btn, true);
+    status("Please tap <b>Allow</b> when your browser asks for your location…", "load");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        AuthUI.loading(btn, false);
+        origin = { lat: pos.coords.latitude, lng: pos.coords.longitude, label: "you" };
+        $("q").value = "";
+        status("");
+        search({});
+      },
+      (err) => {
+        AuthUI.loading(btn, false);
+        const msg = { 1: "Location access is blocked. Tap the lock icon next to the web address, allow Location, then try again — or search your area above.",
+                      2: "Couldn't work out your location. Check GPS / location services, or search your area above.",
+                      3: "That took too long. Try again, or search your area above." }[err.code] || "Couldn't get your location.";
+        status(msg, "warn");
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
+    );
+  });
+
+  // ---------------- search box + radius chips ----------------
+  let t = null;
+  $("q").addEventListener("input", () => {
+    clearTimeout(t);
+    const q = $("q").value.trim();
+    t = setTimeout(() => search({ q }), 380);
+  });
+  $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") { clearTimeout(t); search({ q: $("q").value.trim() }); } });
+
+  document.querySelectorAll(".chip").forEach((chip) =>
+    chip.addEventListener("click", () => {
+      radius = Number(chip.dataset.r);
+      document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
+      search({ q: $("q").value.trim() });
+    })
+  );
+
+  // ---------------- go ----------------
+  skeleton();
+  initMap();
+  search({});
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

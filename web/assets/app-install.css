@@ -1,0 +1,42 @@
+/* Study Space - app download card */
+.sa-host,.sa-host *,.sa-toast{box-sizing:border-box;font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.sa-host{display:block}
+.sa-card{position:relative;overflow:hidden;display:grid;grid-template-columns:1.25fr .75fr;gap:30px;align-items:center;padding:38px 40px;margin:0 0 44px;border-radius:30px;color:#fff;background:linear-gradient(135deg,#1e3a8a 0%,#4338ca 55%,#6d28d9 100%);box-shadow:0 30px 60px -28px rgba(49,46,129,.7)}
+.sa-card::before,.sa-card::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.07);pointer-events:none}
+.sa-card::before{width:340px;height:340px;top:-150px;right:-90px}
+.sa-card::after{width:240px;height:240px;bottom:-120px;left:30%}
+.sa-card>*{position:relative;z-index:1}
+.sa-card.sa-noqr{grid-template-columns:1fr}
+.sa-brand{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.sa-logo{width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none}
+.sa-logo svg{width:26px;height:26px}
+.sa-brand b{display:block;font-size:17px;line-height:1.15}
+.sa-brand i{font-style:normal;font-size:12.5px;color:#c7d2fe;font-weight:600}
+.sa-h{margin:0 0 8px;font-size:clamp(26px,3.6vw,36px);line-height:1.1;letter-spacing:-.025em;font-weight:800;color:#fff}
+.sa-p{margin:0 0 16px;color:#dbe4ff;font-size:15.5px;line-height:1.6;max-width:46ch}
+.sa-feats{list-style:none;margin:0 0 22px;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.sa-feats li{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:#fff}
+.sa-feats svg{width:17px;height:17px;color:#6ee7b7;flex:none}
+.sa-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;font:inherit;font-weight:800;font-size:16.5px;padding:16px 34px;border-radius:16px;background:#fff;color:#3730a3;box-shadow:0 14px 30px -10px rgba(0,0,0,.5);transition:transform .15s,box-shadow .15s;line-height:1}
+.sa-btn svg{width:22px;height:22px}
+.sa-btn:hover{transform:translateY(-2px);box-shadow:0 18px 34px -10px rgba(0,0,0,.55)}
+.sa-btn:focus-visible,.sa-link:focus-visible{outline:3px solid #fde68a;outline-offset:3px}
+.sa-meta{margin:14px 0 0;font-size:13px;color:#c7d2fe;font-weight:600}
+.sa-trust{display:flex;gap:8px;align-items:flex-start;margin:10px 0 0;font-size:12.5px;line-height:1.5;color:#c7d2fe;max-width:52ch}
+.sa-trust svg{width:16px;height:16px;color:#6ee7b7;flex:none;margin-top:1px}
+.sa-qrside{display:flex;flex-direction:column;align-items:center;text-align:center}
+.sa-qrbox{background:#fff;border-radius:22px;padding:12px;line-height:0;width:min(210px,100%);box-shadow:0 20px 44px -14px rgba(0,0,0,.55);margin-bottom:14px}
+.sa-qrbox svg{width:100%;height:auto;display:block}
+.sa-qrside b{font-size:16px}
+.sa-qrside span{font-size:13px;color:#c7d2fe;margin-top:3px}
+.sa-link{background:none;border:0;color:#fff;opacity:.85;text-decoration:underline;cursor:pointer;font:inherit;font-size:13px;margin-top:8px;padding:4px}
+.sa-link:hover{opacity:1}
+.ds-home-nav a.sa-nav{color:#fff;background:linear-gradient(135deg,#2563eb,#4f46e5);font-weight:800;margin-left:4px}
+.ds-home-nav a.sa-nav:hover{color:#fff;background:linear-gradient(135deg,#1d4ed8,#4338ca)}
+.sa-toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,30px);z-index:99999;background:#0f172a;color:#fff;padding:12px 18px;border-radius:14px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;max-width:92vw;text-align:center}
+.sa-toast.on{opacity:1;transform:translate(-50%,0)}
+#get-app{scroll-margin-top:90px}
+@media(max-width:760px){
+  .sa-card{grid-template-columns:1fr;padding:28px 22px;gap:26px;border-radius:24px}
+  .sa-btn{width:100%}
+}

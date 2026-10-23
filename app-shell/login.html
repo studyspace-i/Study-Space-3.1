@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/><title>Sign in — Study Space</title>
+<link rel="stylesheet" href="/assets/tailwind.css"/></head>
+<body class="min-h-screen text-white" style="background:radial-gradient(900px 500px at 15% -10%,#6366f1 0,transparent 60%),radial-gradient(800px 500px at 100% 100%,#db2777 0,transparent 55%),linear-gradient(160deg,#1e1b4b,#312e81 55%,#4c1d95)">
+<main class="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 pb-10 pt-16">
+  <div class="mb-8 text-center">
+    <div class="mx-auto mb-4 grid h-20 w-20 place-items-center rounded-3xl bg-white/15 ring-1 ring-white/40 backdrop-blur"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 5.5C5 4 8.5 4 12 6c3.5-2 7-2 9.5-.5V19c-2.5-1.5-6-1.5-9.5.5-3.5-2-7-2-9.5-.5z"/><path d="M12 6v13.5"/></svg></div>
+    <h1 class="text-2xl font-extrabold">Welcome back</h1>
+    <p class="mt-1 text-sm text-indigo-100">Sign in once — this phone remembers you securely.</p>
+  </div>
+  <div id="msg" class="mb-4 hidden rounded-2xl bg-red-500/90 px-4 py-3 text-sm"></div>
+  <div id="info" class="mb-4 hidden rounded-2xl bg-amber-400/95 px-4 py-3 text-sm text-amber-950"></div>
+  <form id="f" method="post" action="/login.html" autocomplete="on" class="space-y-4 rounded-[28px] bg-white/90 p-6 text-slate-800 shadow-2xl backdrop-blur">
+    <label class="block text-sm font-semibold">Email
+      <input id="email" name="username" type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" required class="mt-1 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base outline-none focus:border-indigo-500"/></label>
+    <label class="block text-sm font-semibold">Password
+      <div class="relative mt-1"><input id="pw" name="password" type="password" autocomplete="current-password" required class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 pr-16 text-base outline-none focus:border-indigo-500"/>
+      <button type="button" id="eye" class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-500">Show</button></div></label>
+    <button id="go" class="w-full rounded-2xl py-3.5 text-base font-extrabold text-white shadow-lg active:scale-95 disabled:opacity-60" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)">Sign in</button>
+    <a href="/forgot-password.html" class="block text-center text-sm font-semibold text-indigo-600">Forgot password?</a>
+  </form>
+  <p class="mt-6 text-center text-sm text-indigo-100">New here? <a href="/create-account.html" class="font-bold text-white underline">Create an account</a></p>
+</main>
+<script>
+var q = new URLSearchParams(location.search), info = document.getElementById("info");
+if (q.get("expired")) { info.textContent = "Your session expired. Please sign in again."; info.classList.remove("hidden"); }
+if (q.get("locked")) { info.textContent = "Too many wrong passcodes. Please sign in again."; info.classList.remove("hidden"); }
+document.getElementById("eye").onclick = function () { var p = document.getElementById("pw"); p.type = p.type === "password" ? "text" : "password"; this.textContent = p.type === "password" ? "Show" : "Hide"; };
+document.getElementById("f").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  var btn = document.getElementById("go"), msg = document.getElementById("msg");
+  msg.classList.add("hidden"); btn.disabled = true; btn.textContent = "Signing in…";
+  try {
+    var res = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: document.getElementById("email").value.trim(), password: document.getElementById("pw").value }) });
+    var raw = await res.text(), j;
+    try { j = JSON.parse(raw); } catch (pe) { throw new Error("Not working right now. Please try again in a little while."); }
+    if (!res.ok || !j.success) throw new Error(j.message || "Login failed. Please check your details.");
+    var u = j.data;
+    if (!u.token) throw new Error("Not working right now. Please try again in a little while.");
+    if (u.role === "platform_owner") throw new Error("Owner accounts must use the website.");
+    var token = u.token; delete u.token;
+    await AppCore.saveSession(token, u);
+    // offer to save the password in Google / Samsung password manager (system dialog)
+    try {
+      var SP = window.Native && window.Native.SavePassword;
+      if (SP && AppCore.isNative) {
+        AppCore.guard.on();
+        await Promise.race([SP.promptDialog({ username: document.getElementById("email").value.trim(), password: document.getElementById("pw").value, url: "study.mrharshit.in", title: "Study Space" }), new Promise(function (r) { setTimeout(r, 25000); })]);
+      }
+    } catch (se) {} finally { try { AppCore.guard.off(1500); } catch (x) {} }
+    location.replace("/shell.html");
+  } catch (err) {
+    msg.textContent = AppCore.friendly(String(err.message || err)) || "Not working right now. Please try again in a little while.";
+    msg.classList.remove("hidden"); btn.disabled = false; btn.textContent = "Sign in";
+  }
+});
+</script></body></html>

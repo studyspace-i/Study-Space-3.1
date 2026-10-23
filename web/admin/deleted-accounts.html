@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Deleted accounts — Study Space</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+  <a href="/admin/students.html" class="text-sm text-primary hover:underline">← Back to students</a>
+  <div class="mt-2 mb-5 rounded-2xl bg-gradient-to-r from-rose-600 to-orange-500 p-6 text-white shadow">
+    <h1 class="text-2xl font-bold">🗑 Deleted accounts</h1>
+    <p class="mt-1 text-sm text-rose-50">Deleted accounts stay restorable for <b>30 days</b>. After that, the complete record is saved in the <b>Recycle bin</b> below and the account no longer exists in your center.</p>
+  </div>
+
+  <section class="mb-8">
+    <div class="mb-3 flex items-center gap-2"><h2 class="text-lg font-bold text-gray-900">⏳ Waiting to be moved to the recycle bin</h2><span id="pending-count" class="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-700">0</span></div>
+    <div id="pending" class="grid gap-3"></div>
+  </section>
+
+  <section>
+    <div class="mb-3 flex items-center gap-2"><h2 class="text-lg font-bold text-gray-900">🗂 Recycle bin</h2><span id="bin-count" class="rounded-full bg-gray-200 px-2.5 py-0.5 text-xs font-bold text-gray-700">0</span></div>
+    <p class="mb-3 text-sm text-gray-500">Full records saved after 30 days (profile, membership, payments, attendance, study history). You can restore them — if the same email or phone is now used by another account, you'll be asked to change the details first.</p>
+    <div id="bin" class="grid gap-3"></div>
+  </section>
+</main>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script src="/assets/delete-ui.js?v=1"></script>
+<script>
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const WHO = { self: "the account owner", admin: "your center", owner: "the platform owner" };
+const fmt = (d) => d ? new Date(String(d).replace(" ", "T")).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "";
+let ticker = null;
+
+function overlay(titleHtml, bodyEl, actions) {
+  const back = document.createElement("div"); back.className = "fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4";
+  const card = document.createElement("div"); card.className = "max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl";
+  const h = document.createElement("h2"); h.className = "mb-3 text-lg font-bold text-gray-900"; h.innerHTML = titleHtml; card.appendChild(h); card.appendChild(bodyEl);
+  const row = document.createElement("div"); row.className = "mt-5 flex flex-wrap justify-end gap-2"; card.appendChild(row);
+  const close = () => back.remove();
+  actions.forEach((a) => { const b = document.createElement("button"); b.type = "button"; b.className = a.cls || "rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"; b.textContent = a.label;
+    b.addEventListener("click", async () => { if (!a.fn) return close(); b.disabled = true; try { const r = await a.fn(close); if (r !== false) close(); } catch (e) { toast(e.message, "error"); } finally { b.disabled = false; } }); row.appendChild(b); });
+  back.appendChild(card); document.body.appendChild(back); return close;
+}
+
+function chips(sum) {
+  if (!sum) return "";
+  const c = [];
+  if (sum.memberships) c.push(`${sum.memberships} membership${sum.memberships > 1 ? "s" : ""}`);
+  if (sum.transactions) c.push(`${sum.transactions} payment${sum.transactions > 1 ? "s" : ""} (₹${Math.round(sum.totalPaid || 0).toLocaleString("en-IN")})`);
+  if (sum.attendance) c.push(`${sum.attendance} attendance`);
+  if (sum.study_logs) c.push(`${sum.study_logs} study days`);
+  return c.map((x) => `<span class="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600">${esc(x)}</span>`).join(" ");
+}
+
+async function load() {
+  try {
+    const { data } = await api("/admin/deleted-accounts");
+    document.getElementById("pending-count").textContent = data.pending.length;
+    document.getElementById("bin-count").textContent = data.bin.length;
+    const pend = document.getElementById("pending");
+    pend.innerHTML = data.pending.length ? data.pending.map((p) => `
+      <div class="rounded-2xl border-l-4 border-red-500 bg-red-50 p-4 shadow-sm">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2"><span class="font-bold text-red-800">${esc(p.name)}</span><span class="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold uppercase text-white">Deleted</span><span class="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-gray-600 ring-1 ring-gray-200">${esc(p.role)}</span></div>
+            <div class="mt-1 text-xs text-red-700">${esc(p.email || "")} ${p.phone ? "· " + esc(p.phone) : ""} ${p.card ? "· card " + esc(p.card) : ""}</div>
+            <div class="mt-1 text-xs text-gray-600">Deleted ${fmt(p.deletedAt)} by ${WHO[p.by] || ""}${p.reason ? " — “" + esc(p.reason) + "”" : ""}</div>
+            <div class="mt-1 text-[11px] text-gray-500">${p.by === "owner" ? "Only the developer can restore this account." : p.canSelfRestore ? "The person can also restore it themselves (email code)." : "Self-restore is turned off for this account."}</div>
+          </div>
+          <div class="text-right"><div class="rounded-lg bg-white px-3 py-2 ring-1 ring-red-200"><div class="text-[10px] font-semibold uppercase text-red-500">Time left</div><div class="font-mono text-lg font-extrabold text-red-700" data-secs="${p.secondsLeft}">${DeleteUI.left(p.secondsLeft)}</div><div class="text-[10px] text-red-400">then → recycle bin</div></div>
+            <div class="mt-2 flex justify-end gap-2">${p.restorable ? `<button data-restore="${p.userId}" data-name="${esc(p.name)}" class="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700">Restore</button><button data-tobin="${p.userId}" data-name="${esc(p.name)}" class="rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50">Move to bin now</button>` : ""}</div></div>
+        </div>
+      </div>`).join("") : `<div class="rounded-2xl bg-white p-8 text-center text-sm text-gray-400 shadow-sm">No accounts are waiting. 🎉</div>`;
+    pend.querySelectorAll("[data-restore]").forEach((b) => b.addEventListener("click", () => DeleteUI.adminRestore(b.dataset.name, b.dataset.restore, load)));
+    pend.querySelectorAll("[data-tobin]").forEach((b) => b.addEventListener("click", () => moveToBin(b.dataset.tobin, b.dataset.name)));
+
+    const bin = document.getElementById("bin");
+    bin.innerHTML = data.bin.length ? data.bin.map((r) => `
+      <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-200">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2"><span class="font-bold text-gray-900">${esc(r.name)}</span><span class="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-600">${esc(r.role)}</span></div>
+            <div class="mt-1 text-xs text-gray-500">${esc(r.email || "")} ${r.phone ? "· " + esc(r.phone) : ""} ${r.card ? "· card " + esc(r.card) : ""}</div>
+            <div class="mt-1 text-xs text-gray-500">Deleted ${fmt(r.deletedAt)} by ${WHO[r.by] || ""} · saved to bin ${fmt(r.archivedAt)}${r.reason ? " — “" + esc(r.reason) + "”" : ""}</div>
+            <div class="mt-2 flex flex-wrap gap-1">${chips(r.summary)}</div>
+          </div>
+          <div class="flex gap-2"><button data-view="${r.id}" class="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50">View details</button><button data-binrestore="${r.id}" data-name="${esc(r.name)}" class="rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700">Restore</button></div>
+        </div>
+      </div>`).join("") : `<div class="rounded-2xl bg-white p-8 text-center text-sm text-gray-400 shadow-sm">The recycle bin is empty.</div>`;
+    bin.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => viewBin(b.dataset.view)));
+    bin.querySelectorAll("[data-binrestore]").forEach((b) => b.addEventListener("click", () => restoreBin(b.dataset.binrestore, b.dataset.name, {})));
+    clearInterval(ticker);
+    ticker = setInterval(() => document.querySelectorAll("[data-secs]").forEach((n) => { const v = Math.max(0, +n.dataset.secs - 1); n.dataset.secs = v; n.textContent = DeleteUI.left(v); }), 1000);
+  } catch (e) { toast(e.message, "error"); }
+}
+
+function moveToBin(userId, name) {
+  const body = document.createElement("p"); body.className = "text-sm text-gray-600"; body.textContent = "The full record is saved in the recycle bin right now (before the 30 days end) and the person can no longer restore it themselves. You can still restore it from the bin.";
+  overlay("Move " + esc(name) + " to the recycle bin now?", body, [{ label: "Cancel" }, { label: "Move now", cls: "rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700", fn: async () => { const { message } = await api(`/admin/deleted-accounts/${userId}/move-to-bin`, { method: "POST", body: { confirm: true } }); toast(message); load(); } }]);
+}
+
+async function viewBin(id) {
+  try {
+    const { data: d } = await api(`/admin/recycle-bin/${id}`);
+    const body = document.createElement("div"); body.className = "space-y-3 text-sm";
+    const rows = [["Name", d.name], ["Role", d.role], ["Email", d.email], ["Phone", d.phone], ["Library card", d.card], ["Center", d.orgName], ["Deleted", `${fmt(d.deletedAt)} by ${WHO[d.by] || ""}`], ["Reason", d.reason], ["Saved to bin", fmt(d.archivedAt)]].filter((r) => r[1]);
+    body.innerHTML = `<div class="divide-y rounded-lg border">${rows.map((r) => `<div class="flex justify-between gap-3 px-3 py-2"><span class="text-gray-500">${r[0]}</span><b class="text-right">${esc(r[1])}</b></div>`).join("")}</div>`;
+    if (d.student) body.innerHTML += `<div class="rounded-lg bg-gray-50 p-3"><b>Student record</b><div class="mt-1 text-gray-600">Parent: ${esc(d.student.parentName || "—")} ${esc(d.student.parentPhone || "")}<br>Education: ${esc(d.student.education || "—")}<br>Address: ${esc(d.student.address || "—")}</div></div>`;
+    if ((d.memberships || []).length) body.innerHTML += `<div><b>Memberships</b>${d.memberships.map((m) => `<div class="mt-1 rounded-lg bg-gray-50 px-3 py-2 text-gray-600">Seat ${esc(m.seat)} · ${esc(m.start)} → ${esc(m.expiry)} · ₹${esc(m.paid)} · ${esc(m.status)}</div>`).join("")}</div>`;
+    if ((d.transactions || []).length) body.innerHTML += `<div><b>Payments</b>${d.transactions.map((t) => `<div class="mt-1 rounded-lg bg-gray-50 px-3 py-2 text-gray-600">₹${esc(t.amount)} · ${esc(t.type)} · ${esc(fmt(t.at))}</div>`).join("")}</div>`;
+    overlay("🗂 Saved record", body, [{ label: "Close" }, { label: "Restore", cls: "rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700", fn: async () => { restoreBin(id, d.name, {}); } }]);
+  } catch (e) { toast(e.message, "error"); }
+}
+
+// Restore with the SAFETY CHECK: the server refuses if an account with this email/phone exists, and asks you to change the details.
+function restoreBin(id, name, prefill) {
+  const body = document.createElement("div"); body.className = "space-y-3 text-sm text-gray-600";
+  const info = document.createElement("p"); info.textContent = "Everything — profile, membership, payments, attendance and study history — will be put back."; body.appendChild(info);
+  const warn = document.createElement("div"); warn.className = "hidden rounded-lg border border-amber-300 bg-amber-50 p-3 text-amber-900"; body.appendChild(warn);
+  const mk = (label, val) => { const w = document.createElement("div"); w.className = "hidden"; const l = document.createElement("label"); l.className = "mb-1 block text-xs font-semibold text-gray-700"; l.textContent = label; const i = document.createElement("input"); i.className = "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"; i.value = val || ""; w.append(l, i); body.appendChild(w); return { w, i }; };
+  const em = mk("New email for this account", prefill.email), ph = mk("New phone number", prefill.phone);
+  overlay("♻️ Restore " + esc(name), body, [{ label: "Cancel" }, { label: "Restore", cls: "rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700", fn: async () => {
+    const payload = {}; if (!em.w.classList.contains("hidden") && em.i.value.trim()) payload.email = em.i.value.trim(); if (!ph.w.classList.contains("hidden") && ph.i.value.trim()) payload.phone = ph.i.value.trim();
+    try {
+      const { message, data } = await api(`/admin/recycle-bin/${id}/restore`, { method: "POST", body: payload });
+      toast(message); (data.notes || []).forEach((n) => toast(n, "info")); load();
+    } catch (err) {
+      const e = err.payload && err.payload.errors;
+      if (e && e.code === "RESTORE_CONFLICT") {
+        warn.classList.remove("hidden"); warn.innerHTML = `<b>⚠️ Please change the user's details.</b><br>${esc(err.message)}`;
+        if (e.conflicts.email) { em.w.classList.remove("hidden"); em.i.value = e.current.email; }
+        if (e.conflicts.phone) { ph.w.classList.remove("hidden"); ph.i.value = e.current.phone; }
+        return false;     // keep the dialog open so the admin can edit and try again
+      }
+      throw err;
+    }
+  } }]);
+}
+
+(async () => {
+  const user = await guardRole(["admin", "staff"]);
+  if (!user) return;
+  renderAdminNav("/admin/students.html", user);
+  load();
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access paused — Study Space</title><meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:#0b1220;color:#e5ecf6;font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+.card{width:100%;max-width:560px;background:#111a2e;border:1px solid #223253;border-top:5px solid #f59e0b;border-radius:16px;padding:28px;box-shadow:0 24px 70px rgba(0,0,0,.5)}
+.card.bad{border-top-color:#ef4444}.card.warn{border-top-color:#f59e0b}
+.icon{font-size:42px;text-align:center}h1{font-size:22px;text-align:center;margin:6px 0 4px}.center{text-align:center;color:#8fa1bf;margin:0 0 14px}
+.message{background:#0b1426;border:1px solid #223253;border-radius:12px;padding:14px 16px;font-size:16px}
+.note{margin-top:12px;border-radius:10px;padding:10px 13px;font-size:14px;background:rgba(245,158,11,.1);border:1px solid #78490c;color:#fde68a}
+.hidden{display:none}h2{font-size:15px;margin:22px 0 8px}
+.contacts{display:grid;gap:8px}.cbtn{display:block;text-align:center;padding:11px 14px;border-radius:10px;background:#16233d;border:1px solid #2a3d63;color:#e5ecf6;text-decoration:none;font-weight:600}
+.cbtn.main{background:#4f46e5;border-color:#4f46e5}.cbtn:hover{filter:brightness(1.15)}.hours{color:#8fa1bf;font-size:13px;text-align:center;margin-top:8px}
+input,textarea{width:100%;background:#08101f;border:1px solid #223253;border-radius:9px;padding:10px 12px;color:inherit;font:inherit;margin-bottom:8px}textarea{min-height:90px;resize:vertical}
+button.send{width:100%;padding:11px;border:0;border-radius:10px;background:#10b981;color:#04130d;font-weight:800;font-size:15px;cursor:pointer}button:disabled{opacity:.5}
+.result{margin-top:8px;font-size:14px}.result.ok{color:#6ee7b7}.result.err{color:#fca5a5}
+.back{display:block;text-align:center;margin-top:18px;color:#8fa1bf;font-size:13px}
+</style></head>
+<body><div class="card" id="card">
+  <div class="icon" id="icon">⛔</div><h1 id="title"></h1><p class="center" id="center"></p>
+  <div class="message" id="message"></div>
+  <div class="note hidden" id="reason"><b>Reason:</b> <span id="reason-text"></span></div>
+  <div class="note hidden" id="until"><span id="until-text"></span></div>
+  <h2>Contact the owner</h2><div class="contacts" id="contacts"></div><div class="hours" id="hours"></div>
+  <div id="appeal"><h2>Or send a message right here</h2>
+    <input id="ident" placeholder="Your account email or phone number" autocomplete="username">
+    <textarea id="msg" maxlength="2000" placeholder="Tell the owner what happened and what you need…"></textarea>
+    <button class="send" id="send">Send message to the owner</button><div class="result" id="result"></div></div>
+  <a class="back" href="/">← Back to home page</a>
+</div><script src="/assets/suspended.js?v=1"></script></body></html>

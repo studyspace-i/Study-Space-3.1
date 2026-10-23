@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "730739747023",
+    "project_id": "study-space-5d8b7",
+    "storage_bucket": "study-space-5d8b7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730739747023:android:879467b0ce39e522312fba",
+        "android_client_info": {
+          "package_name": "in.mrharshit.studyspace"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_R7D6kfTA0yZqMcRsQ-Jewnz3AZHdHbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

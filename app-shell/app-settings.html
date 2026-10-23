@@ -1,0 +1,165 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/><title>Settings — Study Space</title>
+<link rel="stylesheet" href="/assets/tailwind.css"/>
+<style>
+.sec{margin-top:22px}.sec h3{margin:0 0 8px 6px;font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--ss-mut)}
+.card{border-radius:26px;background:var(--ss-glass);border:1px solid var(--ss-line);box-shadow:0 16px 34px -18px rgba(79,70,229,.35);backdrop-filter:blur(18px);overflow:hidden}
+.row{display:flex;align-items:center;gap:14px;width:100%;padding:13px 16px;text-align:left;border-top:1px solid var(--ss-line);min-height:58px}
+.row:first-child{border-top:0}.row.stk{flex-wrap:wrap}.row.stk .seg{width:100%;margin-left:52px;margin-top:2px}.row.stk .seg button{flex:1}.row:active{background:var(--ss-soft)}
+.ri{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;color:#fff;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
+.ri svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.rt{flex:1;min-width:0}.rt b{display:block;font-size:14.5px;font-weight:700;color:var(--ss-ink)}.rt i{display:block;font-style:normal;font-size:12px;color:var(--ss-mut);margin-top:1px}
+.chev{font-size:22px;color:#94a3b8;line-height:1}
+.chip{padding:6px 12px;border-radius:14px;font-size:12px;font-weight:700;background:var(--ss-soft);color:var(--a1,#4338ca);white-space:nowrap}
+.chip.ok{background:#dcfce7;color:#15803d}.chip.no{background:#fee2e2;color:#b91c1c}html[data-theme=dark] .chip.ok{background:rgba(16,185,129,.2);color:#6ee7b7}html[data-theme=dark] .chip.no{background:rgba(239,68,68,.2);color:#fca5a5}.news{padding:14px 16px}.news b{font-size:14.5px}.news ul{margin:8px 0 0 18px;padding:0;font-size:13px;color:var(--ss-ink2);line-height:1.6}.dotn{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-left:6px;vertical-align:middle}
+.tg{position:relative;width:50px;height:30px;border-radius:15px;background:rgba(148,163,184,.5);transition:.25s;flex:none}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:.25s cubic-bezier(.3,1.4,.5,1)}
+.tg.on{background:linear-gradient(135deg,var(--a1,#4f46e5),var(--a2,#7c3aed))}.sw{width:38px;height:38px;border-radius:50%;border:3px solid transparent;box-shadow:0 6px 14px -6px rgba(0,0,0,.4)}.sw.on{border-color:#fff;outline:3px solid var(--a1,#4f46e5)}.tg.on::after{left:23px}
+.seg{display:flex;gap:4px;padding:4px;border-radius:16px;background:var(--ss-soft)}
+.seg button{padding:7px 12px;border-radius:12px;font-size:12px;font-weight:700;color:var(--ss-ink2);white-space:nowrap}
+.seg button.on{background:linear-gradient(135deg,var(--a1,#4f46e5),var(--a2,#7c3aed));color:#fff;box-shadow:0 6px 14px -6px rgba(79,70,229,.8)}
+.mask{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.45);display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.mask .pnl{width:100%;max-width:520px;margin:10px;padding:22px 18px 18px;border-radius:28px;background:var(--ss-sheet);color:var(--ss-ink);box-shadow:0 24px 60px rgba(30,27,75,.4)}
+.mask input{width:100%;margin-top:8px;padding:13px 14px;border-radius:14px;border:1px solid var(--ss-line);background:var(--ss-field);color:var(--ss-ink);font-size:16px}
+.go{width:100%;margin-top:14px;padding:14px;border-radius:16px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--a1,#4f46e5),var(--a2,#7c3aed))}
+.toast{position:fixed;left:50%;bottom:130px;transform:translateX(-50%);padding:10px 18px;border-radius:18px;background:#0f172aef;color:#fff;font-size:13px;font-weight:600;z-index:60}
+.srch{display:flex;align-items:center;gap:10px;height:48px;border-radius:24px;padding:0 16px;background:var(--ss-card);border:1px solid var(--ss-line);margin:10px 0 0;color:var(--ss-mut)}.srch input{flex:1;min-width:0;border:0;background:transparent;font-size:16px;color:var(--ss-ink);outline:none;margin:0;padding:0;width:auto}</style></head>
+<body class="px-4 pb-10 pt-2" style="color:var(--ss-ink)">
+<div class="srch"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="sq" type="text" placeholder="Search settings" autocomplete="off"/></div>
+<div id="root"></div><div id="nores" style="display:none;text-align:center;padding:40px 10px;color:var(--ss-mut);font-size:14px">No settings match your search.</div>
+<script src="/child.js"></script>
+<script>
+(function () {
+  var Core = parent.AppCore, Shell = parent.AppShell, CFG = parent.APP_CONFIG || {};
+  var IC = {
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7z"/>',
+    key: '<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"/>',
+    lock: '<rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><circle cx="12" cy="15.5" r="1.2"/>',
+    dots: '<path d="M5 12h.01M12 12h.01M19 12h.01"/><rect x="3" y="7" width="18" height="10" rx="5"/>',
+    finger: '<path d="M12 11v3c0 3-1 5-2 6"/><path d="M8 14c0-2.2 1.8-4 4-4s4 1.8 4 4c0 3-.500 5-1.5 7"/><path d="M5 12a7 7 0 0 1 14 0c0 2 0 4-.500 6"/>',
+    timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/>',
+    bell: '<path d="M6 8.5a6 6 0 0 1 12 0c0 7 3 8.5 3 8.5H3s3-1.5 3-8.5"/><path d="M10.3 20.5a2 2 0 0 0 3.4 0"/>',
+    cam: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+    pin: '<path d="M12 21.5s7-6.2 7-11.7A7 7 0 0 0 5 9.8c0 5.5 7 11.7 7 11.7z"/><circle cx="12" cy="9.8" r="2.6"/>',
+    home: '<path d="M3 11.2 12 3.6l9 7.6V20a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 20z"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/>',
+    shield: '<path d="M12 3 4.5 6v6c0 4.5 3.2 7.5 7.5 9 4.3-1.5 7.5-4.5 7.5-9V6z"/><path d="M9 12l2.2 2.2L15.5 10"/>',
+    heart: '<path d="M12 20.5s-8-4.6-8-10.6A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8 2.9c0 6-8 10.6-8 10.6z"/>',
+    out: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5h.01"/>',
+    test: '<path d="M4 4l16 8-16 8 3-8z"/>'
+  };
+  function ic(n, c) { return '<span class="ri" style="background:' + c + '"><svg viewBox="0 0 24 24">' + IC[n] + '</svg></span>'; }
+  var G = { ind: "linear-gradient(135deg,#6366f1,#8b5cf6)", pink: "linear-gradient(135deg,#ec4899,#f43f5e)", amb: "linear-gradient(135deg,#f59e0b,#ef4444)", cy: "linear-gradient(135deg,#06b6d4,#3b82f6)", gr: "linear-gradient(135deg,#10b981,#14b8a6)", sl: "linear-gradient(135deg,#64748b,#334155)", vio: "linear-gradient(135deg,#8b5cf6,#d946ef)" };
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  function toast(t) { var e = document.createElement("div"); e.className = "toast"; e.textContent = t; document.body.appendChild(e); setTimeout(function () { e.remove(); }, 2200); }
+  function esc(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+  var S = { lockOn: true, user: null, len: 4, bio: false, bioAvail: false, perms: {}, notif: true, ms: 30000, priv: false };
+  async function load() {
+    S.user = await Core.getUser() || {}; S.len = await Core.lock.length(); S.bioAvail = await Core.bio.available(); S.bio = S.bioAvail && await Core.bio.enabled();
+    S.lockOn = Core.lock.enabled(); S.ms = Core.lock.timeoutMs(); S.priv = Core.privacy.on(); S.notif = Core.LS.get("ss_notif_on", "1") === "1";
+    for (var k in Core.perm.list) S.perms[k] = await Core.perm.status(k);
+    draw();
+  }
+  function row(icon, color, title, sub, right, id) { var stk = right && right.indexOf('class="seg"') > -1 ? " stk" : ""; return '<div class="row' + stk + '" role="button" tabindex="0" data-id="' + id + '">' + ic(icon, color) + '<span class="rt"><b>' + title + '</b>' + (sub ? '<i>' + sub + '</i>' : "") + '</span>' + (right == null ? '<span class="chev">›</span>' : right) + '</div>'; }
+  function permRow(k, icon, color, name) {
+    var s = S.perms[k], on = s === "granted";
+    return row(icon, color, name, on ? "Allowed" : s === "denied" ? "Blocked — open phone settings to allow" : "Not allowed yet", '<span class="chip ' + (on ? "ok" : "no") + '">' + (on ? "Allowed" : s === "denied" ? "Open settings" : "Allow") + '</span>', "perm-" + k);
+  }
+  function draw() {
+    var u = S.user, name = ((u.firstName || "") + " " + (u.lastName || "")).trim() || "Study Space user", role = u.role === "student" ? "Student" : u.role === "staff" ? "Staff" : "Library admin";
+    var admin = u.role !== "student", h = "";
+    h += '<div class="card" data-id="go:/me.html" style="padding:18px;display:flex;align-items:center;gap:14px;cursor:pointer"><div style="width:62px;height:62px;border-radius:22px;display:grid;place-items:center;color:#fff;font-size:26px;font-weight:800;background:linear-gradient(135deg,#6366f1,#a855f7);box-shadow:0 14px 26px -10px rgba(99,102,241,.8)">' + esc((name || "S").charAt(0).toUpperCase()) + '</div><div class="rt"><b style="font-size:17px">' + esc(name) + '</b><i>' + esc(u.email || "") + '</i><i>' + esc(u.phone || "") + '</i></div><span class="chip">' + role + '</span></div>';
+    h += '<div class="sec"><h3>Account</h3><div class="card">' + row("user", G.cy, "My profile", "Name, contact and membership details", null, "go:/me.html") + row("key", G.ind, "Change password", "Update your sign-in password", null, "pw") +
+      (admin ? "" : row("timer", G.amb, "Clock, alarm and timer", "Alarms, timer, stopwatch and focus", null, "go:/clock.html")) + (admin ? row("home", G.cy, "Library settings", "Profile, Wi-Fi, team, seats, location & billing", null, "go:/admin/settings.html") + row("globe", G.gr, "Public homepage", "Content shown on your center page", null, "go:/admin/manage-home.html") + row("shield", G.vio, "Account security", "Sessions and sign-in protection", null, "go:/admin/security.html")
+             : row("user", G.cy, "My profile", "Details, photo and change requests", null, "go:/student/profile.html") + row("bell", G.amb, "Notifications", "Notices from your library", null, "go:/student/notifications.html")) +
+      row("heart", G.pink, "Pay Now", "Support Study Space with UPI", null, "go:/pay-now.html") + row("heart", G.pink, "Donations", "Premium and receipts", null, "go:/my-donations.html") + row("heart", G.gr, "Supporters wall", "People who power Study Space", null, "go:/supporters.html") + '</div></div>';
+    var cur = Core.theme.accent(), md = Core.theme.mode();
+    h += '<div class="sec"><h3>Appearance</h3><div class="card">' +
+      row("globe", G.vio, "Theme", "Light, dark or follow your phone", '<div class="seg" data-mode>' + [["auto", "Auto"], ["light", "Light"], ["dark", "Dark"]].map(function (o) { return '<button data-n="' + o[0] + '" class="' + (md === o[0] ? "on" : "") + '">' + o[1] + '</button>'; }).join("") + '</div>', "mode") +
+      '<div class="row" style="flex-wrap:wrap"><span class="rt" style="flex:1 0 100%"><b>Accent colour</b><i>Pick the colour of buttons and highlights</i></span><div style="display:flex;gap:14px;margin-left:0;padding:4px 2px">' + Object.keys(Core.theme.accents).map(function (k) { var a = Core.theme.accents[k]; return '<button class="sw ' + (cur === k ? "on" : "") + '" data-acc="' + k + '" aria-label="' + k + '" style="background:linear-gradient(135deg,' + a[0] + ',' + a[1] + ')"></button>'; }).join("") + '</div></div></div></div>';
+    h += '<div class="sec"><h3>App security</h3><div class="card">' +
+      row("lock", G.ind, "Passcode lock", admin ? "Recommended for library accounts" : "Ask for a passcode when you open the app", '<span class="tg ' + (S.lockOn ? "on" : "") + '"></span>', "lockon") +
+      (S.lockOn ? row("lock", G.ind, "Change passcode", "Currently " + S.len + " digits", null, "chpin") +
+      row("dots", G.vio, "Passcode length", "Choose a shorter or longer passcode", '<div class="seg" data-len>' + [4, 6].map(function (n) { return '<button data-n="' + n + '" class="' + (S.len === n ? "on" : "") + '">' + n + ' digits</button>'; }).join("") + '</div>', "len") +
+      (S.bioAvail ? row("finger", G.gr, "Fingerprint / face unlock", "Unlock faster with your biometrics", '<span class="tg ' + (S.bio ? "on" : "") + '"></span>', "bio") : "") +
+      row("timer", G.amb, "Auto-lock", "Ask for the passcode after leaving the app", '<div class="seg" data-ms>' + [[0, "Now"], [30000, "30s"], [60000, "1m"], [300000, "5m"]].map(function (o) { return '<button data-n="' + o[0] + '" class="' + (S.ms === o[0] ? "on" : "") + '">' + o[1] + '</button>'; }).join("") + '</div>', "ms") +
+      row("lock", G.sl, "Lock app now", "Show the passcode screen right away", null, "lock") : "") +
+      row("shield", G.vio, "Hide app in recent apps", "Also blocks screenshots and screen recording", '<span class="tg ' + (S.priv ? "on" : "") + '"></span>', "priv") + '</div></div>';
+    h += '<div class="sec"><h3>Permissions</h3><div class="card">' + permRow("notifications", "bell", G.amb, "Notifications") + permRow("camera", "cam", G.cy, "Camera") + permRow("location", "pin", G.gr, "Location") + '</div></div>';
+    h += '<div class="sec"><h3>Notifications</h3><div class="card">' +
+      row("bell", G.pink, "Alerts on this phone", admin ? "New profile change requests" : "New notices from your library", '<span class="tg ' + (S.notif ? "on" : "") + '"></span>', "notif") +
+      row("test", G.ind, "Send a test alert", "Check that alerts reach you", null, "test") + '</div></div>';
+    var nw = (Core.news || [])[0], seen = Core.LS.get("ss_news_open", "") === CFG.VERSION;
+    if (nw) h += '<div class="sec" id="news"><h3>What’s new</h3><div class="card news"><b>' + esc(nw.title) + '</b> <span class="chip" style="margin-left:4px">v' + esc(nw.v) + '</span><div style="font-size:12px;color:var(--ss-mut);margin-top:2px">From the Study Space developer · ' + esc(nw.date) + '</div><ul>' + nw.items.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + '</ul></div></div>';
+    h += '<div class="sec"><h3>About</h3><div class="card">' + row("info", G.sl, "App version", "Study Space for Android", '<span class="chip">v' + esc(CFG.VERSION || "1.0") + '</span>', "none") +
+      row("globe", G.cy, "Open website", "Study Space on the web", null, "web") + '</div></div>';
+    h += '<div class="row card" role="button" tabindex="0" style="margin-top:22px;justify-content:center;color:#dc2626" data-id="out">' + ic("out", "linear-gradient(135deg,#ef4444,#dc2626)") + '<b style="font-size:15px;color:#dc2626">Log out</b></div>';
+    h += '<p style="text-align:center;margin-top:18px;font-size:12px;color:#94a3b8">Your passcode stays on this phone after logging out.</p>';
+    $("#root").innerHTML = h;
+    filt();
+  }
+  function filt() {
+    var q = ($("#sq").value || "").trim().toLowerCase(), shown = 0;
+    document.querySelectorAll("#root .sec").forEach(function (sec) {
+      var any = false;
+      sec.querySelectorAll(".row").forEach(function (r) { var ok = !q || r.textContent.toLowerCase().indexOf(q) > -1 || (sec.querySelector("h3") && sec.querySelector("h3").textContent.toLowerCase().indexOf(q) > -1); r.style.display = ok ? "" : "none"; if (ok) any = true; });
+      sec.style.display = any ? "" : "none"; if (any) shown++;
+    });
+    $("#nores").style.display = q && !shown ? "" : "none";
+  }
+  $("#sq").addEventListener("input", filt);
+  async function ask(title, fields, okLabel) {
+    return new Promise(function (resolve) {
+      var m = document.createElement("div"); m.className = "mask";
+      m.innerHTML = '<div class="pnl"><h3 style="margin:0 0 4px;font-size:19px;font-weight:800">' + title + '</h3>' + fields.map(function (f) { return '<input type="password" autocomplete="off" placeholder="' + f + '"/>'; }).join("") + '<p id="er" style="color:#dc2626;font-size:13px;margin:10px 0 0"></p><button class="go">' + okLabel + '</button><button class="cn" style="width:100%;margin-top:6px;padding:12px;color:#64748b;font-weight:700">Cancel</button></div>';
+      document.body.appendChild(m);
+      m.querySelector(".cn").onclick = function () { m.remove(); resolve(null); };
+      m.addEventListener("click", function (e) { if (e.target === m) { m.remove(); resolve(null); } });
+      m.querySelector(".go").onclick = function () { var v = [].map.call(m.querySelectorAll("input"), function (i) { return i.value; }); resolve({ v: v, m: m, err: function (t) { m.querySelector("#er").textContent = t; } }); };
+    });
+  }
+  async function changePassword() {
+    var r;
+    while ((r = await ask("Change password", ["Current password", "New password", "Repeat new password"], "Update password"))) {
+      var v = r.v;
+      if (!v[0] || !v[1]) { r.err("Please fill all fields."); continue; }
+      if (v[1] !== v[2]) { r.err("New passwords do not match."); continue; }
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(v[1])) { r.err("Use 8+ characters with an uppercase letter, a lowercase letter and a number."); continue; }
+      try {
+        var res = await (await Core.fetch("/api/auth/change-password", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ currentPassword: v[0], newPassword: v[1] }) })).json();
+        if (!res.success) { r.err(Core.friendly(res.message) || "Could not change password."); continue; }
+        r.m.remove(); toast("Password updated. Please log in again."); setTimeout(function () { Core.expire(); }, 1200); return;
+      } catch (e) { r.err(Core.friendly(e.message)); }
+    }
+  }
+  document.addEventListener("click", async function (e) {
+    var b = e.target.closest("[data-id]"); if (!b) return;
+    var seg = e.target.closest(".seg button");
+    var id = b.dataset.id;
+    if (id === "mode" && seg) { Core.theme.set("mode", seg.dataset.n); draw(); return; }
+    var sw = e.target.closest("[data-acc]"); if (sw) { Core.theme.set("accent", sw.dataset.acc); draw(); return; }
+    if (id === "priv") { S.priv = !S.priv; await Core.privacy.set(S.priv); toast(S.priv ? "Screenshots blocked" : "Screenshots allowed"); draw(); return; }
+    if (id === "lockon") { var want = !S.lockOn; var ok2 = await Core.lock.setEnabled(want); if (ok2) { S.lockOn = want; S.len = await Core.lock.length(); toast(want ? "Passcode lock on" : "Passcode lock off"); } draw(); return; }
+    if (id === "len" && seg) { var n = +seg.dataset.n; if (n !== S.len) { Core.LS.set("ss_len", String(n)); var ok = await Core.lock.change(); S.len = await Core.lock.length(); if (!ok) Core.LS.set("ss_len", String(S.len)); else toast("Passcode changed to " + S.len + " digits"); draw(); } return; }
+    if (id === "ms" && seg) { Core.lock.setTimeoutMs(+seg.dataset.n); S.ms = +seg.dataset.n; draw(); toast("Auto-lock updated"); return; }
+    if (id === "len" || id === "ms" || id === "mode") return;
+    if (id.indexOf("go:") === 0) { Shell.go(id.slice(3)); return; }
+    if (id === "pw") return changePassword();
+    if (id === "chpin") { if (await Core.lock.change()) { S.len = await Core.lock.length(); toast("Passcode changed"); draw(); } return; }
+    if (id === "bio") { if (S.bio) { await Core.bio.disable(); S.bio = false; toast("Biometric unlock off"); } else { S.bio = await Core.bio.enable(); toast(S.bio ? "Biometric unlock on" : "Could not enable biometrics"); } draw(); return; }
+    if (id === "lock") return Core.lock.lockNow();
+    if (id === "notif") { S.notif = !S.notif; Core.LS.set("ss_notif_on", S.notif ? "1" : "0"); if (S.notif) await Core.perm.need("notifications"); draw(); return; }
+    if (id === "test") { if (await Core.perm.need("notifications")) { await Core.testNotification(); toast("Test alert sent"); } load(); return; }
+    if (id.indexOf("perm-") === 0) { var k = id.slice(5), s = S.perms[k]; if (s === "granted") { Core.perm.openSettings(); return; } if (s === "denied") { Core.perm.openSettings(); return; } S.perms[k] = await Core.perm.request(k); draw(); return; }
+    if (id === "web") return Core.openExternal(CFG.API_ORIGIN);
+    if (id === "out") return Core.sheet({ title: "Log out?", text: "You will need to sign in again. Your passcode stays saved on this phone.", buttons: [{ label: "Log out", kind: "d", run: function () { return Core.logout(); } }, { label: "Stay signed in", kind: "s" }] });
+  });
+  // re-read permission state when the user comes back from phone settings
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) load(); });
+  window.addEventListener("focus", load);
+  load();
+  if (/news=1/.test(location.search)) setTimeout(function () { var n = document.getElementById("news"); if (n) n.scrollIntoView({ behavior: "smooth" }); }, 500);
+})();
+</script></body></html>

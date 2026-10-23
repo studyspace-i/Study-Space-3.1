@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Study Center — Study Space</title>
+<meta name="description" content="Study center on Study Space — view seats, shifts, facilities, location and contact details, and join online." />
+<meta property="og:site_name" content="Study Space" />
+<meta property="og:image" content="https://study.mrharshit.in/og-image.png" />
+<meta name="theme-color" content="#2563eb" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" }, fontFamily: { sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"] } } } };</script>
+<style>body{font-family:'Plus Jakarta Sans',system-ui,sans-serif}.soc{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;transition:transform .15s}.soc:hover{transform:translateY(-3px)}</style>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+<header class="sticky top-0 z-30 border-b border-slate-100 bg-white/90 backdrop-blur"><div class="mx-auto flex max-w-5xl items-center justify-between px-5 py-3">
+  <a href="/index.html" class="flex items-center gap-2 font-extrabold"><span class="grid h-8 w-8 place-items-center rounded-lg bg-primary text-white">📚</span>Study Space</a>
+  <nav class="flex items-center gap-3 text-sm font-semibold text-slate-600"><a href="/find-centers.html" class="hover:text-primary">All centers</a><a href="/login.html" class="rounded-lg bg-primary px-3 py-1.5 text-white">Login</a></nav></div></header>
+<main id="root" class="mx-auto max-w-5xl px-5 py-8"><div class="py-24 text-center text-slate-400">Loading…</div></main>
+<footer class="py-8 text-center text-xs text-slate-400">Powered by Study Space</footer>
+<script src="/assets/main.js?v=10"></script>
+<script>
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const SOC = { instagram: ["IG", "linear-gradient(135deg,#f58529,#dd2a7b,#8134af)", "Instagram"], facebook: ["f", "#1877f2", "Facebook"], youtube: ["▶", "#ff0000", "YouTube"], x: ["X", "#0f172a", "X"], telegram: ["TG", "#229ed9", "Telegram"], linkedin: ["in", "#0a66c2", "LinkedIn"], whatsapp: ["WA", "#25d366", "WhatsApp"], website: ["🌐", "#0d9488", "Website"] };
+const ICON = ["🪑", "📶", "❄️", "🔒", "💡", "💧", "📚", "🎧"];
+(async () => {
+  const org = Math.max(1, parseInt(new URLSearchParams(location.search).get("org") || "1", 10) || 1);
+  try {
+    const { data: c } = await api("/content?org=" + org);
+    document.title = c.libraryName + " — Study Space";
+    const soc = Object.keys(SOC).filter((k) => c.social && c.social[k]);
+    const phone = (c.contactPhone || "").replace(/\D/g, ""), wa = (c.whatsapp || "").replace(/\D/g, "");
+    const maps = c.contactAddress ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(c.libraryName + " " + c.contactAddress) : "";
+    document.getElementById("root").innerHTML = `
+      <section class="overflow-hidden rounded-3xl bg-gradient-to-br from-blue-700 via-primary to-indigo-600 p-8 text-white shadow-xl sm:p-12">
+        <div class="flex flex-wrap items-center gap-2 text-xs font-bold text-blue-100">${c.establishedYear ? `<span class="rounded-full bg-white/15 px-3 py-1">Since ${esc(c.establishedYear)}</span>` : ""}${c.openingHours ? `<span class="rounded-full bg-white/15 px-3 py-1">🕒 ${esc(c.openingHours)}</span>` : ""}</div>
+        <h1 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-5xl">${esc(c.libraryName)}</h1>
+        <p class="mt-3 max-w-2xl text-lg text-blue-100">${esc(c.tagline)}</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          ${phone ? `<a href="tel:+91${phone.slice(-10)}" class="rounded-xl bg-white px-5 py-3 text-sm font-extrabold text-primary shadow">📞 Call now</a>` : ""}
+          ${wa ? `<a href="https://wa.me/91${wa.slice(-10)}" target="_blank" rel="noopener" class="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-extrabold text-white shadow">💬 WhatsApp</a>` : ""}
+          <a href="/register.html" class="rounded-xl bg-white/15 px-5 py-3 text-sm font-bold ring-1 ring-white/40">Join as student</a></div>
+      </section>
+      ${(c.notices || []).length ? `<section class="mt-6 rounded-2xl bg-amber-50 p-5 ring-1 ring-amber-200"><h2 class="mb-2 text-sm font-extrabold text-amber-800">📢 Notices</h2><ul class="space-y-1.5 text-sm text-amber-900">${c.notices.slice(0, 4).map((n) => `<li>• ${esc(n.message)}</li>`).join("")}</ul></section>` : ""}
+      ${c.aboutText ? `<section class="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100"><h2 class="text-xl font-extrabold">About us</h2><p class="mt-2 whitespace-pre-line leading-relaxed text-slate-600">${esc(c.aboutText)}</p></section>` : ""}
+      ${(c.features || []).length ? `<section class="mt-6"><h2 class="mb-3 text-xl font-extrabold">What you get</h2><div class="grid grid-cols-2 gap-3 sm:grid-cols-4">${c.features.map((f, i) => `<div class="rounded-2xl bg-white p-4 text-center shadow-sm ring-1 ring-slate-100"><div class="text-2xl">${ICON[i % ICON.length]}</div><div class="mt-1.5 text-sm font-bold">${esc(f)}</div></div>`).join("")}</div></section>` : ""}
+      ${(c.galleryImages || []).length ? `<section class="mt-6"><h2 class="mb-3 text-xl font-extrabold">Gallery</h2><div class="grid grid-cols-2 gap-3 sm:grid-cols-3">${c.galleryImages.map((g) => `<img src="${esc(g.url)}" loading="lazy" alt="" class="h-40 w-full rounded-2xl object-cover">`).join("")}</div></section>` : ""}
+      <section class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100"><h2 class="text-xl font-extrabold">Contact</h2><div class="mt-3 space-y-2 text-sm text-slate-600">
+          ${c.contactAddress ? `<p>📍 ${esc(c.contactAddress)} ${maps ? `<a class="font-bold text-primary" target="_blank" rel="noopener" href="${esc(maps)}">Directions</a>` : ""}</p>` : ""}
+          ${phone ? `<p>📞 <a class="font-semibold" href="tel:+91${phone.slice(-10)}">${esc(c.contactPhone)}</a>${c.altPhone ? ` · ${esc(c.altPhone)}` : ""}</p>` : ""}
+          ${c.contactEmail ? `<p>✉️ <a class="font-semibold" href="mailto:${esc(c.contactEmail)}">${esc(c.contactEmail)}</a></p>` : ""}
+          ${c.website ? `<p>🌐 <a class="font-semibold text-primary" target="_blank" rel="noopener nofollow" href="${esc(c.website)}">${esc(c.website.replace(/^https?:\/\//, ""))}</a></p>` : ""}
+          ${!c.contactAddress && !phone && !c.contactEmail ? '<p class="text-slate-400">Contact details coming soon.</p>' : ""}</div></div>
+        <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100"><h2 class="text-xl font-extrabold">Follow us</h2>${soc.length ? `<div class="mt-4 flex flex-wrap gap-3">${soc.map((k) => `<a class="soc" title="${SOC[k][2]}" aria-label="${SOC[k][2]}" href="${esc(c.social[k])}" target="_blank" rel="noopener nofollow" style="background:${SOC[k][1]}">${SOC[k][0]}</a>`).join("")}</div>` : '<p class="mt-3 text-sm text-slate-400">No social links yet.</p>'}</div>
+      </section>`;
+  } catch (e) { document.getElementById("root").innerHTML = '<div class="py-24 text-center text-slate-500">This page is not available right now.</div>'; }
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body></html>

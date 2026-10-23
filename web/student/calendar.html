@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Study Calendar — Study Space</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div id="dashboard-nav"></div>
+
+<main class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-2xl font-bold text-gray-900">📅 Study Calendar</h1>
+    <div class="rounded-xl bg-violet-600 px-5 py-3 text-white shadow-sm">
+      <div class="text-xs text-violet-100">This Month</div>
+      <div class="text-lg font-bold" id="month-summary">–</div>
+    </div>
+  </div>
+
+  <div class="rounded-xl bg-white p-6 shadow-sm">
+    <div class="mb-4 flex items-center justify-between">
+      <button id="prev-month" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">&laquo; Prev</button>
+      <h2 class="text-lg font-semibold text-gray-900" id="cal-title">–</h2>
+      <button id="next-month" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">Next &raquo;</button>
+    </div>
+    <div class="mb-2 grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-400">
+      <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+    </div>
+    <div class="grid grid-cols-7 gap-1" id="cal-body"></div>
+    <p class="mt-4 text-sm text-gray-400">Blue = studied. Click any date to see or plan its to-do list.</p>
+  </div>
+</main>
+
+<!-- Day detail / to-do modal -->
+<div id="day-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
+  <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+    <div class="mb-1 flex items-center justify-between">
+      <h3 class="text-lg font-bold text-gray-900" id="day-modal-title">–</h3>
+      <button id="close-day-modal" class="text-gray-400 hover:text-gray-700">✕</button>
+    </div>
+    <p class="mb-3 text-sm text-gray-500" id="day-modal-summary">–</p>
+
+    <div id="day-modal-mark-studied-box" class="mb-4 hidden">
+      <button id="btn-mark-studied" class="w-full rounded-md border border-primary px-3 py-2 text-sm font-medium text-primary hover:bg-blue-50">✓ Mark today as studied</button>
+    </div>
+
+    <h4 class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">To-Do List</h4>
+    <div class="mb-3 flex gap-2">
+      <input id="day-new-todo" placeholder="Add a task for this day" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+      <button id="btn-day-add-todo" class="whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Add</button>
+    </div>
+    <ul id="day-todo-list" class="max-h-56 divide-y divide-gray-100 overflow-y-auto text-sm"></ul>
+  </div>
+</div>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+let viewYear = new Date().getFullYear();
+let viewMonth = new Date().getMonth() + 1;
+const todayStr = new Date().toLocaleDateString("en-CA");
+let activeModalDate = null;
+let monthLogsByDate = {};
+
+async function renderCalendar() {
+  document.getElementById("cal-title").textContent = new Date(viewYear, viewMonth - 1, 1).toLocaleString("default", { month: "long", year: "numeric" });
+
+  const { data: logs } = await api(`/student/calendar?year=${viewYear}&month=${viewMonth}`);
+  monthLogsByDate = {};
+  logs.forEach((l) => { monthLogsByDate[l.date.slice(0, 10)] = l; });
+
+  const firstDay = new Date(viewYear, viewMonth - 1, 1).getDay();
+  const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
+
+  let html = "";
+  for (let i = 0; i < firstDay; i++) html += `<div></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${viewYear}-${String(viewMonth).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const log = monthLogsByDate[dateStr];
+    const isStudied = !!(log && log.studied);
+    const isToday = dateStr === todayStr;
+    const hasTodos = !!(log && log.todos && log.todos.length);
+    html += `<div data-date="${dateStr}" class="cal-day relative flex aspect-square cursor-pointer items-center justify-center rounded-md text-sm font-semibold
+      ${isStudied ? "bg-primary text-white" : "border border-gray-200 text-gray-700 hover:bg-gray-50"}
+      ${isToday ? "ring-2 ring-amber-400" : ""}">
+      ${d}
+      ${hasTodos ? `<span class="absolute bottom-1 right-1 h-1.5 w-1.5 rounded-full ${isStudied ? "bg-white" : "bg-amber-500"}"></span>` : ""}
+    </div>`;
+  }
+  document.getElementById("cal-body").innerHTML = html;
+
+  document.querySelectorAll(".cal-day[data-date]").forEach((el) => {
+    el.addEventListener("click", () => openDayModal(el.getAttribute("data-date")));
+  });
+
+  const { data: summary } = await api(`/student/monthly-summary?year=${viewYear}&month=${viewMonth}`);
+  document.getElementById("month-summary").textContent = `${summary.daysStudied} days, ${Math.round((summary.totalMinutes / 60) * 10) / 10} hrs`;
+}
+
+function closeDayModal() {
+  document.getElementById("day-modal").classList.add("hidden");
+  document.getElementById("day-modal").classList.remove("flex");
+  activeModalDate = null;
+}
+document.getElementById("close-day-modal").addEventListener("click", closeDayModal);
+
+async function openDayModal(dateStr) {
+  activeModalDate = dateStr;
+  const isToday = dateStr === todayStr;
+  const prettyDate = new Date(dateStr + "T00:00:00").toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  document.getElementById("day-modal-title").textContent = prettyDate;
+
+  const log = monthLogsByDate[dateStr];
+  const minutes = log ? log.minutesStudied : 0;
+  const studied = !!(log && log.studied);
+  document.getElementById("day-modal-summary").textContent = studied
+    ? `✓ Studied${minutes ? ` — ${minutes} minute(s) logged` : ""}`
+    : (isToday ? "Not marked as studied yet today." : "No study activity recorded for this day.");
+
+  document.getElementById("day-modal-mark-studied-box").classList.toggle("hidden", !isToday || studied);
+
+  const modal = document.getElementById("day-modal");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+
+  await loadDayTodos(dateStr);
+}
+
+document.getElementById("btn-mark-studied").addEventListener("click", async () => {
+  try {
+    await api(`/student/mark-day/${activeModalDate}`, { method: "POST" });
+    toast("Marked as studied");
+    document.getElementById("day-modal-mark-studied-box").classList.add("hidden");
+    document.getElementById("day-modal-summary").textContent = "✓ Studied";
+    renderCalendar();
+  } catch (e) { toast(e.message, "error"); }
+});
+
+async function loadDayTodos(dateStr) {
+  const { data } = await api(`/student/todos/${dateStr}`);
+  renderDayTodos(data);
+}
+function renderDayTodos(todos) {
+  const list = document.getElementById("day-todo-list");
+  list.innerHTML = todos.length ? todos.map((t) => `
+    <li class="flex items-center justify-between py-2">
+      <span class="flex items-center gap-2 ${t.done ? "text-gray-400 line-through" : ""}">
+        <input type="checkbox" class="day-todo-toggle h-4 w-4" data-id="${t._id}" ${t.done ? "checked" : ""}>${t.text}
+      </span>
+      <button class="day-todo-delete text-red-500 hover:text-red-700" data-id="${t._id}">✕</button>
+    </li>`).join("") : `<li class="py-2 text-gray-400">No tasks for this day yet.</li>`;
+
+  list.querySelectorAll(".day-todo-toggle").forEach((cb) => {
+    cb.addEventListener("change", async () => {
+      const { data } = await api(`/student/todos/${activeModalDate}/${cb.dataset.id}`, { method: "PUT" });
+      renderDayTodos(data);
+    });
+  });
+  list.querySelectorAll(".day-todo-delete").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const { data } = await api(`/student/todos/${activeModalDate}/${btn.dataset.id}`, { method: "DELETE" });
+      renderDayTodos(data);
+    });
+  });
+}
+
+document.getElementById("btn-day-add-todo").addEventListener("click", async () => {
+  const val = document.getElementById("day-new-todo").value.trim();
+  if (!val || !activeModalDate) return;
+  const { data } = await api(`/student/todos/${activeModalDate}`, { method: "POST", body: { text: val } });
+  document.getElementById("day-new-todo").value = "";
+  renderDayTodos(data);
+  renderCalendar(); // refresh the little "has todos" dot on the grid
+});
+
+document.getElementById("prev-month").addEventListener("click", () => {
+  viewMonth--; if (viewMonth < 1) { viewMonth = 12; viewYear--; }
+  renderCalendar();
+});
+document.getElementById("next-month").addEventListener("click", () => {
+  viewMonth++; if (viewMonth > 12) { viewMonth = 1; viewYear++; }
+  renderCalendar();
+});
+
+(async () => {
+  const user = await guardRole("student");
+  if (!user) return;
+  renderStudentNav("/student/calendar.html");
+  renderCalendar();
+})();
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body>
+</html>

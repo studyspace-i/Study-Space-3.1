@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ea580c" />
+  <title>Restore your account — Study Space</title>
+  <meta name="robots" content="noindex, follow" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.FX)document.documentElement.classList.add("fx-done")},2500);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } };</script>
+  <link rel="stylesheet" href="/assets/auth.css?v=3" />
+  <link rel="stylesheet" href="/assets/recover.css?v=1" />
+  <link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="auth-body theme-login theme-recover">
+<div class="auth">
+
+  <aside class="aside">
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+    <canvas class="zpin" width="124" height="124" aria-hidden="true"></canvas>
+    <a class="brand" href="/index.html" data-fx><span class="brand-mark" data-icon="book"></span><span class="brand-name">Study Space</span></a>
+    <span class="aside-kicker" data-fx><span class="ic" data-icon="key"></span>Account recovery</span>
+    <h2 data-blur>Changed your mind? <em>Your account is still waiting.</em></h2>
+    <p class="lede" data-fx>Deleted accounts are kept safely for 30 days. Confirm it's you and everything comes back — profile, membership, payments and study history.</p>
+    <div class="steps-title" data-fx>How it works</div>
+    <ol class="steps" id="aside-steps">
+      <li data-fx><span class="dot">1</span><div><h4>See what happened</h4><p>When it was deleted and how many days are left.</p></div></li>
+      <li data-fx><span class="dot">2</span><div><h4>Verify your email</h4><p>We send an 8-digit code to your inbox.</p></div></li>
+      <li data-fx><span class="dot">3</span><div><h4>You're back</h4><p>Everything is restored and you're signed in.</p></div></li>
+    </ol>
+    <div class="tipbox" id="tip" data-fx><span class="tip-ico"></span><div><b>Tip</b><span data-tip-text></span></div></div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <a href="/login.html"><span class="ic" data-icon="arrowLeft"></span>Back to sign in</a>
+      <a href="/index.html"><span class="ic" data-icon="home"></span>Home</a>
+    </div>
+
+    <div class="wrap">
+      <div id="wizard-head" class="rcv-hidden">
+        <div class="prog-meta"><span id="prog-meta"></span></div>
+        <div class="prog" id="prog"><i></i></div>
+      </div>
+
+      <!-- nothing to show (opened directly) -->
+      <div id="p-none" class="step rcv-hidden">
+        <div class="big-emoji">🔑</div>
+        <h1 class="title" style="text-align:center">Looking to restore an account?</h1>
+        <p class="sub" style="text-align:center">Sign in with your email and password. If your account was deleted in the last 30 days, you'll see the time left and can restore it right here.</p>
+        <div class="actions" style="margin-top:20px"><a class="btn" href="/login.html"><span class="lbl">Go to sign in</span></a></div>
+        <p class="hint" style="text-align:center;margin-top:14px">Deleted more than 30 days ago? The account no longer exists — you can <a href="/register.html" style="color:var(--a1);font-weight:700">create a new one</a>.</p>
+      </div>
+
+      <!-- just deleted (self) -->
+      <div id="p-done" class="step rcv-hidden">
+        <div class="big-emoji">👋</div>
+        <h1 class="title" style="text-align:center">Your account was deleted</h1>
+        <p class="sub" style="text-align:center">We're sorry to see you go. Nothing is erased yet — you have <b id="done-days">30</b> days to change your mind.</p>
+        <div class="note-box info"><span>ℹ️</span><div>To restore it, just <b>sign in again</b> with your email and password, then verify with an 8-digit code we email you. We also sent a confirmation to your inbox.</div></div>
+        <div class="actions" style="margin-top:14px"><a class="btn" href="/login.html"><span class="lbl">Restore my account</span></a></div>
+        <div style="margin-top:8px;text-align:center"><a class="linkbtn" href="/index.html">No thanks — take me home</a></div>
+      </div>
+
+      <!-- deleted + can restore (self or admin) -->
+      <div id="p-recover" class="step rcv-hidden">
+        <span class="acct-pill" data-fx><span class="ic" data-icon="user"></span>Account deleted</span>
+        <h1 class="title" data-fx>Welcome back, <span id="r-name">there</span></h1>
+        <p class="sub" data-fx id="r-sub">Your account was deleted, but you can still get it back.</p>
+        <div class="cd-card" id="cd-card" data-fx>
+          <div class="cd-title">⏳ Time left to restore</div>
+          <div class="cd-grid"><div class="cd-box"><b id="cd-d">--</b><span>days</span></div><div class="cd-box"><b id="cd-h">--</b><span>hours</span></div><div class="cd-box"><b id="cd-m">--</b><span>min</span></div><div class="cd-box"><b id="cd-s">--</b><span>sec</span></div></div>
+          <div class="cd-bar"><i id="cd-bar"></i></div>
+          <div class="cd-note" id="cd-note"></div>
+        </div>
+        <div class="facts" data-fx id="r-facts"></div>
+        <div class="mail-card" data-fx><span class="mi" data-icon="mail"></span><div><small>We'll send an 8-digit code to</small><b id="r-mail"></b></div></div>
+        <div class="actions" data-fx><button id="send-btn" type="button" class="btn"><span class="lbl">Restore my account</span></button></div>
+        <p class="hint" data-fx style="text-align:center;margin-top:10px">After this time the account and its data are removed from Study Space.</p>
+      </div>
+
+      <!-- OTP -->
+      <form id="p-otp" class="step rcv-hidden" novalidate>
+        <span class="acct-pill" data-fx><span class="ic" data-icon="mailOpen"></span>Verify it's you</span>
+        <h1 class="title" data-fx>Enter your recovery code</h1>
+        <p class="sub" data-fx>We emailed an <b>8-digit code</b> to <b id="o-mail"></b>. It works for 10 minutes.</p>
+        <div style="height:14px"></div>
+        <div id="otp-boxes" class="otp otp8" data-fx role="group" aria-label="8-digit recovery code"></div>
+        <div class="actions" data-fx><button id="verify-btn" type="submit" class="btn"><span class="lbl">Restore my account</span></button></div>
+        <div class="row-between" style="margin-top:6px" data-fx><button type="button" id="back-btn" class="linkbtn">← Back</button><button type="button" id="resend-btn" class="linkbtn">Resend code</button></div>
+      </form>
+
+      <!-- success -->
+      <div id="p-success" class="success rcv-hidden" role="status">
+        <svg class="check-anim" viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="41"/><path d="M30 49l12 12 25-27"/></svg>
+        <h1 class="title" style="margin-top:0">Your account is back!</h1>
+        <p class="sub" style="margin-bottom:12px" id="s-sub">Everything has been restored.</p>
+        <div id="s-notes"></div>
+        <a class="btn" id="s-go" href="/index.html"><span class="lbl">Open my dashboard</span></a>
+      </div>
+
+      <!-- deleted by center, no self-restore -->
+      <div id="p-locked" class="step rcv-hidden">
+        <div class="big-emoji">🏫</div>
+        <h1 class="title" style="text-align:center">Deleted by your study center</h1>
+        <p class="sub" style="text-align:center" id="l-sub"></p>
+        <div class="cd-card"><div class="cd-title">⏳ Your center can restore it for</div><div class="cd-grid"><div class="cd-box"><b id="l-d">--</b><span>days</span></div><div class="cd-box"><b id="l-h">--</b><span>hours</span></div><div class="cd-box"><b id="l-m">--</b><span>min</span></div><div class="cd-box"><b id="l-s">--</b><span>sec</span></div></div></div>
+        <div class="note-box info"><span>ℹ️</span><div>Please contact your study center's admin and ask them to restore your account (Students → Deleted accounts). You can't restore it yourself because the center chose to block that.</div></div>
+        <div class="actions"><a class="btn" href="/login.html"><span class="lbl">Back to sign in</span></a></div>
+      </div>
+
+      <!-- deleted by the platform owner -->
+      <div id="p-owner" class="step rcv-hidden">
+        <div class="big-emoji">🛡️</div>
+        <h1 class="title" style="text-align:center">Account deleted by the platform</h1>
+        <p class="sub" style="text-align:center" id="w-sub"></p>
+        <div class="cd-card"><div class="cd-title">⏳ The developer can recover it for</div><div class="cd-grid"><div class="cd-box"><b id="w-d">--</b><span>days</span></div><div class="cd-box"><b id="w-h">--</b><span>hours</span></div><div class="cd-box"><b id="w-m">--</b><span>min</span></div><div class="cd-box"><b id="w-s">--</b><span>sec</span></div></div></div>
+        <div class="facts" id="w-facts"></div>
+        <div class="note-box warn"><span>📧</span><div><b>You can't restore this one yourself.</b> Email the developer or send a message below — mention your name and the email you used. A reply usually comes quickly.</div></div>
+        <div class="contact-btns" id="w-contacts"></div>
+        <div class="ap-form">
+          <div class="field" style="margin-bottom:8px"><label for="ap-ident">Your account email or phone</label><div class="inp"><span class="ico" data-icon="mail"></span><input id="ap-ident" placeholder="you@example.com" autocomplete="username" /></div></div>
+          <textarea id="ap-msg" maxlength="2000" placeholder="Tell the developer what happened and why you'd like your account back…"></textarea>
+          <div class="actions" style="margin-top:10px"><button id="ap-send" type="button" class="btn"><span class="lbl">Send message to the developer</span></button></div>
+          <p id="ap-result" class="hint" style="text-align:center;margin-top:8px"></p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/auth.js?v=2"></script>
+<script src="/assets/vendor/motion.js?v=1" defer></script>
+<script src="/assets/fx.js?v=1" defer></script>
+<script src="/assets/account-recovery.js?v=1"></script>
+</body>
+</html>

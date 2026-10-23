@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Payment status — Study Space</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#2563eb" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" }, fontFamily: { sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"] } } } };</script>
+<style>body{font-family:'Plus Jakarta Sans',system-ui,sans-serif}</style>
+<style>
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.pop{animation:pop .6s both}
+.cf{position:fixed;top:-12px;width:9px;height:14px;z-index:50;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
+</style>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+<header class="sticky top-0 z-30 border-b border-gray-100 bg-white/90 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
+    <a href="/index.html" class="flex items-center gap-2">
+      <span class="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-indigo-600 text-lg leading-none text-white">📚</span>
+      <span class="text-lg font-extrabold tracking-tight text-gray-900">Study Space</span>
+    </a>
+    <nav class="flex items-center gap-4 text-sm font-semibold text-gray-600">
+      <a href="/supporters.html" class="hidden transition hover:text-primary sm:inline">🏆 Supporters</a>
+      <a href="/donate.html" class="hidden transition hover:text-primary sm:inline">Donate</a>
+      <span data-auth="out" class="hidden"><a href="/login.html" class="rounded-lg border border-gray-200 px-3 py-1.5 hover:border-primary hover:text-primary">Login</a></span>
+      <span data-auth="in" class="hidden items-center gap-2"><a href="/my-donations.html" class="hidden hover:text-primary sm:inline">My Donations</a><a data-dashboard-link href="/index.html" class="rounded-lg bg-primary px-3 py-1.5 text-white hover:bg-blue-700">Dashboard</a></span>
+    </nav>
+  </div>
+</header>
+<main class="mx-auto max-w-2xl px-4 py-8 sm:px-6">
+  <div id="wait" class="rounded-3xl bg-white p-10 text-center shadow-sm">
+    <div class="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"></div>
+    <h1 class="mt-5 text-xl font-extrabold">Confirming your payment…</h1>
+    <p class="mt-1 text-sm text-gray-500">Please don't close this page. This takes a few seconds.</p>
+  </div>
+  <div id="fail" class="hidden rounded-3xl bg-white p-8 text-center shadow-sm"></div>
+  <div id="ok" class="hidden space-y-5"></div>
+</main>
+<script src="/assets/main.js?v=10"></script>
+<script>
+const qs = new URLSearchParams(location.search);
+const OID = qs.get("order_id") || "", TOK = qs.get("t") || "";
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const inr = (n) => "₹" + Number(n).toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+const show = (id) => ["wait", "fail", "ok"].forEach((x) => document.getElementById(x).classList.toggle("hidden", x !== id));
+
+function confetti() {
+  const colors = ["#f59e0b", "#6366f1", "#10b981", "#ec4899", "#3b82f6", "#facc15"];
+  for (let i = 0; i < 70; i++) {
+    const c = document.createElement("i"); c.className = "cf";
+    c.style.left = Math.random() * 100 + "vw"; c.style.background = colors[i % colors.length];
+    c.style.animationDuration = 2.5 + Math.random() * 2.5 + "s"; c.style.animationDelay = Math.random() * 0.8 + "s";
+    document.body.appendChild(c); setTimeout(() => c.remove(), 6500);
+  }
+}
+
+function failView(state) {
+  const f = document.getElementById("fail");
+  const title = state === "pending" ? "Payment not completed yet" : "Payment was not completed";
+  f.innerHTML = '<div class="text-5xl">' + (state === "pending" ? "⏳" : "😕") + '</div><h1 class="mt-3 text-xl font-extrabold">' + title + '</h1>' +
+    '<p class="mt-2 text-sm text-gray-500">No money was taken, or the bank is still confirming it. If money was deducted, it is usually confirmed automatically within a few minutes — your invoice will appear in My Donations and we email you.</p>' +
+    '<div class="mt-5 flex flex-wrap justify-center gap-2"><button id="chk" class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white">Check again</button><button data-donate class="rounded-xl bg-amber-400 px-5 py-2.5 text-sm font-bold text-amber-950">Try again</button><a href="/index.html" class="rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-bold text-gray-700">Home</a></div>';
+  show("fail");
+  document.getElementById("chk").onclick = () => { show("wait"); poll(0); };
+}
+
+function successView(s) {
+  const p = s.profile || {};
+  const soc = p.social || {};
+  const premiumBox = s.premium && s.premium.active
+    ? '<div class="rounded-2xl bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 p-5 text-amber-950 shadow-lg"><div class="text-2xl font-extrabold">👑 You are now a Premium Supporter!</div><p class="mt-1 text-sm font-semibold">Your Gold bar is active till ' + new Date(s.premium.until).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" }) + " (" + s.premium.daysLeft + ' days).</p></div>'
+    : '<div class="rounded-2xl bg-amber-50 p-5 text-amber-900 ring-1 ring-amber-200"><div class="font-extrabold">👑 ' + s.days + ' days of Premium are reserved for you</div><p class="mt-1 text-sm">Create a free account (or log in) with the <b>same email you paid with</b> and your Gold Premium activates instantly. <a class="font-bold underline" href="/register.html">Register</a> · <a class="font-bold underline" href="/login.html">Login</a></p></div>';
+  const inp = (id, label, val, ph) => '<label class="block"><span class="text-xs font-bold uppercase tracking-wide text-gray-500">' + label + '</span><input id="' + id + '" value="' + esc(val || "") + '" placeholder="' + esc(ph || "") + '" class="mt-1 w-full rounded-xl border-2 border-gray-200 px-3 py-2.5 text-sm font-semibold outline-none focus:border-indigo-500"></label>';
+  const types = [["student", "🎓 Student"], ["center", "🏢 Study Center"], ["individual", "💜 Other"]];
+  document.getElementById("ok").innerHTML =
+    '<div class="rounded-3xl bg-white p-8 text-center shadow-sm"><div class="pop text-6xl">🎉</div><h1 class="mt-3 text-2xl font-extrabold">Bravo, ' + esc((s.name || "").split(" ")[0]) + '! Thank you!</h1>' +
+    '<p class="mt-1 text-gray-500">Your contribution of <b class="text-emerald-600">' + inr(s.amount) + '</b> was received. A receipt has been emailed to you.</p>' +
+    '<div class="mt-4 inline-block rounded-xl bg-gray-50 px-4 py-2 text-xs text-gray-500">Invoice <b class="text-gray-800">' + esc(s.invoiceNo) + '</b></div>' +
+    '<div class="mt-5 flex flex-wrap justify-center gap-2"><a class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white" href="/invoice.html?order_id=' + encodeURIComponent(OID) + '&t=' + encodeURIComponent(TOK) + '">🧾 View / Download invoice</a>' +
+    (s.loggedIn ? '<a class="rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-bold text-gray-700" href="/my-donations.html">My donations</a>' : '') + '<a class="rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-bold text-gray-700" href="/supporters.html">🏆 Supporters Wall</a></div></div>' +
+    premiumBox +
+    '<form id="pf" class="rounded-3xl bg-white p-6 shadow-sm"><h2 class="text-lg font-extrabold">🏆 Add your name to the Supporters Wall</h2><p class="mb-4 text-sm text-gray-500">Tell everyone who you are. All fields are optional — you can change them later' + (s.loggedIn ? ' in My Donations' : ' by donating again or logging in') + '.</p>' +
+    '<div class="space-y-3">' + inp("f-name", "Name shown on the wall", p.displayName || s.name) +
+    '<div><span class="text-xs font-bold uppercase tracking-wide text-gray-500">I am a</span><div class="mt-1 grid grid-cols-3 gap-2">' + types.map((t) => '<label class="cursor-pointer"><input type="radio" name="dt" value="' + t[0] + '" class="peer sr-only"' + ((p.type || "individual") === t[0] ? " checked" : "") + '><span class="block rounded-xl border-2 border-gray-200 py-2.5 text-center text-sm font-bold text-gray-600 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700">' + t[1] + '</span></label>').join("") + '</div></div>' +
+    '<div class="grid gap-3 sm:grid-cols-2">' + inp("f-org", "Center / College / Company", p.org, "e.g. Sunrise Study Point") + inp("f-city", "City", p.city, "e.g. Patna") + '</div>' +
+    inp("f-msg", "Short message (max 200)", p.message, "Thanks for building this!") +
+    '<div class="grid gap-3 sm:grid-cols-2">' + inp("f-ig", "Instagram", soc.instagram, "@username or link") + inp("f-yt", "YouTube", soc.youtube, "channel link") + inp("f-x", "X / Twitter", soc.x, "@username or link") + inp("f-li", "LinkedIn", soc.linkedin, "profile link") + inp("f-fb", "Facebook", soc.facebook, "page/profile link") + inp("f-web", "Website", soc.website, "yourwebsite.com") + '</div>' +
+    '<label class="flex items-center gap-2 text-sm"><input type="checkbox" id="f-show" ' + (p.showOnList === false ? "" : "checked") + '> Show me on the public Supporters Wall</label>' +
+    '<label class="flex items-center gap-2 text-sm"><input type="checkbox" id="f-anon" ' + (p.anonymous ? "checked" : "") + '> Show as “Anonymous Supporter” (hide my name &amp; links)</label>' +
+    '<label class="flex items-center gap-2 text-sm"><input type="checkbox" id="f-hide" ' + (p.hideAmount ? "checked" : "") + '> Hide my amount</label></div>' +
+    '<button id="pf-save" class="mt-5 w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 py-3.5 text-base font-extrabold text-white shadow-lg">Save &amp; show on the wall</button><div id="pf-msg" class="mt-2 text-center text-sm font-semibold"></div></form>';
+  show("ok"); confetti();
+  try { // remember this payment in the browser so Donate buttons stay hidden while Premium is valid (also for guests)
+    const until = s.premium && s.premium.until ? new Date(s.premium.until).getTime() : Date.now() + (s.days || 1) * 864e5;
+    localStorage.setItem("dsPaidUntil", String(until));
+    document.documentElement.classList.add("ds-hide-donate");
+  } catch (e) {}
+  const v = (id) => document.getElementById(id).value;
+  document.getElementById("pf").onsubmit = async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("pf-save"); btn.disabled = true;
+    try {
+      const r = await api("/donations/" + encodeURIComponent(OID) + "/profile", { method: "POST", body: {
+        t: TOK, displayName: v("f-name"), donorType: document.querySelector("input[name=dt]:checked").value, org: v("f-org"), city: v("f-city"), message: v("f-msg"),
+        social: { instagram: v("f-ig"), youtube: v("f-yt"), x: v("f-x"), linkedin: v("f-li"), facebook: v("f-fb"), website: v("f-web") },
+        showOnList: document.getElementById("f-show").checked, anonymous: document.getElementById("f-anon").checked, hideAmount: document.getElementById("f-hide").checked } });
+      document.getElementById("pf-msg").innerHTML = '<span class="text-emerald-600">✅ ' + esc(r.message) + ' <a class="underline" href="/supporters.html">See the list →</a></span>';
+      confetti();
+    } catch (err) { document.getElementById("pf-msg").innerHTML = '<span class="text-red-600">' + esc(err.message) + "</span>"; }
+    btn.disabled = false;
+  };
+}
+
+async function poll(n) {
+  if (!OID || !TOK) return failView("failed");
+  try {
+    const { data: s } = await api("/donations/" + encodeURIComponent(OID) + "/status?t=" + encodeURIComponent(TOK));
+    if (s.state === "paid") return successView(s);
+    if (s.state === "expired" || s.state === "failed") return failView("failed");
+  } catch (e) { if (/not found/i.test(e.message)) return failView("failed"); }
+  if (n >= 12) return failView("pending");
+  setTimeout(() => poll(n + 1), 2500);
+}
+document.addEventListener("DOMContentLoaded", () => setTimeout(() => poll(0), 400));
+</script>
+</body></html>

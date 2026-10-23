@@ -1,0 +1,37 @@
+/* Account deletion / recovery pages — extends the website's auth design (auth.css). */
+body.theme-recover { --a1: #ea580c; --a2: #dc2626; --soft: #fff7ed; --ring: rgba(234, 88, 12, .25); }
+body.theme-recover .aside { background: linear-gradient(150deg, #9a3412 0%, #dc2626 55%, #f97316 100%); }
+.otp.otp8 { gap: 6px; }
+.otp.otp8 input { max-width: 52px; height: 56px; font-size: 22px; border-radius: 11px; }
+@media (max-width: 420px) { .otp.otp8 input { height: 48px; font-size: 18px; border-radius: 9px; } .otp.otp8 { gap: 4px; } }
+
+.cd-card { margin: 18px 0 14px; padding: 18px; border-radius: 20px; background: linear-gradient(135deg, #fff7ed, #fef2f2); border: 1px solid #fed7aa; }
+.cd-card .cd-title { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; letter-spacing: .5px; text-transform: uppercase; color: #9a3412; margin-bottom: 12px; }
+.cd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.cd-box { background: #fff; border: 1px solid #fed7aa; border-radius: 14px; padding: 10px 4px; text-align: center; box-shadow: 0 1px 0 rgba(0, 0, 0, .03); }
+.cd-box b { display: block; font: 800 28px/1.1 var(--font); color: #c2410c; font-variant-numeric: tabular-nums; }
+.cd-box span { font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase; letter-spacing: .6px; }
+.cd-bar { height: 8px; border-radius: 99px; background: #fed7aa; overflow: hidden; margin-top: 14px; }
+.cd-bar i { display: block; height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, #f59e0b, #dc2626); transition: width .6s ease; }
+.cd-note { margin-top: 8px; font-size: 12.5px; color: #9a3412; }
+.cd-card.urgent { background: linear-gradient(135deg, #fef2f2, #fee2e2); border-color: #fca5a5; animation: pulseRed 2s infinite; }
+@keyframes pulseRed { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, .25); } 50% { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); } }
+
+.facts { margin: 6px 0 16px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff; }
+.facts .f { display: flex; justify-content: space-between; gap: 12px; padding: 11px 14px; font-size: 14px; border-bottom: 1px solid #f1f5f9; }
+.facts .f:last-child { border-bottom: 0; }
+.facts .f span { color: var(--muted); }
+.facts .f b { text-align: right; word-break: break-word; }
+.note-box { display: flex; gap: 10px; padding: 12px 14px; border-radius: 14px; font-size: 13.5px; line-height: 1.55; margin: 12px 0; }
+.note-box.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+.note-box.info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+.note-box.bad { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.contact-btns { display: grid; gap: 8px; margin: 12px 0; }
+.contact-btns a { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 14px; border-radius: 13px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font-weight: 700; text-decoration: none; transition: all .2s; }
+.contact-btns a.cta { background: linear-gradient(135deg, var(--a1), var(--a2)); color: #fff; border-color: transparent; }
+.contact-btns a:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(15, 23, 42, .1); }
+.ap-form textarea { width: 100%; min-height: 96px; border: 1.5px solid var(--line); border-radius: 13px; padding: 11px 13px; font: 500 14px var(--font); outline: none; resize: vertical; }
+.ap-form textarea:focus { border-color: var(--a1); box-shadow: 0 0 0 4px var(--ring); }
+.big-emoji { font-size: 54px; text-align: center; line-height: 1; margin-bottom: 6px; }
+.rcv-hidden { display: none !important; }
+.otp.otp8 { margin-bottom: 16px; }

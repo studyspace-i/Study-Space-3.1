@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>My Donations & Premium — Study Space</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#2563eb" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" }, fontFamily: { sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"] } } } };</script>
+<style>body{font-family:'Plus Jakarta Sans',system-ui,sans-serif}</style>
+<link rel="stylesheet" href="/assets/responsive.css?v=7" />
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+<div id="dashboard-nav"></div>
+<main class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+  <h1 class="mb-5 text-2xl font-extrabold">💜 My Donations &amp; Premium</h1>
+
+  <section id="prem" class="mb-6 rounded-3xl bg-white p-6 shadow-sm"><div class="text-gray-400">Loading…</div></section>
+
+  <section class="mb-6">
+    <div class="mb-3 flex flex-wrap items-center justify-between gap-2"><h2 class="text-lg font-extrabold">🧾 Payment history &amp; invoices</h2>
+      <div class="text-xs text-gray-500" id="totals"></div></div>
+    <div id="hist" class="overflow-hidden rounded-2xl bg-white shadow-sm"></div>
+  </section>
+
+  <section id="profwrap" class="hidden rounded-3xl bg-white p-6 shadow-sm">
+    <h2 class="text-lg font-extrabold">🏆 My Supporters Wall profile</h2>
+    <p class="mb-4 text-sm text-gray-500">This is how you appear on the public <a class="font-semibold text-primary" href="/supporters.html">Supporters Wall</a>.</p>
+    <form id="pf" class="space-y-3"></form>
+  </section>
+</main>
+<script src="/assets/main.js?v=10"></script>
+<script src="/assets/dashboard.js?v=11"></script>
+<script>
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const inr = (n) => "₹" + Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 });
+const dt = (s) => s ? new Date(s.replace(" ", "T")).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true }) : "-";
+
+async function init() {
+  let user;
+  try { user = (await api("/auth/check")).data; } catch (e) { return (location.href = "/login.html"); }
+  if (user.role === "admin" || user.role === "staff") renderAdminNav("/my-donations.html", user); else renderStudentNav("/my-donations.html");
+  document.querySelectorAll("[data-user-name]").forEach((el) => (el.textContent = (user.firstName + " " + (user.lastName || "")).trim()));
+  const { data: d } = await api("/donations/me");
+  drawPremium(d); drawHistory(d); drawProfile(d);
+}
+
+function drawPremium(d) {
+  const p = d.premium; const el = document.getElementById("prem");
+  let head;
+  if (p.active) {
+    const total = Math.max(p.daysLeft, 30); const pct = Math.min(100, Math.round((p.daysLeft / total) * 100));
+    head = '<div class="flex flex-wrap items-center gap-3"><span class="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-amber-300 to-amber-600 text-3xl shadow">👑</span><div><div class="text-xl font-extrabold text-amber-700">Premium Supporter — Active</div><div class="text-sm text-gray-500">Valid till <b>' + new Date(p.until).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" }) + "</b> · " + p.daysLeft + ' days left</div></div></div>' +
+      '<div class="mt-4 h-2.5 overflow-hidden rounded-full bg-amber-100"><div class="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-600" style="width:' + pct + '%"></div></div>';
+  } else if (p.expired) {
+    head = '<div class="flex items-center gap-3"><span class="grid h-14 w-14 place-items-center rounded-2xl bg-gray-100 text-3xl grayscale">👑</span><div><div class="text-xl font-extrabold text-gray-700">Premium ended</div><div class="text-sm text-gray-500">It ended on ' + new Date(p.until).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" }) + ". Renew to get your Gold badge back.</div></div></div>";
+  } else {
+    head = '<div class="flex items-center gap-3"><span class="grid h-14 w-14 place-items-center rounded-2xl bg-indigo-50 text-3xl">💜</span><div><div class="text-xl font-extrabold">You are not Premium yet</div><div class="text-sm text-gray-500">Support with any amount from ₹10 and unlock the Gold Premium badge.</div></div></div>';
+  }
+  el.innerHTML = head + '<div class="mt-5 flex flex-wrap gap-2"><button data-donate="' + (p.expired || p.active ? "renew" : "") + '" class="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-sm font-extrabold text-white shadow">' + (p.active ? "➕ Extend Premium" : p.expired ? "🔁 Renew now" : "💜 Donate / Go Premium") + "</button>" +
+    ((p.expired || (p.active && p.daysLeft <= 7)) ? '<button id="rl" class="rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-bold text-gray-700">📩 Send me the renewal link' + (d.smsEnabled ? " (SMS + Email)" : " (Email)") + "</button>" : "") + "</div>";
+  const rl = document.getElementById("rl");
+  if (rl) rl.onclick = async () => { rl.disabled = true; try { const r = await api("/donations/remind", { method: "POST" }); toast(r.message); } catch (e) { toast(e.message, "error"); } rl.disabled = false; };
+}
+
+function drawHistory(d) {
+  const paid = d.donations.filter((x) => x.status === "paid");
+  const sum = paid.reduce((a, x) => a + x.amount, 0);
+  document.getElementById("totals").innerHTML = "Total donated: <b class='text-emerald-600'>" + inr(sum) + "</b> · " + paid.length + " payment" + (paid.length === 1 ? "" : "s");
+  const el = document.getElementById("hist");
+  if (!d.donations.length) { el.innerHTML = '<div class="p-8 text-center text-gray-500">No payments yet. Your invoices will appear here.</div>'; return; }
+  const badge = { paid: "bg-emerald-50 text-emerald-700", pending: "bg-amber-50 text-amber-700", failed: "bg-red-50 text-red-700", expired: "bg-gray-100 text-gray-600" };
+  el.innerHTML = '<div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500"><tr><th class="px-4 py-3">Invoice</th><th class="px-4 py-3">Date</th><th class="px-4 py-3">Paid via</th><th class="px-4 py-3 text-right">Amount</th><th class="px-4 py-3">Status</th><th class="px-4 py-3"></th></tr></thead><tbody class="divide-y divide-gray-100">' +
+    d.donations.map((x) => '<tr><td class="px-4 py-3 font-semibold">' + esc(x.invoiceNo) + (x.days ? '<div class="text-xs font-normal text-amber-600">👑 +' + x.days + " days</div>" : "") + '</td><td class="px-4 py-3 text-gray-600">' + esc(dt(x.paidAt || x.createdAt)) + '</td><td class="px-4 py-3 text-gray-600">' + esc(x.method || "-") + '</td><td class="px-4 py-3 text-right font-bold">' + inr(x.amount) + '</td><td class="px-4 py-3"><span class="rounded-full px-2.5 py-1 text-xs font-bold ' + (badge[x.status] || badge.expired) + '">' + x.status.toUpperCase() + "</span></td><td class='px-4 py-3 text-right whitespace-nowrap'>" +
+      (x.status === "paid" ? '<a class="rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-white" href="/invoice.html?order_id=' + encodeURIComponent(x.orderId) + '">View</a> <a class="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-700" target="_blank" href="/invoice.html?order_id=' + encodeURIComponent(x.orderId) + '&print=1">Print / PDF</a>' : x.status === "pending" ? '<a class="rounded-lg bg-amber-100 px-3 py-1.5 text-xs font-bold text-amber-800" href="/invoice.html?order_id=' + encodeURIComponent(x.orderId) + '">Check status</a>' : "") + "</td></tr>").join("") + "</tbody></table></div>";
+}
+
+function drawProfile(d) {
+  const p = d.profile; if (!p) return;
+  document.getElementById("profwrap").classList.remove("hidden");
+  const s = p.social || {};
+  const inp = (id, label, val, ph) => '<label class="block"><span class="text-xs font-bold uppercase tracking-wide text-gray-500">' + label + '</span><input id="' + id + '" value="' + esc(val || "") + '" placeholder="' + esc(ph || "") + '" class="mt-1 w-full rounded-xl border-2 border-gray-200 px-3 py-2.5 text-sm font-semibold outline-none focus:border-indigo-500"></label>';
+  const types = [["student", "🎓 Student"], ["center", "🏢 Study Center"], ["individual", "💜 Other"]];
+  document.getElementById("pf").innerHTML = inp("f-name", "Name on the wall", p.displayName) +
+    '<div class="grid grid-cols-3 gap-2">' + types.map((t) => '<label class="cursor-pointer"><input type="radio" name="dt" value="' + t[0] + '" class="peer sr-only"' + (p.type === t[0] ? " checked" : "") + '><span class="block rounded-xl border-2 border-gray-200 py-2.5 text-center text-sm font-bold text-gray-600 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700">' + t[1] + "</span></label>").join("") + "</div>" +
+    '<div class="grid gap-3 sm:grid-cols-2">' + inp("f-org", "Center / College", p.org) + inp("f-city", "City", p.city) + "</div>" + inp("f-msg", "Message (max 200)", p.message) +
+    '<div class="grid gap-3 sm:grid-cols-2">' + inp("f-ig", "Instagram", s.instagram) + inp("f-yt", "YouTube", s.youtube) + inp("f-x", "X / Twitter", s.x) + inp("f-li", "LinkedIn", s.linkedin) + inp("f-fb", "Facebook", s.facebook) + inp("f-web", "Website", s.website) + "</div>" +
+    '<label class="flex items-center gap-2 text-sm"><input type="checkbox" id="f-show" ' + (p.showOnList ? "checked" : "") + '> Show me on the public Supporters Wall</label>' +
+    '<label class="flex items-center gap-2 text-sm"><input type="checkbox" id="f-anon" ' + (p.anonymous ? "checked" : "") + '> Show as Anonymous Supporter</label>' +
+    '<label class="flex items-center gap-2 text-sm"><input type="checkbox" id="f-hide" ' + (p.hideAmount ? "checked" : "") + '> Hide my amount</label>' +
+    '<button class="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 py-3 font-extrabold text-white">Save profile</button>';
+  const v = (id) => document.getElementById(id).value;
+  document.getElementById("pf").onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api("/donations/me/profile", { method: "PUT", body: { displayName: v("f-name"), donorType: document.querySelector("input[name=dt]:checked").value, org: v("f-org"), city: v("f-city"), message: v("f-msg"),
+        social: { instagram: v("f-ig"), youtube: v("f-yt"), x: v("f-x"), linkedin: v("f-li"), facebook: v("f-fb"), website: v("f-web") },
+        showOnList: document.getElementById("f-show").checked, anonymous: document.getElementById("f-anon").checked, hideAmount: document.getElementById("f-hide").checked } });
+      toast("Profile saved");
+    } catch (err) { toast(err.message, "error"); }
+  };
+}
+document.addEventListener("DOMContentLoaded", () => setTimeout(init, 400));
+</script>
+<script src="/assets/platform-widget.js?v=2" defer></script>
+</body></html>

@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/><title>Inbox — Study Space</title>
+<link rel="stylesheet" href="/assets/tailwind.css"/>
+<style>
+.top{display:flex;align-items:center;justify-content:space-between;margin:6px 4px 12px}.top h1{font-size:24px;font-weight:800;margin:0}
+.mk{font-size:12px;font-weight:800;color:var(--a1,#4f46e5);padding:8px 12px;border-radius:14px;background:var(--ss-soft)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px}.chips::-webkit-scrollbar{display:none}
+.ch{flex:none;padding:8px 14px;border-radius:99px;font-size:12.5px;font-weight:800;background:var(--ss-soft);color:var(--ss-ink2)}
+.ch.on{background:linear-gradient(135deg,var(--a1,#4f46e5),var(--a2,#7c3aed));color:#fff;box-shadow:0 8px 16px -8px rgba(79,70,229,.8)}
+.it{display:flex;gap:12px;padding:13px;margin-bottom:10px;border-radius:22px;background:var(--ss-glass);border:1px solid var(--ss-line);box-shadow:0 12px 26px -18px rgba(79,70,229,.45);backdrop-filter:blur(16px);width:100%;text-align:left;position:relative}
+.it:active{transform:scale(.99)}
+.ic{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;font-size:22px;flex:none;background:linear-gradient(135deg,#0ea5e9,#14b8a6)}
+.ic.dev{background:linear-gradient(135deg,#6366f1,#a855f7)}.ic.rq{background:linear-gradient(135deg,#f59e0b,#f97316)}
+.tx{flex:1;min-width:0}.tx .l{display:flex;gap:6px;align-items:center;font-size:10.5px;font-weight:800;letter-spacing:.04em;color:var(--ss-mut);text-transform:uppercase}
+.tx .l .d{color:#6366f1}.tx b{display:block;font-size:14.5px;margin-top:2px;color:var(--ss-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx p{margin:2px 0 0;font-size:12.5px;color:var(--ss-mut);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.un::after{content:"";position:absolute;top:14px;right:14px;width:10px;height:10px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.18)}
+.un .tx b{font-weight:800}.it:not(.un){opacity:.82}
+.emp{text-align:center;padding:60px 20px;color:var(--ss-mut);font-size:14px}.emp div{font-size:46px;margin-bottom:8px}
+</style></head>
+<body class="px-4 pb-10 pt-2" style="color:var(--ss-ink)">
+<div class="top"><h1>Inbox</h1><button class="mk" id="mk">Mark all read</button></div>
+<div class="chips" id="chips"></div>
+<div id="list"></div>
+<script src="/child.js"></script>
+<script>
+(function () {
+  var Core = parent.AppCore, Shell = parent.AppShell, esc = Core.esc;
+  var role = Core.role() || "student";
+  var isStu = role === "student";
+  var filter = "all", lib = [], reqs = [], dev = Core.dev;
+  var chips = isStu ? [["all", "All"], ["dev", "From developer"], ["lib", "Library"]] : [["all", "All"], ["dev", "From developer"], ["req", "Requests"]];
+  function api(u, o) { return Core.fetch("/api" + u, o || {}).then(function (r) { return r.json(); }).catch(function () { return null; }); }
+  function strip(t) { return String(t || "").replace(/[*_`#]/g, "").replace(/\s+/g, " ").trim(); }
+  function when(t) { try { var d = new Date(String(t).replace(" ", "T")); var s = (Date.now() - d) / 1000; if (s < 60) return "now"; if (s < 3600) return Math.floor(s / 60) + "m"; if (s < 86400) return Math.floor(s / 3600) + "h"; if (s < 604800) return Math.floor(s / 86400) + "d"; return d.toLocaleDateString([], { day: "numeric", month: "short" }); } catch (e) { return ""; } }
+  function items() {
+    var a = [];
+    dev.list.forEach(function (m) { a.push({ k: "dev", t: m.createdAt, un: !dev.isRead(m.id), m: m }); });
+    if (isStu) lib.forEach(function (n) { a.push({ k: "lib", t: n.createdAt, un: !n.read, n: n }); });
+    else reqs.forEach(function (r) { a.push({ k: "req", t: r.createdAt || r.created_at, un: true, r: r }); });
+    a = a.filter(function (x) { return filter === "all" || x.k === filter; });
+    a.sort(function (x, y) { return String(y.t).localeCompare(String(x.t)); });
+    return a;
+  }
+  function draw() {
+    document.getElementById("chips").innerHTML = chips.map(function (c) { return '<button class="ch ' + (filter === c[0] ? "on" : "") + '" data-f="' + c[0] + '">' + c[1] + '</button>'; }).join("");
+    var a = items(), L = document.getElementById("list");
+    if (!a.length) { L.innerHTML = '<div class="emp"><div>🔔</div>Nothing here yet.<br>New messages will show up here.</div>'; return; }
+    L.innerHTML = a.map(function (x, i) {
+      var cls = "it" + (x.un ? " un" : ""), ic, lab, ti, bo;
+      if (x.k === "dev") { ic = '<div class="ic dev">' + esc(x.m.icon || "🧑‍💻") + '</div>'; lab = '<span class="d">From the developer</span>'; ti = x.m.title; bo = x.m.body; }
+      else if (x.k === "lib") { ic = '<div class="ic">' + esc(x.n.icon || "🔔") + '</div>'; lab = esc(x.n.from || "Library"); ti = x.n.title; bo = x.n.body; }
+      else { ic = '<div class="ic rq">📝</div>'; lab = "Profile request"; ti = (x.r.studentName || "A student") + " asked to update profile"; bo = "Tap to review the request."; }
+      return '<button class="' + cls + '" data-i="' + i + '">' + ic + '<div class="tx"><div class="l">' + lab + ' · ' + when(x.t) + '</div><b>' + esc(ti) + '</b><p>' + esc(strip(bo)) + '</p></div></button>';
+    }).join("");
+    L._a = a;
+  }
+  function open(x) {
+    if (x.k === "dev") { dev.open(x.m); }
+    else if (x.k === "lib") {
+      var n = x.n; n.read = true;
+      api("/student/notifications/" + n._id + "/read", { method: "POST" }).then(function () { Core.notify.now(); });
+      Core.sheet.detail({ title: n.title, body: n.body, icon: n.icon, from: "library", org: n.from, time: n.createdAt, important: n.priority === "high" || n.priority === "urgent" });
+    } else { Shell.go("/admin/change-requests.html"); return; }
+    draw();
+  }
+  document.addEventListener("click", function (e) {
+    var c = e.target.closest("[data-f]"); if (c) { filter = c.dataset.f; draw(); return; }
+    var b = e.target.closest("[data-i]"); if (b) { var a = document.getElementById("list")._a; if (a && a[+b.dataset.i]) open(a[+b.dataset.i]); }
+  });
+  document.getElementById("mk").onclick = function () {
+    dev.markAll(); lib.forEach(function (n) { n.read = true; });
+    if (isStu) api("/student/notifications/read-all", { method: "POST" }).then(function () { Core.notify.now(); });
+    draw();
+  };
+  async function load() {
+    await dev.poll(true); draw();
+    if (isStu) { var j = await api("/student/notifications?limit=50"); if (j && j.success) lib = (j.data && j.data.items) || []; }
+    else { var r = await api("/admin/change-requests?status=pending"); if (r && r.success && Array.isArray(r.data)) reqs = r.data; }
+    draw();
+    var m = /[?&]m=(\d+)/.exec(location.search); if (m) dev.openId(m[1]);
+  }
+  draw(); load();
+})();
+</script></body></html>
